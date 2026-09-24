@@ -26,8 +26,11 @@ namespace GameFramework.Core
             _ = Services.EffectManager.Instance;
             _ = Services.SceneLoader.Instance;
             _ = Services.UIManager.Instance;
+            _ = Services.StatService.Instance;
             _ = Gameplay.InventoryManager.Instance;
             _ = Gameplay.AchievementManager.Instance;
+            _ = Gameplay.AugmentManager.Instance;
+            _ = Gameplay.TraitManager.Instance;
             _ = Gameplay.AchievementToastListener.Instance;
 
             Debug.Log("[Bootstrapper] 프레임워크 초기화 완료");

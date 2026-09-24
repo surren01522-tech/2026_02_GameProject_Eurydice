@@ -23,6 +23,14 @@ namespace GameFramework.Core
     public struct AchievementUnlockedEvent { public string AchievementId; }
     public struct AchievementProgressEvent { public string AchievementId; public int Current; public int Target; }
 
+    public struct AugmentChoicesRequestedEvent { public int ChoiceCount; }
+    public struct AugmentChoicesGeneratedEvent { public int ChoiceCount; }
+    public struct AugmentSelectedEvent { public string AugmentId; }
+    public struct StatModifiersChangedEvent { public string Source; }
+
+    public struct TraitPointsChangedEvent { public int AvailablePoints; }
+    public struct TraitInvestedEvent { public string TraitId; public int NewRank; public int AvailablePoints; }
+
     public struct SceneLoadStartedEvent  { public string SceneName; }
     public struct SceneLoadProgressEvent { public float Progress; }
     public struct SceneLoadedEvent       { public string SceneName; }

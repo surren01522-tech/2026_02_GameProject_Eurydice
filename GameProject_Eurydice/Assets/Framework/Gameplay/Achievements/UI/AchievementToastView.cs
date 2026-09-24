@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using GameFramework.Data;
@@ -7,24 +8,24 @@ using GameFramework.Data;
 namespace GameFramework.Gameplay
 {
     /// <summary>
-    /// 화면 상단에서 내려오는 업적 달성 토스트. 연속 달성은 큐로 순차 표시.
-    /// AchievementToastListener가 자동으로 생성/호출하므로 직접 쓸 일은 없다.
-    /// 그림 교체 포인트: background / icon / 폰트. 연출 시간은 Inspector에서 조절.
+    /// Toast shown when an achievement is unlocked.
     /// </summary>
     public class AchievementToastView : MonoBehaviour
     {
-        [Header("자동 연결됨 (템플릿 생성기)")]
+        [Header("Auto Wiring (Template Generator)")]
         public CanvasGroup group;
         public Image background;
         public Image icon;
-        public Text headerText;   // "업적 달성!"
+        public TMP_Text headerTmpText;
+        public Text headerText;
+        public TMP_Text nameTmpText;
         public Text nameText;
 
-        [Header("연출")]
+        [Header("Animation")]
         public float slideTime = 0.25f;
-        public float holdTime  = 2.0f;
-        public float hiddenY   = 120f;   // 화면 밖 (위)
-        public float shownY    = -24f;   // 표시 위치 (상단에서 아래로)
+        public float holdTime = 2.0f;
+        public float hiddenY = 120f;
+        public float shownY = -24f;
 
         private readonly Queue<AchievementData> _queue = new();
         private bool _playing;
@@ -32,6 +33,12 @@ namespace GameFramework.Gameplay
 
         private void Awake()
         {
+            UIFontUtility.ApplyToHierarchy(transform);
+            if (headerTmpText != null && string.IsNullOrWhiteSpace(headerTmpText.text))
+                headerTmpText.text = "업적 달성!";
+            if (headerText != null && string.IsNullOrWhiteSpace(headerText.text))
+                headerText.text = "업적 달성!";
+
             _rt = (RectTransform)transform;
             group.alpha = 0f;
             group.blocksRaycasts = false;
@@ -41,7 +48,8 @@ namespace GameFramework.Gameplay
         public void Enqueue(AchievementData data)
         {
             _queue.Enqueue(data);
-            if (!_playing) StartCoroutine(PlayLoop());
+            if (!_playing)
+                StartCoroutine(PlayLoop());
         }
 
         private IEnumerator PlayLoop()
@@ -50,7 +58,10 @@ namespace GameFramework.Gameplay
             while (_queue.Count > 0)
             {
                 var data = _queue.Dequeue();
-                nameText.text = data.displayName;
+                if (nameTmpText != null)
+                    nameTmpText.text = data.displayName;
+                if (nameText != null)
+                    nameText.text = data.displayName;
                 icon.enabled = data.icon != null;
                 icon.sprite = data.icon;
 
@@ -58,6 +69,7 @@ namespace GameFramework.Gameplay
                 yield return new WaitForSecondsRealtime(holdTime);
                 yield return Slide(shownY, hiddenY, 1f, 0f);
             }
+
             _playing = false;
         }
 
@@ -73,6 +85,7 @@ namespace GameFramework.Gameplay
                 group.alpha = Mathf.Lerp(fromA, toA, k);
                 yield return null;
             }
+
             _rt.anchoredPosition = new Vector2(pos.x, toY);
             group.alpha = toA;
         }

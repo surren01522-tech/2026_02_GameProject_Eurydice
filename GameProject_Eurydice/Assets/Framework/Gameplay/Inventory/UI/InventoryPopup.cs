@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using GameFramework.Core;
@@ -21,6 +22,7 @@ namespace GameFramework.Gameplay
         [Header("자동 연결됨 (템플릿 생성기)")]
         public Transform slotParent;          // GridLayoutGroup
         public InventorySlotView slotTemplate; // 비활성 템플릿, 복제해서 사용
+        public TMP_Text titleTmpText;
         public Text titleText;
         public Button sortButton;
         public Button closeButton;
@@ -32,6 +34,7 @@ namespace GameFramework.Gameplay
 
         private void Awake()
         {
+            UIFontUtility.ApplyToHierarchy(transform);
             slotTemplate.gameObject.SetActive(false);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             if (sortButton != null) sortButton.onClick.AddListener(

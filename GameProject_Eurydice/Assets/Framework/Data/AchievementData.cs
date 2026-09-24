@@ -4,8 +4,8 @@ namespace GameFramework.Data
 {
     public enum AchievementConditionType
     {
-        CumulativeCount,   // 누적 카운트 (예: 적 100마리 처치)
-        SingleTrigger      // 1회 달성 (예: 첫 클리어)
+        CumulativeCount,
+        SingleTrigger
     }
 
     [CreateAssetMenu(menuName = "GameFramework/Achievement Data", fileName = "Achv_")]
@@ -18,10 +18,13 @@ namespace GameFramework.Data
 
         [Header("달성 조건")]
         public AchievementConditionType conditionType;
-        [Tooltip("구독할 GameplayEvent의 Key (예: enemy_kill)")]
+
+        [Tooltip("구독할 GameplayEvent의 Key 값입니다. 예: enemy_kill")]
         public string eventKey;
-        [Tooltip("Param 필터. 비워두면 모든 Param 허용 (예: 특정 적 ID만 카운트)")]
+
+        [Tooltip("선택 필터입니다. 비워두면 모든 Param을 허용합니다.")]
         public string paramFilter;
+
         public int targetCount = 1;
 
         [Header("보상 (선택)")]

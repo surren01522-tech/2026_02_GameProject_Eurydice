@@ -5,9 +5,7 @@ using GameFramework.Services;
 namespace GameFramework.Gameplay
 {
     /// <summary>
-    /// AchievementUnlockedEvent를 구독해 토스트를 자동 표시한다.
-    /// Resources/UI/AchievementToast 프리팹이 있으면 동작, 없으면 조용히 넘어감.
-    /// (프리팹은 Tools > GameFramework > UI 템플릿 생성 으로 생성)
+    /// Spawns and feeds the achievement toast prefab when achievements are unlocked.
     /// </summary>
     public class AchievementToastListener : MonoSingleton<AchievementToastListener>
     {
@@ -26,7 +24,8 @@ namespace GameFramework.Gameplay
         private void OnUnlocked(AchievementUnlockedEvent e)
         {
             var data = AchievementManager.Instance.GetData(e.AchievementId);
-            if (data == null) return;
+            if (data == null)
+                return;
 
             if (_view == null && !TrySpawnView())
                 return;

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using GameFramework.Data;
@@ -14,7 +15,13 @@ namespace GameFramework.Gameplay
     {
         public Image background;
         public Image icon;
+        public TMP_Text countTmpText;
         public Text countText;
+
+        private void Awake()
+        {
+            UIFontUtility.ApplyToHierarchy(transform);
+        }
 
         public void Set(ItemData data, int count)
         {
@@ -34,8 +41,18 @@ namespace GameFramework.Gameplay
                 icon.color = Color.white;
             }
 
-            countText.enabled = has && count > 1;
-            countText.text = has ? count.ToString() : "";
+            bool showCount = has && count > 1;
+            if (countTmpText != null)
+            {
+                countTmpText.enabled = showCount;
+                countTmpText.text = has ? count.ToString() : "";
+            }
+
+            if (countText != null)
+            {
+                countText.enabled = showCount;
+                countText.text = has ? count.ToString() : "";
+            }
         }
 
         public void SetEmpty() => Set(null, 0);

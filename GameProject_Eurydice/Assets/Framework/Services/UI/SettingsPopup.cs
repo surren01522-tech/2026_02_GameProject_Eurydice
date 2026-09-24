@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ namespace GameFramework.Services
     public class SettingsPopup : UIPanel
     {
         [Header("자동 연결됨 (템플릿 생성기)")]
+        public TMP_Text titleTmpText;
         public Text titleText;
         public Slider bgmSlider;
         public Slider sfxSlider;
@@ -22,6 +24,7 @@ namespace GameFramework.Services
 
         private void Awake()
         {
+            GameFramework.Gameplay.UIFontUtility.ApplyToHierarchy(transform);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             bgmSlider.onValueChanged.AddListener(v => SoundManager.Instance.SetBgmVolume(v));
             sfxSlider.onValueChanged.AddListener(v =>

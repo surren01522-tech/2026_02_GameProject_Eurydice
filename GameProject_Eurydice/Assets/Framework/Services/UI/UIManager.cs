@@ -72,6 +72,7 @@ namespace GameFramework.Services
                     Debug.LogError($"[UI] Resources/UI/{prefabName} 프리팹 없음");
                     return null;
                 }
+
                 panel = Instantiate(prefab, _rootCanvas.transform).GetComponent<UIPanel>();
                 _cache[prefabName] = panel;
             }
