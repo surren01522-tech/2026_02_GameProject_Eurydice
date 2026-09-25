@@ -1,152 +1,187 @@
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public enum PlayerState
 {
-
     Normal,
     Pickup,
+}
 
+public enum ControlMode
+{
+    FreeLook,
+    Strafe,
 }
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Animator animator;         //애니메이터
-    [SerializeField] private Transform cameraTransform;  //캐릭터를 따라갈 카메라
+    [SerializeField] private Animator animator;
+    [SerializeField] private Transform cameraTransform;
+
+    [Header("카메라")]
+    [SerializeField] private CinemachineCamera freeLookCamera;
+    [SerializeField] private CinemachineCamera strafeCamera;
+
+    [Header("카메라 모드")]
+    [SerializeField] private ControlMode controlMode = ControlMode.FreeLook;
 
     [Header("이동 설정")]
-    [SerializeField] private float walkSpeed = 3f;      //걷기 속도
-    [SerializeField] private float runSpeed = 6f;         //뛰기 속도
-    [SerializeField] private float rotationSpeed = 10f;    //회전 속도
+    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float runSpeed = 6f;
+    [SerializeField] private float rotationSpeed = 10f;
+
+    [Header("점프 설정")]
+    [SerializeField] private float jumpPower = 2f;
 
     [Header("바닥 설정")]
-    [SerializeField] private float gravity = -20f;         //중력
+    [SerializeField] private float gravity = -20f;
 
-    private CharacterController controller;              //유니티의 캐릭터 컨트롤러 접근
-    private float verticalVeolocity;                 //수평이동의 속도값 정의
+    private CharacterController controller;
+    private InputSystem_Actions inputActions;
+    private Vector3 moveVelocity;
+    private float verticalVelocity;
 
     private PlayerState currentState = PlayerState.Normal;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        inputActions = new InputSystem_Actions();
+        Cursor.visible = false;
+
+        if (cameraTransform == null && Camera.main != null)
+            cameraTransform = Camera.main.transform;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
+    private void Start() => UpdateCameraState();
 
+    private void OnEnable() => inputActions.Player.Enable();
+    private void OnDisable() => inputActions.Player.Disable();
+    private void OnDestroy() => inputActions.Dispose();
+
+    private void OnValidate()
+    {
+        if (Application.isPlaying)
+            UpdateCameraState();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        //1. WASD 입력
-
-        Keyboard keyboard = Keyboard.current;
-
-        if (keyboard == null)
+        if (Keyboard.current != null && Keyboard.current.vKey.wasPressedThisFrame)
         {
-            return;
+            SetControlMode(controlMode == ControlMode.FreeLook ? ControlMode.Strafe : ControlMode.FreeLook);
         }
 
-        //상태와 관계없이 중력은 계속 적용
-        ApplyGravity();
-
-        //
-        if (currentState != PlayerState.Normal) return;
-
-        HandleMovement(keyboard);
-
-
-    }
-
-    private void HandleMovement(Keyboard keyboard)
-    {
-        Vector2 input = Vector2.zero;
-
-        if (keyboard.aKey.isPressed)
-            input.x -= 1f;
-        if (keyboard.dKey.isPressed)
-            input.x += 1f;
-        if (keyboard.sKey.isPressed)
-            input.y -= 1f;
-        if (keyboard.wKey.isPressed)
-            input.y += 1f;
-
-        input = Vector2.ClampMagnitude(input, 1f);
-
-        //2.
-        Vector3 cameraForward = cameraTransform.forward;
-        Vector3 cameraRight = cameraTransform.right;
-
-        //카메라 위아래 기울기는 이동에 사용 하지 않는다.
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-
-        //3. 
-
-        Vector3 moveDirection = cameraForward * input.y + cameraRight * input.x;
-        moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
-
-        //4. Shift 달리기
-        bool isRunning = keyboard.leftShiftKey.isPressed;
-        float currentSpeed = isRunning ? runSpeed : walkSpeed;
-
-        //5. 수평 이동
-        controller.Move(moveDirection * currentSpeed * Time.deltaTime);
-
-        //6. 
-        if (moveDirection.sqrMagnitude > 0.001f)
+        if (currentState == PlayerState.Normal)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-
-        //7.
-        if (controller.isGrounded && verticalVeolocity < 0f)
-        {
-            verticalVeolocity = -2f;
+            HandleMovement();
+            HandleJump();
         }
         else
         {
-            verticalVeolocity += gravity * Time.deltaTime;
+            moveVelocity = Vector3.zero;
         }
 
-        controller.Move(Vector3.up * verticalVeolocity * Time.deltaTime);
+        ApplyGravity();
+    }
 
-        //8. Idle, Wlak, Run
-        float animationSpeed = 0f;
+    private void HandleMovement()
+    {
+        Vector2 input = inputActions.Player.Move.ReadValue<Vector2>();
+        input = Vector2.ClampMagnitude(input, 1f);
+
+        bool isRunning = inputActions.Player.Sprint.IsPressed();
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
+
+        if (controlMode == ControlMode.FreeLook)
+        {
+            Vector3 cameraForward = cameraTransform.forward;
+            Vector3 cameraRight = cameraTransform.right;
+            cameraForward.y = 0;
+            cameraRight.y = 0;
+            cameraForward.Normalize();
+            cameraRight.Normalize();
+
+            Vector3 moveDirection = cameraForward * input.y + cameraRight * input.x;
+            moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
+            moveVelocity = moveDirection * currentSpeed;
+
+            if (moveDirection.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            }
+        }
+        else // Strafe 모드
+        {                                 
+            Vector3 camForward = cameraTransform.forward;
+            camForward.y = 0;
+            if (camForward.sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(camForward);
+
+            Vector3 moveDirection = transform.forward * input.y + transform.right * input.x;
+            moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
+            moveVelocity = moveDirection * currentSpeed;
+        }
+
+        // Idle, Wlak, Run
+        /* float animationSpeed = 0f;
 
         if (moveDirection.sqrMagnitude > 0.001f)
         {
             animationSpeed = isRunning ? 1f : 0.5f;
         }
 
-        //animator.SetFloat("speed", animationSpeed, 0.1f, Time.deltaTime);
+        animator.SetFloat("speed", animationSpeed, 0.1f, Time.deltaTime);
+        */
+    }
+
+    private void HandleJump()
+    {
+        if (inputActions.Player.Jump.WasPressedThisFrame() && controller.isGrounded)
+        {
+            verticalVelocity = Mathf.Sqrt(jumpPower * -2f * gravity);
+        }
     }
 
     private void ApplyGravity()
     {
-        if (controller.isGrounded && verticalVeolocity < 0f)
+        if (controller.isGrounded && verticalVelocity < 0f)
         {
-            verticalVeolocity = -2f;
+            verticalVelocity = -2f;
         }
         else
         {
-            verticalVeolocity += gravity * Time.deltaTime;
+            verticalVelocity += gravity * Time.deltaTime;
         }
-        controller.Move(Vector3.up * verticalVeolocity * Time.deltaTime);
+
+        Vector3 finalMovement = moveVelocity + Vector3.up * verticalVelocity;
+        controller.Move(finalMovement * Time.deltaTime);
+    }
+
+    public void SetControlMode(ControlMode newMode)
+    {
+        controlMode = newMode;
+        UpdateCameraState();
+    }
+
+    private void UpdateCameraState()
+    {
+        bool isFreeLook = controlMode == ControlMode.FreeLook;
+
+        if (freeLookCamera != null)
+            freeLookCamera.Priority.Value = isFreeLook ? 10 : 0;
+
+        if (strafeCamera != null)
+            strafeCamera.Priority.Value = isFreeLook ? 0 : 10;
     }
 
     public void ChangeState(PlayerState newState)
     {
         currentState = newState;
 
-        if (currentState != PlayerState.Normal)
+        if (currentState != PlayerState.Normal && animator != null)
         {
             animator.SetFloat("speed", 0);
         }
