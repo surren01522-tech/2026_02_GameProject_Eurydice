@@ -11,19 +11,19 @@ public enum PlayerState
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Animator animator;         //¾Ö´Ï¸ŞÀÌÅÍ
-    [SerializeField] private Transform cameraTransform;  //Ä³¸¯ÅÍ¸¦ µû¶ó°¥ Ä«¸Ş¶ó
+    [SerializeField] private Animator animator;         //ì• ë‹ˆë©”ì´í„°
+    [SerializeField] private Transform cameraTransform;  //ìºë¦­í„°ë¥¼ ë”°ë¼ê°ˆ ì¹´ë©”ë¼
 
-    [Header("ÀÌµ¿ ¼³Á¤")]
-    [SerializeField] private float walkSpeed = 3f;      //°È±â ¼Óµµ
-    [SerializeField] private float runSpeed = 6f;         //¶Ù±â ¼Óµµ
-    [SerializeField] private float rotationSpeed = 10f;    //È¸Àü ¼Óµµ
+    [Header("ì´ë™ ì„¤ì •")]
+    [SerializeField] private float walkSpeed = 3f;      //ê±·ê¸° ì†ë„
+    [SerializeField] private float runSpeed = 6f;         //ë›°ê¸° ì†ë„
+    [SerializeField] private float rotationSpeed = 10f;    //íšŒì „ ì†ë„
 
-    [Header("¹Ù´Ú ¼³Á¤")]
-    [SerializeField] private float gravity = -20f;         //Áß·Â
+    [Header("ë°”ë‹¥ ì„¤ì •")]
+    [SerializeField] private float gravity = -20f;         //ì¤‘ë ¥
 
-    private CharacterController controller;              //À¯´ÏÆ¼ÀÇ Ä³¸¯ÅÍ ÄÁÆ®·Ñ·¯ Á¢±Ù
-    private float verticalVeolocity;                 //¼öÆòÀÌµ¿ÀÇ ¼Óµµ°ª Á¤ÀÇ
+    private CharacterController controller;              //ìœ ë‹ˆí‹°ì˜ ìºë¦­í„° ì»¨íŠ¸ë¡¤ëŸ¬ ì ‘ê·¼
+    private float verticalVeolocity;                 //ìˆ˜í‰ì´ë™ì˜ ì†ë„ê°’ ì •ì˜
 
     private PlayerState currentState = PlayerState.Normal;
 
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //1. WASD ÀÔ·Â
+        //1. WASD ì…ë ¥
 
         Keyboard keyboard = Keyboard.current;
 
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        //»óÅÂ¿Í °ü°è¾øÀÌ Áß·ÂÀº °è¼Ó Àû¿ë
+        //ìƒíƒœì™€ ê´€ê³„ì—†ì´ ì¤‘ë ¥ì€ ê³„ì† ì ìš©
         ApplyGravity();
 
         //
@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
         Vector3 cameraForward = cameraTransform.forward;
         Vector3 cameraRight = cameraTransform.right;
 
-        //Ä«¸Ş¶ó À§¾Æ·¡ ±â¿ï±â´Â ÀÌµ¿¿¡ »ç¿ë ÇÏÁö ¾Ê´Â´Ù.
+        //ì¹´ë©”ë¼ ìœ„ì•„ë˜ ê¸°ìš¸ê¸°ëŠ” ì´ë™ì— ì‚¬ìš© í•˜ì§€ ì•ŠëŠ”ë‹¤.
         cameraForward.y = 0;
         cameraRight.y = 0;
 
@@ -92,11 +92,11 @@ public class PlayerController : MonoBehaviour
         Vector3 moveDirection = cameraForward * input.y + cameraRight * input.x;
         moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
 
-        //4. Shift ´Ş¸®±â
+        //4. Shift ë‹¬ë¦¬ê¸°
         bool isRunning = keyboard.leftShiftKey.isPressed;
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
 
-        //5. ¼öÆò ÀÌµ¿
+        //5. ìˆ˜í‰ ì´ë™
         controller.Move(moveDirection * currentSpeed * Time.deltaTime);
 
         //6. 
@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour
             animationSpeed = isRunning ? 1f : 0.5f;
         }
 
-        animator.SetFloat("speed", animationSpeed, 0.1f, Time.deltaTime);
+        //animator.SetFloat("speed", animationSpeed, 0.1f, Time.deltaTime);
     }
 
     private void ApplyGravity()
@@ -151,6 +151,6 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("speed", 0);
         }
 
-        Debug.Log("ÇöÀç »óÅÂ : " + currentState);
+        Debug.Log("í˜„ì¬ ìƒíƒœ : " + currentState);
     }
 }

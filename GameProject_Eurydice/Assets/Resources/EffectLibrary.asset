@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bef239d27ae436c4a8ff87d250d339bc, type: 3}
+  m_Script: {fileID: 11500000, guid: a52ea1e665d38964a9b1889f4c95a142, type: 3}
   m_Name: EffectLibrary
   m_EditorClassIdentifier: GameFramework::GameFramework.Data.EffectLibrary
   effects: []
