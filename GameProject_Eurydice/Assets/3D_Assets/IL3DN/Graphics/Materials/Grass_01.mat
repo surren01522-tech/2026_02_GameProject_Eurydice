@@ -28,7 +28,7 @@ Material:
   - _USETERRAINCOLOR
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -86,6 +86,10 @@ Material:
         m_Texture: {fileID: 8400000, guid: 0e8d415191cf6164a926c9456fb7d4a4, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WindTex:
+        m_Texture: {fileID: 2800000, guid: 75661e2bcd4455a4298db1345e9e06f6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -119,7 +123,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HeightBlend: 2.89
+    - _HeightBlend: 1.3
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -136,7 +140,9 @@ Material:
     - _TerrainOffset: 0
     - _TerrainSize: 100
     - _USETERRAINCOLOR: 1
+    - _WindHeight: 0.5
     - _WindInlntensisty: 0.2
+    - _WindNoiseSpeed: 0.5
     - _WindSpeed: 0.1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
@@ -146,10 +152,12 @@ Material:
     - _BottomColor: {r: 0.003921569, g: 0.45490196, b: 0.4392157, a: 1}
     - _Color: {r: 0.5067376, g: 0.8235294, b: 0.035294093, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FarColor: {r: 0.20353192, g: 0.72955966, b: 0.13994685, a: 1}
+    - _FarColor: {r: 0.292567, g: 0.61635214, b: 0.25390604, a: 1}
     - _NearColor: {r: 0.66673815, g: 0.8616352, b: 0.30617848, a: 1}
     - _NearFarRange: {r: 3.1, g: 18, b: 0, a: 0}
-    - _ShadowColor: {r: 0, g: 0.045241304, b: 0.19496846, a: 1}
+    - _ShadowColor: {r: 0, g: 0.08935484, b: 0.19607843, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _WindNoiseContrast: {r: 0, g: 1, b: 0, a: 0}
+    - _WindNoiseScale: {r: 40, g: 100, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

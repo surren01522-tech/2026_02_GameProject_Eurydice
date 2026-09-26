@@ -176,9 +176,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   animator: {fileID: 1648672777}
   cameraTransform: {fileID: 961739753}
+  freeLookCamera: {fileID: 0}
+  strafeCamera: {fileID: 0}
+  controlMode: 0
   walkSpeed: 3
   runSpeed: 6
   rotationSpeed: 10
+  jumpPower: 2
   gravity: -20
 --- !u!4 &11551103
 Transform:
@@ -256,7 +260,7 @@ Terrain:
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
-  m_DrawInstanced: 0
+  m_DrawInstanced: 1
   m_DrawTreesAndFoliage: 1
   m_StaticShadowCaster: 0
   m_IgnoreQualitySettings: 0
@@ -271,7 +275,7 @@ Terrain:
   m_GroupingID: 0
   m_RenderingLayerMask: 1
   m_AllowAutoConnect: 1
-  m_EnableHeightmapRayTracing: 1
+  m_EnableHeightmapRayTracing: 0
   m_EnableTreesAndDetailsRayTracing: 0
   m_EnableHeightmapLODFrustumCulling: 1
   m_TreeMotionVectorModeOverride: 3
@@ -1180,15 +1184,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb7c82195892a2448f4ae30b644181e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonCamera
-  target: {fileID: 11551103}
-  distance: 7
-  height: 1.5
-  mouseSensitivityty: 0.12
-  minVerticalAngle: -30
-  maxVerticalAngle: 60
-  zoomspeed: 1
-  minDistance: 2
-  maxDistance: 10
+  axisController: {fileID: 0}
+  sensitivityX: 1
+  sensitivityY: 1
+  invertY: 1
 --- !u!1 &1391620400
 GameObject:
   m_ObjectHideFlags: 0
