@@ -1,6 +1,5 @@
-using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Unity.Cinemachine;
 
 public class CameraSensitivity : MonoBehaviour
 {
@@ -10,8 +9,6 @@ public class CameraSensitivity : MonoBehaviour
     [SerializeField] private float sensitivityX = 1f;
     [SerializeField] private float sensitivityY = 1f;
     [SerializeField] private bool invertY = true;
-
-    public float SensitivityX => sensitivityX;
 
     private void Awake()
     {
