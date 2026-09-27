@@ -1,7 +1,8 @@
-using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class UIDebugger : MonoBehaviour
 {
@@ -43,3 +44,4 @@ public class UIDebugger : MonoBehaviour
         }
     }
 }
+#endif

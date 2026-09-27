@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public enum GameState
 {
@@ -12,35 +11,6 @@ public class GameStateManager : MonoBehaviour
 {
     public static GameState gameState = GameState.Playing;
     public static event Action<GameState> OnGameStateChanged;
-
-    private InputSystem_Actions inputActions;
-
-    void Awake()
-    {
-        inputActions = new InputSystem_Actions();
-    }
-
-    void OnEnable()
-    {
-        inputActions.UI.Enable();
-        inputActions.UI.Previous.performed += OnBackPressed;
-    }
-
-    void OnDisable()
-    {
-        inputActions.UI.Previous.performed -= OnBackPressed;
-        inputActions.UI.Disable();
-    }
-
-    void OnDestroy()
-    {
-        inputActions?.Dispose();
-    }
-
-    void OnBackPressed(InputAction.CallbackContext context)
-    {
-        TogglePause();
-    }
 
     public static void TogglePause()
     {
