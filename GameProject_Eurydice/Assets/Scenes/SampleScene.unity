@@ -572,28 +572,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &941549926 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6946059444643104221, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
-  m_PrefabInstance: {fileID: 8924859309647336989}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
---- !u!114 &941549927 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 832742397423530799, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
-  m_PrefabInstance: {fileID: 8924859309647336989}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1 &1054530791
 GameObject:
   m_ObjectHideFlags: 0
@@ -982,39 +960,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1324260482}
   m_CullTransparentMesh: 1
---- !u!114 &1450180384 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7212556979464921343, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
-  m_PrefabInstance: {fileID: 7265053336814482366}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89875cdc57c54474a8a74efd9b2a3b5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineInputAxisController
---- !u!114 &1450180386 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8002203475435547505, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
-  m_PrefabInstance: {fileID: 7265053336814482366}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
---- !u!114 &1450180387 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7278624202201719351, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
-  m_PrefabInstance: {fileID: 7265053336814482366}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1 &1733051480
 GameObject:
   m_ObjectHideFlags: 0
@@ -1487,22 +1432,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2591972667630238523, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
-      propertyPath: cameraTransform
-      value: 
-      objectReference: {fileID: 330585546}
     - target: {fileID: 3363152563566789463, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 4536908707786260723, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
-      propertyPath: strafeCamera
-      value: 
-      objectReference: {fileID: 941549927}
-    - target: {fileID: 4536908707786260723, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
-      propertyPath: freeLookCamera
-      value: 
-      objectReference: {fileID: 1450180387}
     - target: {fileID: 5071542213701493291, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1543,20 +1476,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5904629674415737473, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
-      propertyPath: axisController
-      value: 
-      objectReference: {fileID: 1450180384}
-    - target: {fileID: 8792493295846968794, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
-      propertyPath: 'orbitalFollows.Array.data[0]'
-      value: 
-      objectReference: {fileID: 1450180386}
-    - target: {fileID: 8792493295846968794, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
-      propertyPath: 'orbitalFollows.Array.data[1]'
-      value: 
-      objectReference: {fileID: 941549926}
-    m_RemovedComponents:
-    - {fileID: 4536908707786260723, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

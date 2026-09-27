@@ -13,7 +13,7 @@ public class CameraZoom : MonoBehaviour
     [SerializeField] private float defaultDistance = 5f;
 
     [Header("줌 감도")]
-    [SerializeField] private float zoomSensitivity =1f;
+    [SerializeField] private float zoomSensitivity = 1f;
     [SerializeField] private float smoothSpeed = 10f;
 
     private float currentDistance;
@@ -21,12 +21,7 @@ public class CameraZoom : MonoBehaviour
 
     private void Awake()
     {
-        if (orbitalFollows == null || orbitalFollows.Length == 0)
-        {
-            var singleFollow = GetComponent<CinemachineOrbitalFollow>();
-            if (singleFollow != null)
-                orbitalFollows = new[] { singleFollow };
-        }
+        FindOrbitalFollows();
 
         currentDistance = defaultDistance;
         if (orbitalFollows != null && orbitalFollows.Length > 0 && orbitalFollows[0] != null)
@@ -47,12 +42,20 @@ public class CameraZoom : MonoBehaviour
         }
 
         currentDistance = Mathf.Lerp(currentDistance, targetDistance, smoothSpeed * Time.deltaTime);
-
         ApplyDistance(currentDistance);
+    }
+
+    private void FindOrbitalFollows()
+    {
+        if (orbitalFollows == null || orbitalFollows.Length == 0)
+        {
+            orbitalFollows = FindObjectsByType<CinemachineOrbitalFollow>(FindObjectsSortMode.None);
+        }
     }
 
     private void ApplyDistance(float distance)
     {
+        FindOrbitalFollows();
         if (orbitalFollows == null) return;
 
         for (int i = 0; i < orbitalFollows.Length; i++)

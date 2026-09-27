@@ -3,7 +3,8 @@ using Unity.Cinemachine;
 
 public class CameraSensitivity : MonoBehaviour
 {
-    [SerializeField] private CinemachineInputAxisController axisController;
+    [Header("카메라 입력 축 컨트롤러")]
+    [SerializeField] private CinemachineInputAxisController[] axisControllers;
     
     [Header("민감도 설정")]
     [SerializeField] private float sensitivityX = 1f;
@@ -12,29 +13,35 @@ public class CameraSensitivity : MonoBehaviour
 
     private void Awake()
     {
-        if (axisController == null)
-            axisController = GetComponent<CinemachineInputAxisController>();
+        if (axisControllers == null || axisControllers.Length == 0)
+        {
+            axisControllers = FindObjectsByType<CinemachineInputAxisController>(FindObjectsSortMode.None);
+        }
     }
 
     private void Start() => ApplySensitivity();
 
     private void OnValidate()
     {
-        if (Application.isPlaying && axisController != null)
+        if (Application.isPlaying)
             ApplySensitivity();
     }
 
     public void ApplySensitivity()
     {
-        if (axisController == null) return;
+        if (axisControllers == null) return;
 
-        SetGain("Look Orbit X", sensitivityX);
-        SetGain("Look Orbit Y", invertY ? -sensitivityY : sensitivityY);
+        foreach (var controller in axisControllers)
+        {
+            if (controller == null) continue;
+            SetGain(controller, "Look Orbit X", sensitivityX);
+            SetGain(controller, "Look Orbit Y", invertY ? -sensitivityY : sensitivityY);
+        }
     }
 
-    private void SetGain(string axisName, float gain)
+    private void SetGain(CinemachineInputAxisController axisCtrl, string axisName, float gain)
     {
-        var controller = axisController.GetController(axisName);
+        var controller = axisCtrl.GetController(axisName);
         if (controller?.Input != null)
             controller.Input.Gain = gain;
     }
