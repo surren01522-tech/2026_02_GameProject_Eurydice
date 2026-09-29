@@ -21,6 +21,16 @@ public class CameraSensitivity : MonoBehaviour
 
     private void Start() => ApplySensitivity();
 
+    private void OnEnable()
+    {
+        GameStateManager.OnInputModeChanged += HandleInputModeChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameStateManager.OnInputModeChanged -= HandleInputModeChanged;
+    }
+
     private void OnValidate()
     {
         if (Application.isPlaying)
@@ -52,5 +62,20 @@ public class CameraSensitivity : MonoBehaviour
         sensitivityY = y;
         if (invert.HasValue) invertY = invert.Value;
         ApplySensitivity();
+    }
+
+    /// <summary>
+    /// 입력 모드 변경 시 카메라 조작 가능 여부 변경
+    /// </summary>
+    private void HandleInputModeChanged(InputMode mode)
+    {
+        bool enableCameraInput = (mode == InputMode.GamePlay);
+        if (axisControllers == null) return;
+
+        foreach (var controller in axisControllers)
+        {
+            if (controller != null)
+                controller.enabled = enableCameraInput;
+        }
     }
 }

@@ -22,17 +22,12 @@ public class CameraZoom : MonoBehaviour
     private void Awake()
     {
         FindOrbitalFollows();
-
-        currentDistance = defaultDistance;
-        if (orbitalFollows != null && orbitalFollows.Length > 0 && orbitalFollows[0] != null)
-            currentDistance = orbitalFollows[0].Radius;
-
-        targetDistance = currentDistance;
+        targetDistance = defaultDistance;
     }
 
     private void Update()
     {
-        if (Mouse.current == null) return;
+        if (Mouse.current == null || GameStateManager.CurrentInputMode != InputMode.GamePlay) return;
 
         float scroll = Mouse.current.scroll.ReadValue().y;
         if (Mathf.Abs(scroll) > 0.01f)
@@ -55,7 +50,6 @@ public class CameraZoom : MonoBehaviour
 
     private void ApplyDistance(float distance)
     {
-        FindOrbitalFollows();
         if (orbitalFollows == null) return;
 
         for (int i = 0; i < orbitalFollows.Length; i++)

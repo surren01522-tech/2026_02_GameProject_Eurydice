@@ -6,61 +6,50 @@ public class UiManager : MonoBehaviour
 {
     public static UiManager Instance { get; private set; }
 
-    [SerializeField] private UIPanel defaultSettingPanel;
-
-    private readonly Stack<UIPanel> panelStack = new Stack<UIPanel>();
+    private readonly Stack<UIPanel> panelStack = new();
     private InputSystem_Actions inputActions;
 
-    void Awake()
+    public bool HasActivePanel => panelStack.Count > 0;
+
+    private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
 
         inputActions = new InputSystem_Actions();
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         inputActions.UI.Enable();
         inputActions.UI.Previous.performed += OnBackPressed;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         inputActions.UI.Previous.performed -= OnBackPressed;
         inputActions.UI.Disable();
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         inputActions?.Dispose();
     }
 
     /// <summary>
-    /// 새 패널을 열고 스택에 등록
+    /// 새 패널을 열고 스택에 등록합니다.
     /// </summary>
     public void PushPanel(UIPanel panel)
     {
         if (panel == null) return;
 
-        if (panelStack.Count == 0 && GameStateManager.gameState == GameState.Playing)
-        {
-            GameStateManager.SetGameState(GameState.Pause);
-        }
-
         panelStack.Push(panel);
         panel.Open();
+        GameStateManager.SetModalActive(true);
     }
 
     /// <summary>
-    /// 최상단 패널을 닫고 이전 패널로 복귀
+    /// 최상단 패널을 닫고 이전 패널로 복귀합니다.
     /// </summary>
     public void PopPanel()
     {
@@ -68,15 +57,28 @@ public class UiManager : MonoBehaviour
 
         UIPanel topPanel = panelStack.Pop();
         topPanel.Close();
+        GameStateManager.SetModalActive(panelStack.Count > 0);
+    }
 
-        if (panelStack.Count == 0)
+    /// <summary>
+    /// 특정 패널을 열거나 이미 열려있으면 닫습니다.
+    /// </summary>
+    public void TogglePanel(UIPanel panel)
+    {
+        if (panel == null) return;
+
+        if (panelStack.Count > 0 && panelStack.Peek() == panel)
         {
-            GameStateManager.SetGameState(GameState.Playing);
+            PopPanel();
+        }
+        else
+        {
+            PushPanel(panel);
         }
     }
 
     /// <summary>
-    /// 열려 있는 모든 패널을 닫고 게임 플레이로 복귀
+    /// 열려 있는 모든 패널을 닫습니다.
     /// </summary>
     public void CloseAll()
     {
@@ -86,22 +88,11 @@ public class UiManager : MonoBehaviour
             panel.Close();
         }
 
-        GameStateManager.SetGameState(GameState.Playing);
+        GameStateManager.SetModalActive(false);
     }
 
     /// <summary>
-    /// 기본 설정 패널 열기 (버튼 이벤트 등에서 호출 가능)
-    /// </summary>
-    public void OpenSetting()
-    {
-        if (defaultSettingPanel != null && !panelStack.Contains(defaultSettingPanel))
-        {
-            PushPanel(defaultSettingPanel);
-        }
-    }
-
-    /// <summary>
-    /// ESC(Previous) 액션 트리거 처리
+    /// ESC(Previous) 액션 트리거 처리. 스택 패널을 닫거나 설정창을 바로 엽니다.
     /// </summary>
     private void OnBackPressed(InputAction.CallbackContext context)
     {
@@ -113,15 +104,15 @@ public class UiManager : MonoBehaviour
                 PopPanel();
             }
         }
-        else
+        else if (SettingWindow.Instance != null)
         {
-            if (GameStateManager.gameState == GameState.Playing)
+            if (SettingWindow.Instance.IsOpen)
             {
-                OpenSetting();
+                SettingWindow.Instance.OnBackPressed();
             }
             else
             {
-                GameStateManager.SetGameState(GameState.Playing);
+                SettingWindow.Instance.Open();
             }
         }
     }
