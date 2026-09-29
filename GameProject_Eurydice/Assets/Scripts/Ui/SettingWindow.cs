@@ -18,7 +18,7 @@ public class SettingWindow : UIPanel
         public GameObject panel;
     }
 
-    [Header("메인 패널 및 트리거")]
+    [Header("메인 요소")]
     [SerializeField] private GameObject settingPanel;
     [SerializeField] private Button settingButton;
 
