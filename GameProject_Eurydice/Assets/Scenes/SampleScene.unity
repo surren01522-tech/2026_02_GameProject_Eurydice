@@ -3190,7 +3190,7 @@ GameObject:
   - component: {fileID: 1924905008}
   - component: {fileID: 1924905009}
   m_Layer: 0
-  m_Name: Game State Manager
+  m_Name: Game Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
