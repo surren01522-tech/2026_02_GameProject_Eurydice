@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SettingWindow : UIPanel
+public class SettingWindow : MonoBehaviour
 {
     public static SettingWindow Instance { get; private set; }
 
@@ -20,7 +20,6 @@ public class SettingWindow : UIPanel
 
     [Header("메인 요소")]
     [SerializeField] private GameObject settingPanel;
-    [SerializeField] private Button settingButton;
 
     [Header("인디케이터")]
     [SerializeField] private RectTransform arrow;
@@ -40,6 +39,7 @@ public class SettingWindow : UIPanel
     private GameObject lastSelected;
     private GameObject lastMenuButton;
     private Coroutine arrowCoroutine;
+    private RectTransform[] cachedLayoutTransforms;
 
     public bool IsOpen => settingPanel != null && settingPanel.activeSelf;
 
@@ -53,9 +53,14 @@ public class SettingWindow : UIPanel
             if (panelTransform != null) settingPanel = panelTransform.gameObject;
         }
 
-        if (settingButton != null)
+        if (settingPanel != null)
         {
-            settingButton.onClick.AddListener(OnSettingButtonClicked);
+            var layoutGroups = settingPanel.GetComponentsInChildren<LayoutGroup>(true);
+            cachedLayoutTransforms = new RectTransform[layoutGroups.Length];
+            for (int i = 0; i < layoutGroups.Length; i++)
+            {
+                cachedLayoutTransforms[i] = layoutGroups[i].GetComponent<RectTransform>();
+            }
         }
 
         for (int i = 0; i < menuList.Count; i++)
@@ -72,14 +77,59 @@ public class SettingWindow : UIPanel
         }
     }
 
+    private void Start()
+    {
+        Warmup();
+    }
+
+    private void Warmup()
+    {
+        if (settingPanel == null) return;
+
+        var cg = settingPanel.GetComponent<CanvasGroup>();
+        bool addedCg = false;
+        if (cg == null)
+        {
+            cg = settingPanel.AddComponent<CanvasGroup>();
+            addedCg = true;
+        }
+
+        float prevAlpha = cg.alpha;
+        bool prevInteractable = cg.interactable;
+        bool prevBlocksRaycasts = cg.blocksRaycasts;
+
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+
+        settingPanel.SetActive(true);
+        for (int i = 0; i < menuList.Count; i++)
+        {
+            if (menuList[i].panel != null)
+            {
+                menuList[i].panel.SetActive(true);
+            }
+        }
+
+        Canvas.ForceUpdateCanvases();
+        RebuildLayouts();
+
+        HideAllSubPanels();
+        settingPanel.SetActive(false);
+
+        cg.alpha = prevAlpha;
+        cg.interactable = prevInteractable;
+        cg.blocksRaycasts = prevBlocksRaycasts;
+
+        if (addedCg && !settingPanel.TryGetComponent<IUIPanelTransition>(out _))
+        {
+            Destroy(cg);
+        }
+    }
+
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
-
-        if (settingButton != null)
-        {
-            settingButton.onClick.RemoveListener(OnSettingButtonClicked);
-        }
     }
 
     private void Update()
@@ -101,14 +151,20 @@ public class SettingWindow : UIPanel
         }
     }
 
-    public override void Open()
+    public void Open(Vector3? originPos = null)
     {
         if (settingPanel != null)
         {
-            settingPanel.SetActive(true);
+            if (settingPanel.TryGetComponent<IUIPanelTransition>(out var transition))
+            {
+                transition.PlayOpen(originPos);
+            }
+            else
+            {
+                settingPanel.SetActive(true);
+            }
         }
 
-        GameStateManager.SetModalActive(true);
         HideAllSubPanels();
 
         if (arrowCoroutine != null)
@@ -128,30 +184,33 @@ public class SettingWindow : UIPanel
         }
     }
 
-    public override void Close()
+    public void Close(bool immediate = false, Vector3? targetPos = null)
     {
+        HideAllSubPanels();
+
         if (settingPanel != null)
         {
-            settingPanel.SetActive(false);
+            if (!immediate && settingPanel.TryGetComponent<IUIPanelTransition>(out var transition))
+            {
+                transition.PlayClose(targetPos);
+            }
+            else
+            {
+                if (settingPanel.TryGetComponent<IUIPanelTransition>(out var tr))
+                {
+                    tr.StopImmediate();
+                }
+                settingPanel.SetActive(false);
+            }
         }
-
-        GameStateManager.SetModalActive(false);
-        HideAllSubPanels();
     }
     
-    public override bool OnBackPressed()
+    public bool OnBackPressed()
     {
         if (activeEntryIndex >= 0)
         {
             onCancelSound?.Invoke();
             CloseAllSubPanels();
-            return true;
-        }
-
-        if (IsOpen)
-        {
-            onCancelSound?.Invoke();
-            Close();
             return true;
         }
 
@@ -239,21 +298,17 @@ public class SettingWindow : UIPanel
     /// </summary>
     private void RebuildLayouts()
     {
-        if (settingPanel == null) return;
+        if (cachedLayoutTransforms == null) return;
 
-        var layoutGroups = settingPanel.GetComponentsInChildren<LayoutGroup>(true);
-        for (int i = 0; i < layoutGroups.Length; i++)
+        for (int i = 0; i < cachedLayoutTransforms.Length; i++)
         {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroups[i].GetComponent<RectTransform>());
+            if (cachedLayoutTransforms[i] != null && cachedLayoutTransforms[i].gameObject.activeInHierarchy)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(cachedLayoutTransforms[i]);
+            }
         }
 
         Canvas.ForceUpdateCanvases();
-    }
-
-    private void OnSettingButtonClicked()
-    {
-        if (IsOpen) Close();
-        else Open();
     }
 
     /// <summary>

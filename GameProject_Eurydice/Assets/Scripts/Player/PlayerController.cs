@@ -77,14 +77,6 @@ public class PlayerController : MonoBehaviour
 
             bool isAlt = Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
             GameStateManager.SetAltHeld(isAlt);
-
-            if (Keyboard.current.leftAltKey.wasReleasedThisFrame || Keyboard.current.rightAltKey.wasReleasedThisFrame)
-            {
-                if (SettingWindow.Instance != null && SettingWindow.Instance.IsOpen)
-                {
-                    SettingWindow.Instance.Close();
-                }
-            }
         }
 
         if (currentState == PlayerState.Normal && GameStateManager.IsGamePlaying)
