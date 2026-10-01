@@ -1,11 +1,10 @@
 {
   "dependencies": {
     "com.cqf.urpvolumetricfog": {
-      "version": "https://github.com/CristianQiu/Unity-URP-Volumetric-Light.git",
+      "version": "file:com.cqf.urpvolumetricfog",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "354ebc5b6ed3c2c40dc9797c813b56d5da213c4e"
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.kink3d.mirrors": {
       "version": "file:com.kink3d.mirrors",

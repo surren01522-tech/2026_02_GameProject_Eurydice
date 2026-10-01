@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -208,7 +208,11 @@ namespace kTools.Mirrors
 
             // Profiling command
             CommandBuffer cmd = CommandBufferPool.Get($"Mirror {gameObject.GetInstanceID()}");
+#if UNITY_2021_1_OR_NEWER
+            using (new ProfilingScope(cmd, new ProfilingSampler($"Mirror {gameObject.GetInstanceID()}")))
+#else
             using (new ProfilingSample(cmd, $"Mirror {gameObject.GetInstanceID()}"))
+#endif
             {
                 ExecuteCommand(context, cmd);
 
@@ -254,7 +258,11 @@ namespace kTools.Mirrors
 
             // Render reflection camera with inverse culling
             GL.invertCulling = true;
+#if UNITY_2023_1_OR_NEWER
+            RenderPipeline.SubmitRenderRequest(reflectionCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = m_RenderTexture });
+#else
             UniversalRenderPipeline.RenderSingleCamera(context, reflectionCamera);
+#endif
             GL.invertCulling = false;
         }
 #endregion
