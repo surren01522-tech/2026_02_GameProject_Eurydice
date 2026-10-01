@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainNormal:
-        m_Texture: {fileID: 2800000, guid: fa4c07b305d384949ad8544fefdeae22, type: 3}
+        m_Texture: {fileID: 2800000, guid: 50c9b96bf58917c4e97fea677a8ff18d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -60,6 +60,22 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NomalMap:
+        m_Texture: {fileID: 2800000, guid: 5dcae898b29c18c428ed872e21424fec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NomalMap2:
+        m_Texture: {fileID: 2800000, guid: 5dcae898b29c18c428ed872e21424fec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 50c9b96bf58917c4e97fea677a8ff18d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap2:
+        m_Texture: {fileID: 2800000, guid: 5dcae898b29c18c428ed872e21424fec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -68,8 +84,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReflectionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SecondNormal:
-        m_Texture: {fileID: 2800000, guid: f70cda8364963e34ea1f980f2bf5af64, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5dcae898b29c18c428ed872e21424fec, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -77,7 +97,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _reflectTex:
-        m_Texture: {fileID: 2800000, guid: 8c808b0018aa6c943b895d86357c35f1, type: 3}
+        m_Texture: {fileID: 2800000, guid: a7ea9b07ab93c9c44bc30a6c262d54ed, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -104,40 +124,57 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Depth: 10.9
+    - _Depth: 2.47
+    - _Depth_Fade: 0.8
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _Displacement: 0.5
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _Lerp: 0.05
     - _Metallic: 0
+    - _NomalStrength: 1.65
+    - _NormalStrength: 0.78
     - _Normal_Strangth: 0.797
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.85
+    - _ReflectionDepth: 30
+    - _ReflectionStrength: 60
+    - _Reflection_Normal: 0.03
+    - _Reflection_Refraction: 0.025
+    - _Reflection_Refraction_Lerp: 0.6
+    - _Refraction: 0.03
+    - _Smoothness: 0.761
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Strangth: 0.07
+    - _Strangth: 0.05
     - _Surface: 0
+    - _WaterLerp: 0.496
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Deep_Water_Color: {r: 0.040722184, g: 0.2298209, b: 0.44654083, a: 0.80784315}
+    - _Color: {r: 0.70754707, g: 0.84478474, b: 1, a: 1}
+    - _Deep_Water_Color: {r: 0, g: 0.3150967, b: 0.49056602, a: 0.70980394}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Shallow_Water_Color: {r: 0.07450981, g: 0.4071819, b: 0.654902, a: 0.4745098}
+    - _Shallow_Water_Color: {r: 0.37399623, g: 0.5998777, b: 0.76729554, a: 0.4745098}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _UvSize: {r: 5, g: 5, b: 0, a: 0}
+    - _UV1: {r: 4, g: 4, b: 0, a: 0}
+    - _UV4: {r: 5, g: 5, b: 0, a: 0}
+    - _UnderWater_Color: {r: 0.42452818, g: 0.90129906, b: 1, a: 1}
+    - _UvSize: {r: 3, g: 3, b: 0, a: 0}
+    - _WaterSpeed1: {r: 0.04, g: 0.04, b: 0, a: 0}
+    - _WaterSpeed2: {r: -0.04, g: -0.04, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &192822222179401967

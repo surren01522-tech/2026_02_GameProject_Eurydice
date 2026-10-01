@@ -7,6 +7,14 @@
       "dependencies": {},
       "hash": "354ebc5b6ed3c2c40dc9797c813b56d5da213c4e"
     },
+    "com.kink3d.mirrors": {
+      "version": "file:D:/unity asset/kMirrors-master",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.render-pipelines.universal": "7.x.x"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.14",
       "depth": 0,

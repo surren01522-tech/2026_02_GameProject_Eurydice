@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.cqf.urpvolumetricfog": "https://github.com/CristianQiu/Unity-URP-Volumetric-Light.git",
+    "com.kink3d.mirrors": "file:D:/unity asset/kMirrors-master",
     "com.unity.ai.navigation": "2.0.14",
     "com.unity.cinemachine": "3.1.7",
     "com.unity.collab-proxy": "2.13.6",
