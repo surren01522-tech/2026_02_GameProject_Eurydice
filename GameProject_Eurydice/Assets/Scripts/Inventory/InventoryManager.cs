@@ -8,6 +8,8 @@ public class InventoryManager : MonoBehaviour
 
     [SerializeField] private List<InventorySlot> slots = new();
 
+    public IReadOnlyList<InventorySlot> Slots => slots;
+
     public event Action OnInventoryChanged;
 
     private void Awake()
