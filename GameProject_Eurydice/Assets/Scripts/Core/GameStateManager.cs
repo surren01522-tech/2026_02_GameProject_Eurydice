@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum InputMode
 {
@@ -17,6 +18,33 @@ public class GameStateManager : MonoBehaviour
     public static bool HasActiveModal { get; private set; }
 
     public static bool IsGamePlaying => CurrentInputMode == InputMode.GamePlay;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Init()
+    {
+        ResetState();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ResetState();
+    }
+
+    public static void ResetState()
+    {
+        IsAltHeld = false;
+        HasActiveModal = false;
+        CurrentInputMode = InputMode.GamePlay;
+        ApplyCursorState(InputMode.GamePlay);
+        OnInputModeChanged?.Invoke(CurrentInputMode);
+    }
+
+    private void Awake()
+    {
+        ResetState();
+    }
 
     public static void SetAltHeld(bool isHeld)
     {

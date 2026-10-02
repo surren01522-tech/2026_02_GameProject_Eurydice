@@ -54,11 +54,29 @@ public class PlayerController : MonoBehaviour
             cameraTransform = Camera.main.transform;
     }
 
-    private void Start() => cameraModeController?.SetCameraMode(controlMode);
+    private void Start()
+    {
+        SettingManager.Instance?.ApplyBindings(inputActions.asset);
+        cameraModeController?.SetCameraMode(controlMode);
+    }
 
-    private void OnEnable() => inputActions?.Player.Enable();
-    private void OnDisable() => inputActions?.Player.Disable();
+    private void OnEnable()
+    {
+        inputActions?.Player.Enable();
+        if (SettingManager.Instance != null)
+            SettingManager.Instance.OnBindingsChanged += SyncBindings;
+    }
+
+    private void OnDisable()
+    {
+        if (SettingManager.Instance != null)
+            SettingManager.Instance.OnBindingsChanged -= SyncBindings;
+        inputActions?.Player.Disable();
+    }
+
     private void OnDestroy() => inputActions?.Dispose();
+
+    private void SyncBindings() => SettingManager.Instance?.ApplyBindings(inputActions.asset);
 
     private void OnValidate()
     {
@@ -68,13 +86,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (inputActions != null && inputActions.Player.ToggleView.WasPressedThisFrame())
+        {
+            SetControlMode(controlMode == ControlMode.FreeLook ? ControlMode.Strafe : ControlMode.FreeLook);
+        }
+
         if (Keyboard.current != null)
         {
-            if (Keyboard.current.vKey.wasPressedThisFrame)
-            {
-                SetControlMode(controlMode == ControlMode.FreeLook ? ControlMode.Strafe : ControlMode.FreeLook);
-            }
-
             bool isAlt = Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
             GameStateManager.SetAltHeld(isAlt);
         }

@@ -7,8 +7,7 @@ public class CameraSensitivity : MonoBehaviour
     [SerializeField] private CinemachineInputAxisController[] axisControllers;
     
     [Header("민감도 설정")]
-    [SerializeField] private float sensitivityX = 1f;
-    [SerializeField] private float sensitivityY = 1f;
+    [SerializeField] private float sensitivity = 1f;
     [SerializeField] private bool invertY = true;
 
     private void Awake()
@@ -44,8 +43,8 @@ public class CameraSensitivity : MonoBehaviour
         foreach (var controller in axisControllers)
         {
             if (controller == null) continue;
-            SetGain(controller, "Look Orbit X", sensitivityX);
-            SetGain(controller, "Look Orbit Y", invertY ? -sensitivityY : sensitivityY);
+            SetGain(controller, "Look Orbit X", sensitivity);
+            SetGain(controller, "Look Orbit Y", invertY ? -sensitivity : sensitivity);
         }
     }
 
@@ -56,13 +55,14 @@ public class CameraSensitivity : MonoBehaviour
             controller.Input.Gain = gain;
     }
 
-    public void SetSensitivity(float x, float y, bool? invert = null)
+    public void SetSens(float val, bool? invert = null)
     {
-        sensitivityX = x;
-        sensitivityY = y;
+        sensitivity = val;
         if (invert.HasValue) invertY = invert.Value;
         ApplySensitivity();
     }
+
+    public void SetSensitivity(float x, float y, bool? invert = null) => SetSens(x, invert);
 
     /// <summary>
     /// 입력 모드 변경 시 카메라 조작 가능 여부 변경
