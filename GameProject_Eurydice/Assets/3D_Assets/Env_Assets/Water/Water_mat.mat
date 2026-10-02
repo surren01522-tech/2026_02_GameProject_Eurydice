@@ -96,6 +96,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Particle_RT:
+        m_Texture: {fileID: 8400000, guid: e22aa8512484f7449a8578a7678dff3b, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -137,7 +141,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _Depth: 2.47
-    - _Depth_Fade: 2.75
+    - _Depth_Fade: 1
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _Displacement: 0.5
@@ -146,17 +150,18 @@ Material:
     - _EnvironmentReflections: 1
     - _Foam: 5.33
     - _FoamLerp: 0.489
-    - _FoamScale: 10
+    - _FoamScale: 8.5
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Lerp: 0.05
     - _Metallic: 0
     - _NomalStrength: 1.65
-    - _NormalStrength: 0.19
+    - _NormalStrength: 0.33
     - _Normal_Strangth: 0.797
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _Particle_Power: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -183,8 +188,8 @@ Material:
     - _Deep_Water_Color: {r: 0, g: 0.3150967, b: 0.49056602, a: 0.70980394}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 0.78301877, g: 0.9749048, b: 1, a: 1}
-    - _FoamSpeed1: {r: 0.008, g: 0.008, b: 0, a: 0}
-    - _FoamSpeed2: {r: -0.008, g: -0.008, b: 0, a: 0}
+    - _FoamSpeed1: {r: 0.01, g: -0.01, b: 0, a: 0}
+    - _FoamSpeed2: {r: -0.01, g: 0.01, b: 0, a: 0}
     - _FoamUV1: {r: 10, g: 10, b: 0, a: 0}
     - _FoamUV2: {r: 10, g: 10, b: 0, a: 0}
     - _Shallow_Water_Color: {r: 0.37399623, g: 0.5998777, b: 0.76729554, a: 0.4745098}
@@ -193,8 +198,8 @@ Material:
     - _UV4: {r: 5, g: 5, b: 0, a: 0}
     - _UnderWater_Color: {r: 0.81128114, g: 0.8778201, b: 0.8805031, a: 1}
     - _UvSize: {r: 3, g: 3, b: 0, a: 0}
-    - _WaterSpeed1: {r: 0.03, g: 0.03, b: 0, a: 0}
-    - _WaterSpeed2: {r: -0.03, g: -0.03, b: 0, a: 0}
+    - _WaterSpeed1: {r: 0.03, g: -0.03, b: 0, a: 0}
+    - _WaterSpeed2: {r: -0.03, g: 0.03, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &192822222179401967
