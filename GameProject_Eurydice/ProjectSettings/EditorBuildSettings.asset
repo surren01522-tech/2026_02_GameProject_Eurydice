@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Play_test.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/WaterShaderTest.unity
+    guid: 31089d011b6b5304b9f8ab39e2f85ce4
+  - enabled: 1
     path: Assets/Scenes/Grass_test.unity
     guid: 48afe3fe89405a64781b3f507aa92fcc
   m_configObjects:
