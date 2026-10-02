@@ -21,12 +21,12 @@ public class InventoryUIManager : MonoBehaviour
     private void Start()
     {
         InitSlots();
+        SubscribeAndSync();
+    }
 
-        if (InventoryManager.Instance != null)
-        {
-            InventoryManager.Instance.OnInventoryChanged += SyncSlot;
-            SyncSlot();
-        }
+    private void OnEnable()
+    {
+        SubscribeAndSync();
     }
 
     private void OnDisable()
@@ -34,6 +34,16 @@ public class InventoryUIManager : MonoBehaviour
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.OnInventoryChanged -= SyncSlot;
+        }
+    }
+
+    private void SubscribeAndSync()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.OnInventoryChanged -= SyncSlot;
+            InventoryManager.Instance.OnInventoryChanged += SyncSlot;
+            SyncSlot();
         }
     }
 

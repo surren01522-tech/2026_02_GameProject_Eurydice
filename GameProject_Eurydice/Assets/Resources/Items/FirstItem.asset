@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: FirstItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   id: 1
-  itemName: "1\uBC88\uC544\uC774\uD15C"
+  itemName: First Item
   icon: {fileID: 0}
-  description: "1\uBC88 \uC544\uC774\uD15C\uC758 \uC124\uBA85"
+  description: First Item Desc
   placePrefab: {fileID: 0}
   maxStack: 99

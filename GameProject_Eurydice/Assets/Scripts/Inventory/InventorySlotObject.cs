@@ -14,14 +14,34 @@ public class InventorySlotObject : MonoBehaviour
 
     public void SetItem(ItemData item, int count = 1)
     {
-        bool hasItem = item != null && item.icon != null;
-        bool isOverOne = item != null && count > 1;
+        bool hasItem = item != null;
+        bool hasIcon = hasItem && item.icon != null;
+        bool isOverOne = hasItem && count > 1;
 
-        icon.sprite = hasItem ? item.icon : null;
-        amountText.text = isOverOne ? count.ToString() : null;
+        if (icon != null)
+        {
+            icon.sprite = hasIcon ? item.icon : null;
+            icon.gameObject.SetActive(hasIcon);
+        }
 
-        icon.gameObject.SetActive(hasItem);
-        amountText.gameObject.SetActive(isOverOne);
+        if (amountText != null)
+        {
+            if (isOverOne)
+            {
+                amountText.text = count.ToString();
+                amountText.gameObject.SetActive(true);
+            }
+            else if (hasItem && !hasIcon)
+            {
+                amountText.text = !string.IsNullOrEmpty(item.itemName) ? item.itemName : item.name;
+                amountText.gameObject.SetActive(true);
+            }
+            else
+            {
+                amountText.text = null;
+                amountText.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void Clear()
@@ -30,6 +50,12 @@ public class InventorySlotObject : MonoBehaviour
         {
             icon.sprite = null;
             icon.gameObject.SetActive(false);
+        }
+
+        if (amountText != null)
+        {
+            amountText.text = null;
+            amountText.gameObject.SetActive(false);
         }
     }
 }
