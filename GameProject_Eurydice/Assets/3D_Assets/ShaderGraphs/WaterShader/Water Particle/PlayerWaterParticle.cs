@@ -29,7 +29,7 @@ public class PlayerWaterParticle : MonoBehaviour
         forward.y = Start;
         ParticleSystem.transform.eulerAngles = forward;
 
-        for (int i = 0; i < 360; i += 3)
+        for (int i = Start; i < End; i += Delta)
         {
             ParticleSystem.Emit(transform.position + ParticleSystem.transform.forward * 0.5f, ParticleSystem.transform.forward * Speed, Size, Lifetime, Color.white);
             ParticleSystem.transform.eulerAngles += Vector3.up * 3;
@@ -38,26 +38,26 @@ public class PlayerWaterParticle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityY > 0.003f)
+        if(other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityY > 0.013f)
         {
-            CreateParticle(-180, 180, 3, 2, 2, 2);
+            CreateParticle(-180, 180, 3, 2, 2.5f, 5);
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityXZ > 0.001f && Time.renderedFrameCount % 3 == 0)
+        if (other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityXZ > 0.012f && Time.renderedFrameCount % 5 == 0)
         {
             int y = (int)transform.eulerAngles.y;
-            CreateParticle(y-100, y+100, 3, 5, 2, 1);
+            CreateParticle(y-100, y+100, 3, 3, 2, 4);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityY > 0.003f)
+        if (other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityY > 0.013f)
         {
-            CreateParticle(-180, 180, 3, 2, 2, 2);
+            CreateParticle(-180, 180, 3, 2, 2.5f, 5);
         }
     }
 }
