@@ -1,4 +1,3 @@
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class PlayerWaterParticle : MonoBehaviour
@@ -29,9 +28,18 @@ public class PlayerWaterParticle : MonoBehaviour
         forward.y = Start;
         ParticleSystem.transform.eulerAngles = forward;
 
+        var emitParams = new ParticleSystem.EmitParams
+        {
+            startSize = Size,
+            startLifetime = Lifetime,
+            startColor = Color.white
+        };
+
         for (int i = Start; i < End; i += Delta)
         {
-            ParticleSystem.Emit(transform.position + ParticleSystem.transform.forward * 0.5f, ParticleSystem.transform.forward * Speed, Size, Lifetime, Color.white);
+            emitParams.position = transform.position + ParticleSystem.transform.forward * 0.5f;
+            emitParams.velocity = ParticleSystem.transform.forward * Speed;
+            ParticleSystem.Emit(emitParams, 1);
             ParticleSystem.transform.eulerAngles += Vector3.up * 3;
         }
     }
