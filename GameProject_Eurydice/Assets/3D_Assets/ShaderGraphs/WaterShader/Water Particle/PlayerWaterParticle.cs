@@ -40,7 +40,7 @@ public class PlayerWaterParticle : MonoBehaviour
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityY > 0.013f)
         {
-            CreateParticle(-180, 180, 3, 2, 2.5f, 5);
+            CreateParticle(-180, 180, 3, 2, 1.5f, 5);
         }
     }
 
@@ -57,7 +57,7 @@ public class PlayerWaterParticle : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Water") && VelocityY > 0.013f)
         {
-            CreateParticle(-180, 180, 3, 2, 2.5f, 5);
+            CreateParticle(-180, 180, 3, 2, 1.5f, 5);
         }
     }
 }
