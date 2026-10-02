@@ -1,13 +1,31 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MinimapController : MonoBehaviour
 {
+    [Header("미니맵 ID (비워두면 씬 이름 사용)")]
+    [SerializeField] private string mapId;
+
+    public string CurrentMapId => string.IsNullOrEmpty(mapId) ? SceneManager.GetActiveScene().name : mapId;
+
     [Header("미니맵 UI")]
     [SerializeField] private RectTransform minimapDisplayRect;
     [SerializeField] private RawImage mapBackgroundImage;
     [SerializeField] private RawImage fogOverlayImage;
     [SerializeField] private RectTransform playerIcon;
+
+    [Header("플레이어 아이콘 & 방향 연출")]
+    [SerializeField] private bool autoScaleWithMap = true;
+    [Range(0.01f, 0.1f)]
+    [Tooltip("미니맵 뷰포트 크기 대비 아이콘 크기 비율 (기본 0.045 = 4.5%)")]
+    [SerializeField] private float iconMapRatio = 0.045f;
+    [SerializeField] private float minIconSize = 16f;
+    [SerializeField] private float maxIconSize = 64f;
+    [SerializeField] private float iconBaseSize = 24f;
+    [SerializeField] private bool showDirectionPointer = true;
+    [SerializeField] private bool trackCameraDirection = false;
+    [SerializeField] private Color pointerColor = new Color(1f, 0.85f, 0.4f, 0.95f);
 
     [Header("맵 그리기")]
     [SerializeField] private Transform player;
@@ -25,14 +43,15 @@ public class MinimapController : MonoBehaviour
     [Header("Fog 설정")]
     [SerializeField] private int fogResolution = 128;
     [SerializeField] private float revealRadius = 15f;
+    [Range(0f, 1f)]
+    [Tooltip("완전히 밝혀지는 중심 영역 비율 (0.6 = 60%, 1.0 = 페이드 없이 완전 클리어)")]
+    [SerializeField] private float innerRevealPercent = 0.6f;
     [SerializeField] private float updateDistanceThreshold = 0.5f;
 
     [Header("캡쳐 높낮이 설정")]
     [SerializeField] private bool useHeightCheck = false;
     [Tooltip("플레이어 머리 위 몇 미터에서 천장을 잘라낼 것인가 (Cut-Plane)")]
     [SerializeField] private float ceilingOffset = 3f;
-    [Tooltip("높이가 이 수치(m) 이상 변했을 때 맵과 안개를 새로 갱신합니다.")]
-    [SerializeField] private float maxHeightDifference = 6f;
 
     private Texture2D fogTexture;
     private RenderTexture mapRenderTexture;
@@ -40,9 +59,39 @@ public class MinimapController : MonoBehaviour
     private Material fogMaskMaterial;
     private Color32[] fogColors;
     private Vector3 lastPlayerPos;
-    private float lastPlayerY;
     private float maxWorldY = 100f;
     private bool isInitialized;
+    private RectTransform directionPointer;
+
+    private void OnEnable()
+    {
+        SaveManager.OnSaveDataDeleted += ResetFog;
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.OnSaveDataDeleted -= ResetFog;
+    }
+
+    /// <summary>
+    /// 미니맵 Fog를 초기 상태로 리셋하고 플레이어 주변만 다시 밝힙니다.
+    /// </summary>
+    public void ResetFog()
+    {
+        InitializeFog();
+        if (player != null)
+        {
+            lastPlayerPos = player.position;
+            UpdatePlayerIcon();
+            RevealFog(player.position);
+        }
+    }
+
+    private void Awake()
+    {
+        ResolveDisplayContainer();
+        if (mapBackgroundImage != null) mapBackgroundImage.enabled = false;
+    }
 
     private void Start()
     {
@@ -54,20 +103,21 @@ public class MinimapController : MonoBehaviour
             CalculateWorldBounds();
         }
 
+        InitializeFog();
+
         if (useDynamicCapture && mapBackgroundImage != null)
         {
             CaptureMapSnapshot();
         }
 
-        InitializeFog();
-
         if (player != null)
         {
             lastPlayerPos = player.position;
-            lastPlayerY = player.position.y;
             UpdatePlayerIcon();
             RevealFog(player.position);
         }
+
+        if (mapBackgroundImage != null) mapBackgroundImage.enabled = true;
     }
 
     private void Update()
@@ -87,23 +137,20 @@ public class MinimapController : MonoBehaviour
             new Vector2(lastPlayerPos.x, lastPlayerPos.z)
         );
 
-        bool heightChanged = useHeightCheck && Mathf.Abs(player.position.y - lastPlayerY) > maxHeightDifference * 0.5f;
-
-        if (movedDistance >= updateDistanceThreshold || heightChanged)
+        if (movedDistance >= updateDistanceThreshold)
         {
             lastPlayerPos = player.position;
-            lastPlayerY = player.position.y;
             RevealFog(player.position);
-
-            if (heightChanged && useDynamicCapture && mapBackgroundImage != null)
-            {
-                CaptureMapSnapshot();
-            }
         }
     }
 
     private void OnDestroy()
     {
+        if (mapBackgroundImage != null) mapBackgroundImage.enabled = false;
+        if (fogOverlayImage != null) fogOverlayImage.enabled = false;
+
+        SaveFog();
+
         if (fogMaskMaterial != null)
         {
             Destroy(fogMaskMaterial);
@@ -247,19 +294,21 @@ public class MinimapController : MonoBehaviour
     /// </summary>
     public void InitializeFog()
     {
-        fogTexture = new Texture2D(fogResolution, fogResolution, TextureFormat.RGBA32, false)
-        {
-            wrapMode = TextureWrapMode.Clamp,
-            filterMode = FilterMode.Bilinear
-        };
-
         int totalPixels = fogResolution * fogResolution;
-        fogColors = new Color32[totalPixels];
-        Color32 initialFog = new Color32(0, 0, 0, 255);
+        if (fogColors == null || fogColors.Length != totalPixels)
+            fogColors = new Color32[totalPixels];
 
+        Color32 initialFog = new Color32(0, 0, 0, 255);
         for (int i = 0; i < totalPixels; i++)
-        {
             fogColors[i] = initialFog;
+
+        if (fogTexture == null)
+        {
+            fogTexture = new Texture2D(fogResolution, fogResolution, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear
+            };
         }
 
         fogTexture.SetPixels32(fogColors);
@@ -289,6 +338,7 @@ public class MinimapController : MonoBehaviour
         }
 
         isInitialized = true;
+        LoadFog();
     }
 
     /// <summary>
@@ -320,15 +370,11 @@ public class MinimapController : MonoBehaviour
         {
             player = pc.transform;
             lastPlayerPos = player.position;
-            lastPlayerY = player.position.y;
             UpdatePlayerIcon();
             RevealFog(player.position);
         }
     }
 
-    /// <summary>
-    /// 미니맵 상의 플레이어 아이콘 위치 및 회전각 갱신
-    /// </summary>
     private void UpdatePlayerIcon()
     {
         if (playerIcon == null || player == null) return;
@@ -358,12 +404,63 @@ public class MinimapController : MonoBehaviour
         );
 
         playerIcon.anchoredPosition = localPos;
-        playerIcon.localEulerAngles = new Vector3(0f, 0f, -player.eulerAngles.y);
+
+        float currentIconSize = autoScaleWithMap
+            ? Mathf.Clamp(Mathf.Min(size.x, size.y) * iconMapRatio, minIconSize, maxIconSize)
+            : iconBaseSize;
+
+        playerIcon.sizeDelta = new Vector2(currentIconSize, currentIconSize);
+        playerIcon.localScale = Vector3.one;
+
+        float targetY = player.eulerAngles.y;
+        if (trackCameraDirection && Camera.main != null)
+        {
+            targetY = Camera.main.transform.eulerAngles.y;
+        }
+        playerIcon.localEulerAngles = new Vector3(0f, 0f, -targetY);
+
+        if (showDirectionPointer)
+        {
+            EnsureDirectionPointer(currentIconSize);
+        }
+        else if (directionPointer != null)
+        {
+            directionPointer.gameObject.SetActive(false);
+        }
     }
 
-    /// <summary>
-    /// 플레이어 주변 시야 반경 내의 Fog 알파값을 0으로 지움
-    /// </summary>
+    private void EnsureDirectionPointer(float iconSize)
+    {
+        if (directionPointer == null)
+        {
+            var child = playerIcon.Find("DirectionPointer");
+            if (child != null)
+            {
+                directionPointer = child.GetComponent<RectTransform>();
+            }
+            else
+            {
+                var pointerObj = new GameObject("DirectionPointer");
+                pointerObj.transform.SetParent(playerIcon, false);
+
+                directionPointer = pointerObj.AddComponent<RectTransform>();
+                directionPointer.anchorMin = new Vector2(0.5f, 0.5f);
+                directionPointer.anchorMax = new Vector2(0.5f, 0.5f);
+                directionPointer.pivot = new Vector2(0.5f, 0.5f);
+                directionPointer.localEulerAngles = new Vector3(0f, 0f, 45f);
+
+                var img = pointerObj.AddComponent<Image>();
+                img.color = pointerColor;
+                img.raycastTarget = false;
+            }
+        }
+
+        directionPointer.gameObject.SetActive(true);
+        float pointerSize = iconSize * 0.5f;
+        directionPointer.sizeDelta = new Vector2(pointerSize, pointerSize);
+        directionPointer.anchoredPosition = new Vector2(0f, iconSize * 0.45f);
+    }
+
     public void RevealFog(Vector3 worldPos)
     {
         if (!isInitialized || worldSize.x <= 0f || worldSize.y <= 0f) return;
@@ -381,6 +478,8 @@ public class MinimapController : MonoBehaviour
         int minY = Mathf.Clamp(centerPy - pxRadius, 0, fogResolution - 1);
         int maxY = Mathf.Clamp(centerPy + pxRadius, 0, fogResolution - 1);
 
+        float innerPercent = Mathf.Clamp01(innerRevealPercent);
+        float outerRange = Mathf.Max(0.001f, 1f - innerPercent);
         bool modified = false;
 
         for (int y = minY; y <= maxY; y++)
@@ -401,9 +500,9 @@ public class MinimapController : MonoBehaviour
                     float normDist = dist / radiusInPixels;
 
                     byte targetAlpha = 0;
-                    if (normDist > 0.6f)
+                    if (innerPercent < 0.999f && normDist > innerPercent)
                     {
-                        float fadeFactor = (normDist - 0.6f) / 0.4f;
+                        float fadeFactor = (normDist - innerPercent) / outerRange;
                         targetAlpha = (byte)(fadeFactor * fadeFactor * 255f);
                     }
 
@@ -461,5 +560,23 @@ public class MinimapController : MonoBehaviour
 
         fogTexture.SetPixels32(fogColors);
         fogTexture.Apply(false);
+    }
+
+    public void SaveFog()
+    {
+        byte[] bytes = GetFogSaveData();
+        if (bytes != null)
+        {
+            SaveManager.SaveMinimapFog(CurrentMapId, bytes);
+        }
+    }
+
+    public void LoadFog()
+    {
+        byte[] bytes = SaveManager.LoadMinimapFog(CurrentMapId);
+        if (bytes != null)
+        {
+            LoadFogSaveData(bytes);
+        }
     }
 }
