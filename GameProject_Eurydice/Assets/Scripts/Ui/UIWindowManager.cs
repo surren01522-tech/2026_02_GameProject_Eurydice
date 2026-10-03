@@ -23,8 +23,6 @@ public class UIWindowManager : MonoBehaviour
     [Header("HUD 설정")]
     [SerializeField] private CanvasGroup hudCanvasGroup;
     [SerializeField] private float fadeDuration = 0.25f;
-
-    [Header("기본 활성화 탭")]
     [SerializeField] private WindowTab defaultTab = WindowTab.None;
 
     public WindowTab CurrentTab => currentTab;
@@ -65,17 +63,19 @@ public class UIWindowManager : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        inputActions?.Dispose();
-        mapButton?.onClick.RemoveAllListeners();
-        inventoryButton?.onClick.RemoveAllListeners();
-        settingButton?.onClick.RemoveAllListeners();
+        if (inputActions != null)
+        {
+            inputActions.Disable();
+            inputActions.Dispose();
+            inputActions = null;
+        }
     }
 
     private void Start()
     {
-        mapButton?.onClick.AddListener(() => ToggleTab(WindowTab.Map));
-        inventoryButton?.onClick.AddListener(() => ToggleTab(WindowTab.Inventory));
-        settingButton?.onClick.AddListener(() => ToggleTab(WindowTab.Setting));
+        BindButton(mapButton, WindowTab.Map);
+        BindButton(inventoryButton, WindowTab.Inventory);
+        BindButton(settingButton, WindowTab.Setting);
 
         if (hudCanvasGroup != null)
         {
@@ -87,7 +87,14 @@ public class UIWindowManager : MonoBehaviour
         CloseAllPanels(animate: false);
 
         if (defaultTab != WindowTab.None)
+        {
             OpenTab(defaultTab);
+        }
+    }
+
+    private void BindButton(Button btn, WindowTab tab)
+    {
+        if (btn != null) btn.onClick.AddListener(() => ToggleTab(tab));
     }
 
     private void OnEscapePerformed(InputAction.CallbackContext _) => HandleEscape();
@@ -103,13 +110,15 @@ public class UIWindowManager : MonoBehaviour
         CloseAllPanels(animate: false);
         currentTab = tab;
 
-        var targetPanel = GetPanel(tab);
-        if (targetPanel != null)
+        Vector3? originPos = GetButtonPos(tab);
+
+        if (tab == WindowTab.Setting && settingUI != null)
         {
-            if (tab == WindowTab.Setting && settingUI != null)
-                settingUI.Open(GetButtonPosition(tab));
-            else
-                SetPanelActive(targetPanel, true, animate: true, GetButtonPosition(tab));
+            settingUI.Open(originPos);
+        }
+        else
+        {
+            SetPanelState(GetPanel(tab), true, animate: true, originPos);
         }
 
         GameStateManager.SetModalActive(tab != WindowTab.None);
@@ -117,18 +126,17 @@ public class UIWindowManager : MonoBehaviour
 
     public void CloseAllTabs(bool animatePanel = false)
     {
-        Vector3? buttonPos = GetButtonPosition(currentTab);
+        Vector3? targetPos = GetButtonPos(currentTab);
         currentTab = WindowTab.None;
         openedViaEscape = false;
         GameStateManager.SetModalActive(false);
 
-        CloseAllPanels(animatePanel, buttonPos);
+        CloseAllPanels(animatePanel, targetPos);
     }
 
     public void HandleEscape()
     {
-        if (settingUI != null && settingUI.IsOpen && settingUI.OnBackPressed())
-            return;
+        if (settingUI != null && settingUI.IsOpen && settingUI.OnBackPressed()) return;
 
         if (currentTab != WindowTab.None)
         {
@@ -143,18 +151,21 @@ public class UIWindowManager : MonoBehaviour
 
     private void CloseAllPanels(bool animate, Vector3? targetPos = null)
     {
-        SetPanelActive(mapPanel, false, animate, targetPos);
-        SetPanelActive(inventoryPanel, false, animate, targetPos);
+        SetPanelState(mapPanel, false, animate, targetPos);
+        SetPanelState(inventoryPanel, false, animate, targetPos);
 
         if (settingUI != null)
+        {
             settingUI.Close(immediate: !animate, targetPos);
+        }
     }
 
-    private void SetPanelActive(GameObject panel, bool active, bool animate, Vector3? pos = null)
+    private void SetPanelState(GameObject panel, bool active, bool animate, Vector3? pos = null)
     {
         if (panel == null) return;
 
-        if (panel.TryGetComponent<IUIPanelTransition>(out var transition))
+        IUIPanelTransition transition = panel.GetComponent<IUIPanelTransition>();
+        if (transition != null)
         {
             if (active)
             {
@@ -173,21 +184,28 @@ public class UIWindowManager : MonoBehaviour
         }
     }
 
-    private GameObject GetPanel(WindowTab tab) => tab switch
+    private GameObject GetPanel(WindowTab tab)
     {
-        WindowTab.Map => mapPanel,
-        WindowTab.Inventory => inventoryPanel,
-        WindowTab.Setting => settingUI != null ? settingUI.gameObject : null,
-        _ => null
-    };
+        switch (tab)
+        {
+            case WindowTab.Map: return mapPanel;
+            case WindowTab.Inventory: return inventoryPanel;
+            case WindowTab.Setting: return settingUI != null ? settingUI.gameObject : null;
+            default: return null;
+        }
+    }
 
-    private Vector3? GetButtonPosition(WindowTab tab) => tab switch
+    private Vector3? GetButtonPos(WindowTab tab)
     {
-        WindowTab.Map => mapButton != null ? mapButton.transform.position : null,
-        WindowTab.Inventory => inventoryButton != null ? inventoryButton.transform.position : null,
-        WindowTab.Setting => settingButton != null ? settingButton.transform.position : null,
-        _ => null
-    };
+        Button btn = null;
+        switch (tab)
+        {
+            case WindowTab.Map: btn = mapButton; break;
+            case WindowTab.Inventory: btn = inventoryButton; break;
+            case WindowTab.Setting: btn = settingButton; break;
+        }
+        return btn != null ? btn.transform.position : (Vector3?)null;
+    }
 
     private void HandleInputModeChanged(InputMode mode)
     {
@@ -197,7 +215,9 @@ public class UIWindowManager : MonoBehaviour
         bool shouldShow = isAltMode || (mode == InputMode.UIModal);
 
         if (buttonContainer != null && shouldShow)
+        {
             buttonContainer.SetActive(isAltMode || !openedViaEscape);
+        }
 
         hudCanvasGroup.interactable = shouldShow;
         hudCanvasGroup.blocksRaycasts = shouldShow;

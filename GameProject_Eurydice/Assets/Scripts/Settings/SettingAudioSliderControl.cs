@@ -10,18 +10,12 @@ public class SettingAudioSliderControl : SettingSliderControl
     public bool IsMuted { get; private set; }
     public event Action<bool> onMuteChanged;
 
-    /// <summary>
-    /// 초기값과 음소거 상태를 설정하고 UI를 동기화합니다.
-    /// </summary>
     public void Init(float initialValue, bool initialMute)
     {
         base.Init(initialValue);
         SetMute(initialMute, notify: false);
     }
 
-    /// <summary>
-    /// 음소거 상태를 설정하고 관련 UI 컨트롤의 상호작용 여부를 동기화합니다.
-    /// </summary>
     public void SetMute(bool muted, bool notify = true)
     {
         IsMuted = muted;

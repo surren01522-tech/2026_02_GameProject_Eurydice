@@ -12,58 +12,57 @@ public class SettingKeyRebindSlot : MonoBehaviour
     [SerializeField] private Button rebindButton;
 
     [Header("설정 정보")]
-    [SerializeField] private string actionName = "";
+    [Tooltip("액션 경로 (예: Player/Move)")]
+    [SerializeField] private string actionPath = "";
+    [Tooltip("컴포지트 파트 (예: up)")]
     [SerializeField] private string compositePart = "";
-    [SerializeField] private int bindingIndex = -1;
+    [SerializeField] private string displayName = "";
 
     private InputAction targetAction;
+    private int bindingIndex = -1;
     private bool isRebinding;
-
-    public string ActionName => actionName;
-    public int BindingIndex => bindingIndex;
 
     private void Awake()
     {
         AutoFind();
-        rebindButton?.onClick.AddListener(StartRebinding);
+
+        if (rebindButton != null)
+        {
+            rebindButton.onClick.AddListener(StartRebinding);
+        }
     }
 
-    private void Reset() => AutoFind();
-
-    public void Init(InputAction action, string targetCompositePart, string displayName)
+    private void Reset()
     {
-        targetAction = action;
-        compositePart = targetCompositePart ?? "";
-        actionName = displayName;
-        bindingIndex = FindBindingIndex(action, compositePart);
-
-        if (actionNameText != null) actionNameText.text = displayName;
-        RefreshDisplay();
+        AutoFind();
     }
 
-    public void Init(InputAction action, int bindIndex, string displayName)
+    public void Init(InputActionAsset asset)
     {
-        targetAction = action;
-        bindingIndex = bindIndex;
-        actionName = displayName;
+        if (asset != null && !string.IsNullOrEmpty(actionPath))
+        {
+            targetAction = asset.FindAction(actionPath);
+        }
+        else
+        {
+            targetAction = null;
+        }
 
-        if (actionNameText != null) actionNameText.text = displayName;
+        bindingIndex = FindBindingIndex(targetAction, compositePart);
+
+        if (actionNameText != null)
+        {
+            actionNameText.text = displayName;
+        }
+
         RefreshDisplay();
     }
 
     public void RefreshDisplay()
     {
         if (keyNameText == null) return;
-        if (targetAction == null)
-        {
-            keyNameText.text = "-";
-            return;
-        }
 
-        if (bindingIndex < 0 || bindingIndex >= targetAction.bindings.Count)
-            bindingIndex = FindBindingIndex(targetAction, compositePart);
-
-        if (bindingIndex < 0 || bindingIndex >= targetAction.bindings.Count)
+        if (!HasValidBinding())
         {
             keyNameText.text = "-";
             return;
@@ -78,36 +77,48 @@ public class SettingKeyRebindSlot : MonoBehaviour
 
     public void StartRebinding()
     {
-        if (isRebinding || targetAction == null || SettingManager.Instance == null) return;
-
-        if (bindingIndex < 0 || bindingIndex >= targetAction.bindings.Count)
-            bindingIndex = FindBindingIndex(targetAction, compositePart);
-
-        if (bindingIndex < 0 || bindingIndex >= targetAction.bindings.Count) return;
+        if (isRebinding || SettingManager.Instance == null || !HasValidBinding()) return;
 
         isRebinding = true;
-        if (keyNameText != null) keyNameText.text = "[ Input Waitng... ]";
-        if (rebindButton != null) rebindButton.interactable = false;
 
-        SettingManager.Instance.Rebind(
-            targetAction,
-            bindingIndex,
-            onComplete: () =>
-            {
-                isRebinding = false;
-                if (rebindButton != null) rebindButton.interactable = true;
-                RefreshDisplay();
-            },
-            onCancel: () =>
-            {
-                isRebinding = false;
-                if (rebindButton != null) rebindButton.interactable = true;
-                RefreshDisplay();
-            }
-        );
+        if (keyNameText != null)
+        {
+            keyNameText.text = "[ Input Waitng... ]";
+        }
+
+        if (rebindButton != null)
+        {
+            rebindButton.interactable = false;
+        }
+
+        SettingManager.Instance.Rebind(targetAction, bindingIndex, OnRebindFinished);
     }
 
-    private int FindBindingIndex(InputAction action, string part)
+    private void OnRebindFinished()
+    {
+        isRebinding = false;
+
+        if (rebindButton != null)
+        {
+            rebindButton.interactable = true;
+        }
+
+        RefreshDisplay();
+    }
+
+    private bool HasValidBinding()
+    {
+        if (targetAction == null) return false;
+
+        if (bindingIndex < 0 || bindingIndex >= targetAction.bindings.Count)
+        {
+            bindingIndex = FindBindingIndex(targetAction, compositePart);
+        }
+
+        return bindingIndex >= 0 && bindingIndex < targetAction.bindings.Count;
+    }
+
+    private static int FindBindingIndex(InputAction action, string part)
     {
         if (action == null) return -1;
 
@@ -118,49 +129,54 @@ public class SettingKeyRebindSlot : MonoBehaviour
         {
             for (int i = 0; i < bindings.Count; i++)
             {
-                var b = bindings[i];
-                if (b.isPartOfComposite && b.name.Equals(part, StringComparison.OrdinalIgnoreCase))
-                    return i;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                var b = bindings[i];
-                if (!b.isComposite && !b.isPartOfComposite)
+                if (bindings[i].isPartOfComposite && bindings[i].name.Equals(part, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (b.groups != null && b.groups.Contains("Keyboard"))
-                        return i;
-                    if (b.effectivePath != null && b.effectivePath.Contains("Keyboard"))
-                        return i;
+                    return i;
                 }
             }
+            return -1;
+        }
 
-            for (int i = 0; i < bindings.Count; i++)
+        int fallback = -1;
+        for (int i = 0; i < bindings.Count; i++)
+        {
+            var b = bindings[i];
+            if (b.isComposite || b.isPartOfComposite) continue;
+
+            if ((b.groups != null && b.groups.Contains("Keyboard")) ||
+                (b.effectivePath != null && b.effectivePath.Contains("Keyboard")))
             {
-                var b = bindings[i];
-                if (!b.isComposite && !b.isPartOfComposite)
-                    return i;
+                return i;
+            }
+
+            if (fallback < 0)
+            {
+                fallback = i;
             }
         }
 
-        return -1;
+        return fallback;
     }
 
     private void AutoFind()
     {
-        var texts = GetComponentsInChildren<TextMeshProUGUI>(true);
-        foreach (var t in texts)
+        TextMeshProUGUI[] texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+        for (int i = 0; i < texts.Length; i++)
         {
-            string tName = t.gameObject.name.ToLower();
+            string tName = texts[i].gameObject.name.ToLower();
             if (actionNameText == null && (tName.Contains("action") || tName.Contains("title") || tName.Contains("label") || tName.Contains("name")))
-                actionNameText = t;
+            {
+                actionNameText = texts[i];
+            }
             else if (keyNameText == null && (tName.Contains("key") || tName.Contains("bind") || tName.Contains("value") || tName.Contains("button")))
-                keyNameText = t;
+            {
+                keyNameText = texts[i];
+            }
         }
 
         if (rebindButton == null)
+        {
             rebindButton = GetComponentInChildren<Button>(true);
+        }
     }
 }

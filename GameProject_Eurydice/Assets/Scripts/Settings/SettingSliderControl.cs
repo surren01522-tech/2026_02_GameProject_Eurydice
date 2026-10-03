@@ -38,17 +38,11 @@ public class SettingSliderControl : MonoBehaviour
         AutoFindComponents();
     }
 
-    /// <summary>
-    /// 초기값을 설정하고 UI를 동기화합니다.
-    /// </summary>
     public virtual void Init(float initialValue)
     {
         SetValue(initialValue, notify: false);
     }
 
-    /// <summary>
-    /// 현재 수치를 변경하고 슬라이더와 텍스트를 갱신합니다.
-    /// </summary>
     public virtual void SetValue(float val, bool notify = true)
     {
         Value = Mathf.Clamp(val, minValue, maxValue);
@@ -71,9 +65,6 @@ public class SettingSliderControl : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 자식 오브젝트들에서 제어에 필요한 UI 요소들을 자동으로 연결합니다.
-    /// </summary>
     public virtual void AutoFindComponents()
     {
         if (slider == null) slider = GetComponentInChildren<Slider>(true);

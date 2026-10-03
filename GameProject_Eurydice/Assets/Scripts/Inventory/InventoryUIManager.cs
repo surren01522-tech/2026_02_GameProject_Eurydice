@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class InventoryUIManager : MonoBehaviour
 {
@@ -10,7 +9,7 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField] private Transform SlotContainer;
     [SerializeField] private int initSlotSize = 5;
 
-    private readonly List<InventorySlotObject> slotUIList = new();
+    private readonly List<InventorySlotObject> slotUIList = new List<InventorySlotObject>();
 
     private void Awake()
     {
@@ -20,13 +19,22 @@ public class InventoryUIManager : MonoBehaviour
 
     private void Start()
     {
-        InitSlots();
-        SubscribeAndSync();
+        if (SlotContainer != null)
+        {
+            slotUIList.AddRange(SlotContainer.GetComponentsInChildren<InventorySlotObject>(true));
+        }
+
+        SyncSlot();
     }
 
     private void OnEnable()
     {
-        SubscribeAndSync();
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.OnInventoryChanged -= SyncSlot;
+            InventoryManager.Instance.OnInventoryChanged += SyncSlot;
+            SyncSlot();
+        }
     }
 
     private void OnDisable()
@@ -37,31 +45,6 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
 
-    private void SubscribeAndSync()
-    {
-        if (InventoryManager.Instance != null)
-        {
-            InventoryManager.Instance.OnInventoryChanged -= SyncSlot;
-            InventoryManager.Instance.OnInventoryChanged += SyncSlot;
-            SyncSlot();
-        }
-    }
-
-    private void InitSlots()
-    {
-        if (SlotContainer == null) return;
-
-        slotUIList.Clear();
-        slotUIList.AddRange(SlotContainer.GetComponentsInChildren<InventorySlotObject>(true));
-
-        while (slotUIList.Count < initSlotSize && SlotPrefab != null)
-        {
-            var slotObj = Instantiate(SlotPrefab, SlotContainer);
-            var slotUI = slotObj.GetComponent<InventorySlotObject>();
-            if (slotUI != null) slotUIList.Add(slotUI);
-        }
-    }
-
     public void SyncSlot()
     {
         if (InventoryManager.Instance == null || SlotContainer == null) return;
@@ -69,12 +52,7 @@ public class InventoryUIManager : MonoBehaviour
         var slots = InventoryManager.Instance.Slots;
         int targetCount = Mathf.Max(initSlotSize, slots.Count);
 
-        while (slotUIList.Count < targetCount && SlotPrefab != null)
-        {
-            var slotObj = Instantiate(SlotPrefab, SlotContainer);
-            var slotUI = slotObj.GetComponent<InventorySlotObject>();
-            if (slotUI != null) slotUIList.Add(slotUI);
-        }
+        EnsureSlotCount(targetCount);
 
         for (int i = 0; i < slotUIList.Count; i++)
         {
@@ -87,6 +65,19 @@ public class InventoryUIManager : MonoBehaviour
             {
                 slotUIList[i].Clear();
                 slotUIList[i].gameObject.SetActive(i < initSlotSize);
+            }
+        }
+    }
+
+    private void EnsureSlotCount(int targetCount)
+    {
+        while (slotUIList.Count < targetCount && SlotPrefab != null)
+        {
+            GameObject slotObj = Instantiate(SlotPrefab, SlotContainer);
+            InventorySlotObject slotUI = slotObj.GetComponent<InventorySlotObject>();
+            if (slotUI != null)
+            {
+                slotUIList.Add(slotUI);
             }
         }
     }

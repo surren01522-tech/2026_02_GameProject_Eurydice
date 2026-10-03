@@ -71,10 +71,18 @@ public class PlayerController : MonoBehaviour
     {
         if (SettingManager.Instance != null)
             SettingManager.Instance.OnBindingsChanged -= SyncBindings;
-        inputActions?.Player.Disable();
+        inputActions?.Disable();
     }
 
-    private void OnDestroy() => inputActions?.Dispose();
+    private void OnDestroy()
+    {
+        if (inputActions != null)
+        {
+            inputActions.Disable();
+            inputActions.Dispose();
+            inputActions = null;
+        }
+    }
 
     private void SyncBindings() => SettingManager.Instance?.ApplyBindings(inputActions.asset);
 
