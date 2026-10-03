@@ -123,12 +123,13 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HeightBlend: 1.6
+    - _HeightBlend: 1.23
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Radius: 1.5
     - _ReceiveShadows: 1
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
@@ -137,13 +138,13 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _TerrainColorMultiply: 3
-    - _TerrainOffset: 0
+    - _TerrainOffset: -0.03
     - _TerrainSize: 100
     - _USETERRAINCOLOR: 1
-    - _WindHeight: 0.5
+    - _WindHeight: 1.5
     - _WindInlntensisty: 0.2
-    - _WindNoiseSpeed: 0.5
-    - _WindSpeed: 0.1
+    - _WindNoiseSpeed: 0.1
+    - _WindSpeed: 0.05
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
@@ -153,11 +154,12 @@ Material:
     - _Color: {r: 0.5067376, g: 0.8235294, b: 0.035294093, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FarColor: {r: 0.292567, g: 0.61635214, b: 0.25390604, a: 1}
-    - _NearColor: {r: 0.66673815, g: 0.8616352, b: 0.30617848, a: 1}
+    - _NearColor: {r: 0.5753363, g: 0.735849, b: 0.27999276, a: 1}
     - _NearFarRange: {r: 3.1, g: 18, b: 0, a: 0}
+    - _Player: {r: 0, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0.08935484, b: 0.19607843, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WindNoiseContrast: {r: 0, g: 1, b: 0, a: 0}
-    - _WindNoiseScale: {r: 40, g: 100, b: 0, a: 0}
+    - _WindNoiseScale: {r: 80, g: 100, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
