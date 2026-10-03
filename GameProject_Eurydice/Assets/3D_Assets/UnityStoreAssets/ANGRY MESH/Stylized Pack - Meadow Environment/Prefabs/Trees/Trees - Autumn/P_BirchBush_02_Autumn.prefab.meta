@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f65c31ace73a6704c842a4e9c8951a09
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Trees/Trees
+    - Autumn/P_BirchBush_02_Autumn.prefab
+  uploadId: 972270

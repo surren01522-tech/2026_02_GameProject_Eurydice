@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a515e9067b5f95c4587e46e912113643
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_VFX_WindMesh.shader
+  uploadId: 972270

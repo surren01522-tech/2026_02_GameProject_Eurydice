@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ed093cb5b56daf7468dcc88d2be53b1e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Trees/Trees
+    - Summer/P_BirchTree_04_Summer.prefab
+  uploadId: 972270

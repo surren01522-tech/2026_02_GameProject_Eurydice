@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 77c6d441ca5cd534e97b8f6b7e7d2168
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Background/Background
+    - Summer/P_Hill_01_Summer.prefab
+  uploadId: 972270

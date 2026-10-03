@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a376d8df2ccfd2d4e9d535248e5e5699
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Plants/Plants
+    - Winter/P_Plant_01_Winter_01.prefab
+  uploadId: 972270

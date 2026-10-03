@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 940d341750effc144ba40ab3b9b52126
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Props/Props
+    - Winter/P_Fence_01_Winter.prefab
+  uploadId: 972270

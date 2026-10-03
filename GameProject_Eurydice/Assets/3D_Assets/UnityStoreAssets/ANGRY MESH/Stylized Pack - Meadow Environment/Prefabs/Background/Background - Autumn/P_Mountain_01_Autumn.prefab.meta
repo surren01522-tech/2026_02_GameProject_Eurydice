@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 23aaf337a0f72674fa93519ac4fcf6ab
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Background/Background
+    - Autumn/P_Mountain_01_Autumn.prefab
+  uploadId: 972270

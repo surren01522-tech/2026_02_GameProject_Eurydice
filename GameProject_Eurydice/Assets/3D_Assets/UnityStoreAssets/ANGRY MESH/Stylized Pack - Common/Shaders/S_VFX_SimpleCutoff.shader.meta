@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 446aaf8c16c37774dbb1cd412ac1f4d2
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_VFX_SimpleCutoff.shader
+  uploadId: 972270

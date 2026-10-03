@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8de0e148214bdb24189fd9165ec9e21a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Trees/Trees
+    - Winter/P_OakTree_01_Winter_Ivy.prefab
+  uploadId: 972270

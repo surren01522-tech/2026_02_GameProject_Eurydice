@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4270427477711867646
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GressMat1
+  m_Shader: {fileID: -6465566751694194690, guid: 8ec07eab81a53f84a990745f82843537, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: 8ec07eab81a53f84a990745f82843537, type: 3}
+  m_ModifiedSerializedProperties: 4
+  m_ValidKeywords:
+  - _USETERRAINCOLOR
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 4ac491148c6a7864fbebaa2cedb1a052, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _HeightBlend: 1
+    - _Radius: 1.2
+    - _Smoothness: 0
+    - _TerrainColorMultiply: 2.56
+    - _USETERRAINCOLOR: 1
+    - _WindHeight: 0.58
+    - _WindInlntensisty: 0.05
+    - _WindNoiseSpeed: 0.3
+    - _WindSpeed: 0.2
+    m_Colors:
+    - _BottomColor: {r: 0.07195122, g: 0.13955233, b: 0.21383637, a: 1}
+    - _FarColor: {r: 0.29836598, g: 0.415, b: 0.08408496, a: 1}
+    - _NearColor: {r: 0.45357448, g: 0.62700003, b: 0.12673403, a: 1}
+    - _ShadowColor: {r: 0.030412838, g: 0.08188075, b: 0.255, a: 1}
+    - _WindNoiseScale: {r: 40, g: 100, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

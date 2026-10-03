@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 65d0a4d70b5f0534db257a7ecc3c0a7b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Props/Props
+    - Winter/P_AMStatue_ME_01_Winter.prefab
+  uploadId: 972270

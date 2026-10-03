@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ee16bb4d7e7cc2b46805bbda9cff2040
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/CoverPlants/CoverPlants
+    - Autumn/P_CoverPlant_01_Autumn.prefab
+  uploadId: 972270

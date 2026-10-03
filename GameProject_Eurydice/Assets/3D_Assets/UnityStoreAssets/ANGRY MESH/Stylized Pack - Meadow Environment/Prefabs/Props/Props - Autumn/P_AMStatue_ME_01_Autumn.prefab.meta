@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5f5afde949c29594f9ce80caafeef0cf
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Props/Props
+    - Autumn/P_AMStatue_ME_01_Autumn.prefab
+  uploadId: 972270

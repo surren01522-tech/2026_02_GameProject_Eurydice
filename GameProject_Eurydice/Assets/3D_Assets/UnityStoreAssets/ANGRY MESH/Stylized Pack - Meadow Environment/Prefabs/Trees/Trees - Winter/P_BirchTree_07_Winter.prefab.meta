@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5d1d1950b54139f42b0a5179ed4f12c6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Prefabs/Trees/Trees
+    - Winter/P_BirchTree_07_Winter.prefab
+  uploadId: 972270
