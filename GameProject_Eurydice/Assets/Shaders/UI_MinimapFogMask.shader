@@ -6,6 +6,8 @@ Shader "UI/MinimapFogMask"
         _FogTex ("Fog Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
 
+        _UnexploredColor ("Unexplored Color", Color) = (0.08, 0.08, 0.1, 1)
+
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -76,6 +78,7 @@ Shader "UI/MinimapFogMask"
             sampler2D _MainTex;
             sampler2D _FogTex;
             fixed4 _Color;
+            fixed4 _UnexploredColor;
             fixed4 _TextureSampleAdd;
             float4 _ClipRect;
             float4 _MainTex_ST;
@@ -94,21 +97,22 @@ Shader "UI/MinimapFogMask"
 
             fixed4 frag(v2f IN) : SV_Target
             {
-                half4 mapColor = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
+                half4 mapTex = tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd;
                 half4 fogColor = tex2D(_FogTex, IN.texcoord);
 
+                float visibleFactor = saturate(1.0 - fogColor.a);
+                half3 rgb = lerp(_UnexploredColor.rgb, mapTex.rgb * IN.color.rgb, visibleFactor);
+                half a = lerp(_UnexploredColor.a, mapTex.a, visibleFactor) * IN.color.a;
+
                 #ifdef UNITY_UI_CLIP_RECT
-                mapColor.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
+                a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
                 #endif
 
                 #ifdef UNITY_UI_ALPHACLIP
-                clip (mapColor.a - 0.001);
+                clip (a - 0.001);
                 #endif
 
-                float visibleFactor = saturate(1.0 - fogColor.a);
-                mapColor.a *= visibleFactor;
-
-                return mapColor;
+                return half4(rgb, a);
             }
             ENDCG
         }

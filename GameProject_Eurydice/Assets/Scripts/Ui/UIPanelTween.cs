@@ -94,8 +94,8 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
             transitionCoroutine = null;
         }
 
-        ResetToDefault();
         gameObject.SetActive(false);
+        ResetToDefault();
     }
 
     private Vector2 CalculateStartOffset(Vector3? screenPos)
@@ -169,8 +169,8 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
             yield return null;
         }
 
-        ResetToDefault();
         gameObject.SetActive(false);
+        ResetToDefault();
         transitionCoroutine = null;
         onComplete?.Invoke();
     }

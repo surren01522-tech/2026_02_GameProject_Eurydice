@@ -12,7 +12,7 @@ public class MinimapController : MonoBehaviour
     [Header("미니맵 UI")]
     [SerializeField] private RectTransform minimapDisplayRect;
     [SerializeField] private RawImage mapBackgroundImage;
-    [SerializeField] private RawImage fogOverlayImage;
+    [SerializeField] private Shader fogMaskShader;
     [SerializeField] private RectTransform playerIcon;
 
     [Header("플레이어 아이콘 & 방향 연출")]
@@ -147,7 +147,6 @@ public class MinimapController : MonoBehaviour
     private void OnDestroy()
     {
         if (mapBackgroundImage != null) mapBackgroundImage.enabled = false;
-        if (fogOverlayImage != null) fogOverlayImage.enabled = false;
 
         SaveFog();
 
@@ -314,19 +313,14 @@ public class MinimapController : MonoBehaviour
         fogTexture.SetPixels32(fogColors);
         fogTexture.Apply(false);
 
-        if (fogOverlayImage != null)
-        {
-            fogOverlayImage.texture = fogTexture;
-        }
-
         if (mapBackgroundImage != null)
         {
             if (fogMaskMaterial == null)
             {
-                var shader = Shader.Find("UI/MinimapFogMask");
-                if (shader != null)
+                var targetShader = fogMaskShader != null ? fogMaskShader : Shader.Find("UI/MinimapFogMask");
+                if (targetShader != null)
                 {
-                    fogMaskMaterial = new Material(shader);
+                    fogMaskMaterial = new Material(targetShader);
                 }
             }
 
@@ -348,11 +342,7 @@ public class MinimapController : MonoBehaviour
     {
         if (minimapDisplayRect != null) return;
 
-        if (fogOverlayImage != null)
-        {
-            minimapDisplayRect = fogOverlayImage.rectTransform;
-        }
-        else if (mapBackgroundImage != null)
+        if (mapBackgroundImage != null)
         {
             minimapDisplayRect = mapBackgroundImage.rectTransform;
         }
