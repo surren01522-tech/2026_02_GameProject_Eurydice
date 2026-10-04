@@ -7,6 +7,5 @@ public class ItemData : ScriptableObject
     public string itemName;
     public Sprite icon;
     public string description;
-    public GameObject placePrefab;
     public int maxStack = 99;
 }
