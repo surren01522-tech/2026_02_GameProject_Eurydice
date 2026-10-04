@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Grass_test.unity
     guid: 48afe3fe89405a64781b3f507aa92fcc
+  - enabled: 1
+    path: Assets/Scenes/GodRay_test.unity
+    guid: 1bb28c921a401b144ba19f2ea7d3dc14
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
