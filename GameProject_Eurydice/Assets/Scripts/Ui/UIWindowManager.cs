@@ -212,7 +212,7 @@ public class UIWindowManager : MonoBehaviour
         if (hudCanvasGroup == null) return;
 
         bool isAltMode = (mode == InputMode.HUDOverlay);
-        bool shouldShow = isAltMode || (mode == InputMode.UIModal);
+        bool shouldShow = isAltMode || (mode == InputMode.UIModal && !GameStateManager.IsPuzzleActive);
 
         if (buttonContainer != null && shouldShow)
         {

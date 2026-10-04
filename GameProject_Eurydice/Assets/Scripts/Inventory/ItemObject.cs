@@ -9,7 +9,7 @@ public class ItemObject : MonoBehaviour, IInteractable
     [Header("상호작용 UI 설정")]
     [SerializeField] private InteractionDisplayMode displayMode = InteractionDisplayMode.Floating;
     [SerializeField] private Vector3 worldOffset = new Vector3(0, 0.4f, 0);
-    [SerializeField] private string promptFormat = "{name} x{amount} 획득";
+    [SerializeField] private string promptFormat = "{name} x{amount}";
 
     public InteractionDisplayMode DisplayMode => displayMode;
     public Vector3 WorldOffset => worldOffset;
