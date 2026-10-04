@@ -6,17 +6,17 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
 {
     public static PuzzleBase ActivePuzzle { get; private set; }
 
-    [Header("상호작용 설정")]
+    [FoldGroup("상호작용 팝업 설정")]
     [SerializeField] private string interactionPrompt = "Interact";
     [SerializeField] private InteractionDisplayMode displayMode = InteractionDisplayMode.Floating;
     [SerializeField] private Vector3 worldOffset = new Vector3(0, 0.5f, 0);
 
-    [Header("카메라 설정")]
+    [FoldGroup("카메라 설정")]
     [SerializeField] private CinemachineCamera puzzleCamera;
     [SerializeField] private int activePriority = 20;
     [SerializeField] private int defaultPriority = -10;
 
-    [Header("상태")]
+    [FoldGroup("퍼즐 상태")]
     [SerializeField] private bool isCompleted = false;
 
     public bool IsActive { get; private set; }
@@ -38,9 +38,6 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
             puzzleCamera.Priority = defaultPriority;
     }
 
-    /// <summary>
-    /// 상호작용 트리거 시 퍼즐 모드에 진입합니다.
-    /// </summary>
     public void Interact(PlayerController player)
     {
         EnterPuzzle();
@@ -88,9 +85,6 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
         OnPuzzleExited?.Invoke();
     }
 
-    /// <summary>
-    /// 퍼즐 완료 처리
-    /// </summary>
     public virtual void CompletePuzzle()
     {
         isCompleted = true;
