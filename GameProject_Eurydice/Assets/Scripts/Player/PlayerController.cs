@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveVelocity;
     private float verticalVelocity;
 
+    public InputSystem_Actions InputActions => inputActions;
+
     private PlayerState currentState = PlayerState.Normal;
 
     private void Awake()

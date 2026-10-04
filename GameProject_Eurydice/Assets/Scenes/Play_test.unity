@@ -331,6 +331,9 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 3866f2d3a92c1d244ac68f15b22cfdfe, type: 2}
   amount: 1
   destroyOnPickup: 1
+  displayMode: 0
+  worldOffset: {x: 0, y: 0.4, z: 0}
+  promptFormat: "{name} x{amount} \uD68D\uB4DD"
 --- !u!65 &279551971
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1154,6 +1157,9 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 3866f2d3a92c1d244ac68f15b22cfdfe, type: 2}
   amount: 1000
   destroyOnPickup: 1
+  displayMode: 0
+  worldOffset: {x: 0, y: 0.4, z: 0}
+  promptFormat: "{name} x{amount} \uD68D\uB4DD"
 --- !u!65 &1535698339
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1282,6 +1288,9 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 3866f2d3a92c1d244ac68f15b22cfdfe, type: 2}
   amount: 5
   destroyOnPickup: 1
+  displayMode: 0
+  worldOffset: {x: 0, y: 0.4, z: 0}
+  promptFormat: "{name} x{amount} \uD68D\uB4DD"
 --- !u!65 &1678324719
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1658,6 +1667,9 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 3866f2d3a92c1d244ac68f15b22cfdfe, type: 2}
   amount: 100
   destroyOnPickup: 1
+  displayMode: 0
+  worldOffset: {x: 0, y: 0.4, z: 0}
+  promptFormat: "{name} x{amount} \uD68D\uB4DD"
 --- !u!65 &1755176291
 BoxCollider:
   m_ObjectHideFlags: 0

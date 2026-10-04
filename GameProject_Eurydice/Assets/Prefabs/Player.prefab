@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2591972667630238523}
   - component: {fileID: 5904629674415737473}
   - component: {fileID: 8792493295846968794}
+  - component: {fileID: 4284949931763451599}
   - component: {fileID: 4536908707786260723}
   m_Layer: 0
   m_Name: Player
@@ -96,8 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonCameraSensitivityController
   axisControllers: []
-  sensitivityX: 1
-  sensitivityY: 1
+  sensitivity: 1
   invertY: 1
 --- !u!114 &8792493295846968794
 MonoBehaviour:
@@ -117,6 +117,23 @@ MonoBehaviour:
   defaultDistance: 5
   zoomSensitivity: 1
   smoothSpeed: 10
+--- !u!114 &4284949931763451599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3363152563566789463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e3ae79f43e1bd409122fb51ab9c634, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  interactionRange: 2.5
+  interactionAngle: 75
+  interactionLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &4536908707786260723
 MonoBehaviour:
   m_ObjectHideFlags: 0
