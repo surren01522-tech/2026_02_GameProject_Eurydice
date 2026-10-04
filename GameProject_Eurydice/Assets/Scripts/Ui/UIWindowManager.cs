@@ -119,6 +119,10 @@ public class UIWindowManager : MonoBehaviour
         else
         {
             SetPanelState(GetPanel(tab), true, animate: true, originPos);
+            if (tab == WindowTab.Inventory && InventoryUIManager.Instance != null)
+            {
+                InventoryUIManager.Instance.SyncSlot();
+            }
         }
 
         GameStateManager.SetModalActive(tab != WindowTab.None);
@@ -126,6 +130,11 @@ public class UIWindowManager : MonoBehaviour
 
     public void CloseAllTabs(bool animatePanel = false)
     {
+        if (InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode)
+        {
+            InventoryUIManager.Instance.CancelSelection();
+        }
+
         Vector3? targetPos = GetButtonPos(currentTab);
         currentTab = WindowTab.None;
         openedViaEscape = false;
@@ -138,9 +147,21 @@ public class UIWindowManager : MonoBehaviour
     {
         if (settingUI != null && settingUI.IsOpen && settingUI.OnBackPressed()) return;
 
+        if (InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode)
+        {
+            InventoryUIManager.Instance.CloseSelection();
+            return;
+        }
+
         if (currentTab != WindowTab.None)
         {
             CloseAllTabs(animatePanel: GameStateManager.IsAltHeld);
+            return;
+        }
+
+        if (GameStateManager.IsPuzzleActive && PuzzleBase.ActivePuzzle != null)
+        {
+            PuzzleBase.ActivePuzzle.ExitPuzzle();
             return;
         }
 
@@ -212,26 +233,22 @@ public class UIWindowManager : MonoBehaviour
         if (hudCanvasGroup == null) return;
 
         bool isAltMode = (mode == InputMode.HUDOverlay);
-        bool shouldShow = isAltMode || (mode == InputMode.UIModal && !GameStateManager.IsPuzzleActive);
+        bool isSelection = InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode;
+        bool isPuzzle = GameStateManager.IsPuzzleActive;
 
-        if (buttonContainer != null && shouldShow)
+        bool showButtons = isAltMode || (mode == InputMode.UIModal && !openedViaEscape && !isSelection && !isPuzzle);
+        if (buttonContainer != null)
         {
-            buttonContainer.SetActive(isAltMode || !openedViaEscape);
+            buttonContainer.SetActive(showButtons);
         }
 
-        hudCanvasGroup.interactable = shouldShow;
-        hudCanvasGroup.blocksRaycasts = shouldShow;
+        bool shouldShowHud = showButtons;
+        hudCanvasGroup.interactable = shouldShowHud;
+        hudCanvasGroup.blocksRaycasts = shouldShowHud;
 
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
 
-        fadeCoroutine = StartCoroutine(CoFade(shouldShow ? 1f : 0f, () =>
-        {
-            if (!shouldShow)
-            {
-                if (buttonContainer != null) buttonContainer.SetActive(false);
-                CloseAllPanels(animate: false);
-            }
-        }));
+        fadeCoroutine = StartCoroutine(CoFade(shouldShowHud ? 1f : 0f));
     }
 
     private IEnumerator CoFade(float targetAlpha, System.Action onComplete = null)

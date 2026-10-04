@@ -16,7 +16,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (!GameStateManager.IsGamePlaying)
+        if (!GameStateManager.IsGamePlaying || GameStateManager.HasActiveModal)
         {
             SetTarget(null);
             return;
