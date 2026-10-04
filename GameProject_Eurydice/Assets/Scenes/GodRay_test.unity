@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 8fa1544c0c351cb4bb171eed42d80d76, type: 2}
+  m_LightingDataAsset: {fileID: 0}
   m_LightingSettings: {fileID: 4890085278179872738, guid: a9ba65d737250ff4096ca40ab1559a9d, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -176,7 +176,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.98039216, g: 0.9033653, b: 0.60588235, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9370915, b: 0.77254903, a: 1}
   m_Intensity: 13.2
   m_Range: 20
   m_SpotAngle: 30
@@ -216,7 +216,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -239,12 +239,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1988452}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.95, y: 11.42, z: -34.47}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -54.11, y: -7.4051495, z: -56.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &32085974
 PrefabInstance:
@@ -309,6 +309,22 @@ PrefabInstance:
     - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
       propertyPath: m_Name
       value: P_Rock_02_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -377,7 +393,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.98039216, g: 0.9033653, b: 0.60588235, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9438317, b: 0.80490196, a: 1}
   m_Intensity: 25.6
   m_Range: 23.8
   m_SpotAngle: 30
@@ -417,7 +433,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -440,11 +456,95 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42231980}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.95, y: 9.049999, z: -20.89}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -55.41, y: -7.78, z: -42.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
+  m_Father: {fileID: 91549583}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &59728834
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 59728835}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &59728835
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59728834}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 37.64829, y: 25.66616, z: 30.38207}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1846481043}
+  - {fileID: 924700831}
+  - {fileID: 1927254473}
+  - {fileID: 2036886124}
+  - {fileID: 1046255998}
+  - {fileID: 1932487432}
+  - {fileID: 259613390}
+  - {fileID: 2139904085}
+  - {fileID: 592297687}
+  - {fileID: 768427979}
+  - {fileID: 1082937396}
+  - {fileID: 774764440}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &91549582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 91549583}
+  m_Layer: 0
+  m_Name: Bake_Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &91549583
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91549582}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 36.19692, y: 18.82515, z: 24.41638}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2113072379}
+  - {fileID: 1682175050}
+  - {fileID: 1603073246}
+  - {fileID: 101965393}
+  - {fileID: 561942214}
+  - {fileID: 42231983}
+  - {fileID: 2084273727}
+  - {fileID: 218306387}
+  - {fileID: 1988455}
+  - {fileID: 978178158}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &101965390
@@ -504,7 +604,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.98039216, g: 0.9033653, b: 0.60588235, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9370915, b: 0.77254903, a: 1}
   m_Intensity: 25.6
   m_Range: 23.8
   m_SpotAngle: 30
@@ -544,7 +644,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -567,12 +667,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101965390}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.57, y: 9.049999, z: -20.89}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -17.68, y: -7.59, z: -43.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &117989129
 PrefabInstance:
@@ -582,9 +682,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -656,9 +772,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -712,6 +836,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -730,6 +862,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.725978
@@ -786,6 +922,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -804,9 +952,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -859,6 +1019,10 @@ PrefabInstance:
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1011,7 +1175,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &209079074
 Transform:
@@ -1098,7 +1262,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.98039216, g: 0.9033653, b: 0.60588235, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9438317, b: 0.80490196, a: 1}
   m_Intensity: 13.2
   m_Range: 20
   m_SpotAngle: 30
@@ -1138,7 +1302,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -1161,12 +1325,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 218306384}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.48, y: 11.420001, z: -34.47}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -38.676918, y: -7.4051485, z: -53.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &218873743
 GameObject:
@@ -1200,7 +1364,7 @@ MonoBehaviour:
   version: 2
   globalVolume: 0
   mode: 2
-  size: {x: 61.32819, y: 21.667595, z: 292.2502}
+  size: {x: 100, y: 50, z: 100}
   overrideRendererFilters: 0
   minRendererVolumeSize: 0.1
   objectLayerMask:
@@ -1209,7 +1373,7 @@ MonoBehaviour:
   lowestSubdivLevelOverride: 0
   highestSubdivLevelOverride: 3
   overridesSubdivLevels: 0
-  mightNeedRebaking: 0
+  mightNeedRebaking: 1
   cachedTransform:
     e00: 0.23425838
     e01: 0
@@ -1238,7 +1402,7 @@ Transform:
   m_GameObject: {fileID: 218873743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.16898155, y: 8.413106, z: 11.435104}
+  m_LocalPosition: {x: 0, y: 18.5, z: 0}
   m_LocalScale: {x: 4.2687907, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1252,9 +1416,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -1308,6 +1480,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1326,9 +1506,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -1382,6 +1570,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1392,6 +1588,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
   m_PrefabInstance: {fileID: 229193849}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &259613389
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 11.389
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 5.1452084
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 11.389
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -37.23829
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.24616
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -67.212074
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_06_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+--- !u!4 &259613390 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+  m_PrefabInstance: {fileID: 259613389}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &262861888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1400,6 +1686,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.7259784
@@ -1456,6 +1746,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1474,9 +1776,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -1530,6 +1844,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1548,9 +1866,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -1566,7 +1896,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.28183
+      value: 15.44
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1574,7 +1904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -27.522642
+      value: -26.88
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1604,6 +1934,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1622,9 +1956,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -1678,6 +2020,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1696,9 +2046,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -1751,6 +2109,14 @@ PrefabInstance:
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1826,6 +2192,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1844,9 +2226,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -1900,6 +2294,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1918,9 +2316,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -1973,6 +2383,10 @@ PrefabInstance:
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2044,9 +2458,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2066,6 +2496,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.7259784
@@ -2121,6 +2555,18 @@ PrefabInstance:
     - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_Name
       value: P_Rock_04_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2140,6 +2586,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.7259784
@@ -2195,6 +2645,18 @@ PrefabInstance:
     - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_Name
       value: P_Rock_04_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2266,9 +2728,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2288,9 +2766,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -2370,7 +2864,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &477748517
 Transform:
@@ -2504,9 +2998,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2526,9 +3036,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -2600,6 +3126,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 3568019516708808555, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312187082979817629, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
       propertyPath: m_LocalScale.x
       value: 8.789999
@@ -2656,6 +3190,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_11_Summer
       objectReference: {fileID: 0}
+    - target: {fileID: 5342371471094433770, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106037234720478127, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2674,9 +3216,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -2729,6 +3279,14 @@ PrefabInstance:
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2797,7 +3355,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.98039216, g: 0.9033653, b: 0.60588235, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9370915, b: 0.77254903, a: 1}
   m_Intensity: 25.6
   m_Range: 23.8
   m_SpotAngle: 30
@@ -2837,7 +3395,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -2860,12 +3418,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 561942211}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.48, y: 9.05, z: -20.89}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -38.676918, y: -8.7, z: -45.30638}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &562169269
 PrefabInstance:
@@ -2875,6 +3433,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.725978
@@ -2931,6 +3493,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2949,9 +3523,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -3005,6 +3591,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3015,6 +3605,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
   m_PrefabInstance: {fileID: 567659582}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &592297686
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 3568019516708808555, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312187082979817629, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 14.982998
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 6.8300004
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 14.982998
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9.584463
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.016161
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -25.875046
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.66313434
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.74850047
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -96.921
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5342371471094433770, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_11_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5342371471094433770, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106037234720478127, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+--- !u!4 &592297687 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+  m_PrefabInstance: {fileID: 592297686}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &600150407
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3023,6 +3703,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 82819312173223872, guid: 337b289443e813242a2688b7046a178a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1125442801116838148, guid: 337b289443e813242a2688b7046a178a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1240530298757185201, guid: 337b289443e813242a2688b7046a178a, type: 3}
       propertyPath: m_LocalScale.x
       value: 11.759997
@@ -3079,6 +3767,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_10_Summer
       objectReference: {fileID: 0}
+    - target: {fileID: 1908663226111337483, guid: 337b289443e813242a2688b7046a178a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8156351442229895352, guid: 337b289443e813242a2688b7046a178a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3097,9 +3793,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -3171,9 +3883,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -3227,6 +3951,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3245,6 +3973,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 2.7677999
@@ -3301,6 +4033,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3325,7 +4069,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &633469166
 Transform:
@@ -3363,9 +4107,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -3419,6 +4175,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3437,9 +4197,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -3493,6 +4261,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3511,9 +4287,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -3566,6 +4354,10 @@ PrefabInstance:
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3637,9 +4429,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3659,9 +4467,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -3714,6 +4530,14 @@ PrefabInstance:
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3789,6 +4613,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3859,9 +4699,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3873,6 +4729,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
   m_PrefabInstance: {fileID: 754597834}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &768427978
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_05_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.4295
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.9782631
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4.4295
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.168289
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.91616
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -26.86207
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+--- !u!4 &768427979 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+  m_PrefabInstance: {fileID: 768427978}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &771955509
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3881,9 +4827,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -3947,6 +4909,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
   m_PrefabInstance: {fileID: 771955509}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &774764439
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_05_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.4295006
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.9782631
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4.4295006
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -39.14686
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.91616
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -44.83307
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6653596
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7465231
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -96.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+--- !u!4 &774764440 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+  m_PrefabInstance: {fileID: 774764439}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &816864453
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3955,9 +5007,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -4010,6 +5074,10 @@ PrefabInstance:
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4085,6 +5153,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -4112,9 +5196,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -4168,6 +5260,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4178,6 +5278,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
   m_PrefabInstance: {fileID: 839045713}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &924700830
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 9.25401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.6030653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.25401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -17.50167
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.616161
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -54.41314
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.581271
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.81371003
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -108.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_02_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 744140052737a92459c101dc667abdac, type: 3}
+--- !u!4 &924700831 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+  m_PrefabInstance: {fileID: 924700830}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &927696795
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4186,6 +5376,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.725978
@@ -4241,6 +5435,18 @@ PrefabInstance:
     - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_Name
       value: P_Rock_04_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4397,9 +5603,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -4453,6 +5671,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4471,9 +5693,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -4537,6 +5775,133 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
   m_PrefabInstance: {fileID: 970379229}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &978178155
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 978178158}
+  - component: {fileID: 978178157}
+  - component: {fileID: 978178156}
+  m_Layer: 0
+  m_Name: Point Light (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &978178156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978178155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
+--- !u!108 &978178157
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978178155}
+  m_Enabled: 1
+  serializedVersion: 12
+  m_Type: 2
+  m_Color: {r: 0.98039216, g: 0.9438317, b: 0.80490196, a: 1}
+  m_Intensity: 13.2
+  m_Range: 39.9
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize2D: {x: 0.5, y: 0.5}
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 2
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
+--- !u!4 &978178158
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978178155}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.956917, y: -8.00515, z: -9.17638}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 91549583}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &979083531
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4545,9 +5910,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -4601,6 +5978,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4619,9 +6000,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -4675,6 +6068,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4693,9 +6090,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -4749,6 +6154,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4767,9 +6180,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -4823,6 +6244,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4832,6 +6261,96 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
   m_PrefabInstance: {fileID: 1023325904}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1046255997
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 9.254008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.6030653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.254008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -50.05367
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.616161
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.518717
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.7878224
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.61590254
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -283.965
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_02_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 744140052737a92459c101dc667abdac, type: 3}
+--- !u!4 &1046255998 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+  m_PrefabInstance: {fileID: 1046255997}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1071374757
 PrefabInstance:
@@ -4893,9 +6412,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4907,6 +6442,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
   m_PrefabInstance: {fileID: 1071374757}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1082937395
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_05_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.786699
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.8908029
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 5.786699
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -70.71829
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -27.19256
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -41.21207
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+--- !u!4 &1082937396 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+  m_PrefabInstance: {fileID: 1082937395}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1086238175
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4915,9 +6540,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -4970,6 +6603,14 @@ PrefabInstance:
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 32.848
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5045,6 +6686,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5063,9 +6720,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -5119,6 +6788,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5137,9 +6810,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -5193,6 +6874,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5211,9 +6900,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -5266,6 +6963,14 @@ PrefabInstance:
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5334,6 +7039,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 2.7677994
@@ -5390,6 +7099,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5416,7 +7137,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1212942092
 Transform:
@@ -5498,9 +7219,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -5554,6 +7283,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5572,6 +7309,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1536194671448617364, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3477631064344155951, guid: c85478ef95afb224ea24f474df41da79, type: 3}
       propertyPath: m_LocalScale.x
       value: 10.7109995
@@ -5624,9 +7365,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065405971844107854, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4253886979649342869, guid: c85478ef95afb224ea24f474df41da79, type: 3}
       propertyPath: m_Name
       value: P_Rock_08_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253886979649342869, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6879712923896887855, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5698,9 +7451,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5720,9 +7489,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -5850,6 +7635,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5868,9 +7669,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -5924,6 +7733,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5942,6 +7759,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1536194671448617364, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3477631064344155951, guid: c85478ef95afb224ea24f474df41da79, type: 3}
       propertyPath: m_LocalScale.x
       value: 10.710999
@@ -5994,9 +7815,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065405971844107854, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4253886979649342869, guid: c85478ef95afb224ea24f474df41da79, type: 3}
       propertyPath: m_Name
       value: P_Rock_08_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253886979649342869, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6879712923896887855, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6024,7 +7857,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1379577148
 Transform:
@@ -6106,6 +7939,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1536194671448617364, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3477631064344155951, guid: c85478ef95afb224ea24f474df41da79, type: 3}
       propertyPath: m_LocalScale.x
       value: 10.7109995
@@ -6158,9 +7995,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4065405971844107854, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4253886979649342869, guid: c85478ef95afb224ea24f474df41da79, type: 3}
       propertyPath: m_Name
       value: P_Rock_08_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253886979649342869, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6879712923896887855, guid: c85478ef95afb224ea24f474df41da79, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6180,9 +8029,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -6236,6 +8093,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6246,119 +8111,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
   m_PrefabInstance: {fileID: 1412599828}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1413363039
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1413363043}
-  - component: {fileID: 1413363042}
-  - component: {fileID: 1413363041}
-  - component: {fileID: 1413363040}
-  m_Layer: 2
-  m_Name: Plane
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!64 &1413363040
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413363039}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1413363041
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413363039}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1413363042
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413363039}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1413363043
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413363039}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.99}
-  m_LocalScale: {x: 8.674297, y: 8.674297, z: 8.674297}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1455320955
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6423,6 +8175,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6441,9 +8209,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -6497,6 +8277,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6522,7 +8306,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &1482072025
 MonoBehaviour:
@@ -6536,7 +8320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a83d2f7ae04ab6f4f99b0d85377be998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumePerSceneData
-  serializedBakingSet: {fileID: 11400000, guid: 5a1f990ea04192f459750a8fa4261cca, type: 2}
+  serializedBakingSet: {fileID: 0}
   sceneGUID: 1bb28c921a401b144ba19f2ea7d3dc14
   obsoleteAsset: {fileID: 0}
   obsoleteCellSharedDataAsset: {fileID: 0}
@@ -6621,6 +8405,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6639,9 +8439,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -6695,6 +8507,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6713,9 +8529,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -6769,6 +8597,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6787,9 +8619,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -6867,7 +8715,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1550969543
 Transform:
@@ -6905,9 +8753,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -6979,9 +8843,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -7034,6 +8910,10 @@ PrefabInstance:
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7108,6 +8988,22 @@ PrefabInstance:
     - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
       propertyPath: m_Name
       value: P_Rock_02_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7216,7 +9112,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -7239,12 +9135,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1603073243}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -23.77, y: 7.14, z: 0.74000025}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -57.49, y: -10.89, z: -28.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1612171595
 PrefabInstance:
@@ -7310,6 +9206,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7328,9 +9240,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 209079074}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -7384,6 +9304,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7402,9 +9330,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -7458,6 +9394,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7482,7 +9426,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1658883371
 Transform:
@@ -7636,7 +9580,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -7659,12 +9603,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1682175047}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.3, y: 7.14, z: 0.74000025}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -45.496918, y: -11.68515, z: -23.67638}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1718434964
 PrefabInstance:
@@ -7726,9 +9670,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7804,6 +9764,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7878,6 +9854,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7896,9 +9888,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 1892869547448472681, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3733815118652185053, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746835048271857090, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_Name
       value: P_Rock_03_Summer (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784760671684545727, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4597607235236926981, guid: adab95a8ea059ea4cb5c7a5a6ad62515, type: 3}
       propertyPath: m_LocalScale.x
@@ -7970,9 +9978,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -8026,6 +10042,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8044,9 +10068,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -8100,6 +10132,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8118,9 +10158,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -8173,6 +10225,10 @@ PrefabInstance:
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8248,6 +10304,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8318,9 +10390,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8331,6 +10419,96 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
   m_PrefabInstance: {fileID: 1819710800}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1846481042
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 9.25401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.6030653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.25401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -54.84929
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.616161
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -62.01407
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_02_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 744140052737a92459c101dc667abdac, type: 3}
+--- !u!4 &1846481043 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+  m_PrefabInstance: {fileID: 1846481042}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1925062451
 PrefabInstance:
@@ -8392,9 +10570,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4343979396129066849, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
       propertyPath: m_Name
       value: P_Rock_06_Summer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469672340906224723, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662048923544936562, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503611532948922837, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8406,6 +10600,186 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3840629285508019945, guid: 7f809b87efed6494ba3f704b006fcf14, type: 3}
   m_PrefabInstance: {fileID: 1925062451}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1927254472
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 9.254011
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.6030653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.254011
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -17.498316
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -30.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -32.292072
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.58112437
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.018291473
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.81350434
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.013066458
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -2.437
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -108.938
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0.836
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_02_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 744140052737a92459c101dc667abdac, type: 3}
+--- !u!4 &1927254473 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+  m_PrefabInstance: {fileID: 1927254472}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1932487431
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 9.25401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.6030653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.25401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -51.448288
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -29.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -28.302555
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.99990505
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.013781624
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -358.421
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_02_Summer (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 744140052737a92459c101dc667abdac, type: 3}
+--- !u!4 &1932487432 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+  m_PrefabInstance: {fileID: 1932487431}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1936817422
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8414,9 +10788,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 3394448628338189374, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3695594673647587166, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_Name
       value: P_Rock_01_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694420879387917385, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5363292678570616563, guid: 02207e26e3164584198d70543ab7df23, type: 3}
       propertyPath: m_LocalScale.x
@@ -8470,6 +10856,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7568773482329186498, guid: 02207e26e3164584198d70543ab7df23, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8488,6 +10878,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 633469166}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.7259784
@@ -8544,6 +10938,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8554,6 +10960,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
   m_PrefabInstance: {fileID: 1938945260}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2036886123
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 9.254011
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.6030653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.254011
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -12.189106
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.616161
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.1720715
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.043227773
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9990653
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -175.045
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_02_Summer (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 744140052737a92459c101dc667abdac, type: 3}
+--- !u!4 &2036886124 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1511836536598193674, guid: 744140052737a92459c101dc667abdac, type: 3}
+  m_PrefabInstance: {fileID: 2036886123}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2038771642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8562,9 +11058,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1550969543}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -8618,6 +11122,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8642,7 +11154,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2042674285
 Transform:
@@ -8681,6 +11193,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2042674285}
     m_Modifications:
+    - target: {fileID: 592508226484891694, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5855537814897634703, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.725978
@@ -8737,6 +11253,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_04_Summer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6487677374751536949, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6866511469317290273, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936312386043080882, guid: 8ebc278613bd6f1498adae8ec0565276, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8755,9 +11283,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1658883371}
     m_Modifications:
+    - target: {fileID: 6685208244343886009, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_Name
       value: P_Rock_05_Summer (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7130474142017988203, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalScale.x
@@ -8810,6 +11346,14 @@ PrefabInstance:
     - target: {fileID: 7619906781714021585, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119559796442301382, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8867826292673195245, guid: 7260d12c077bd224b8420f345de60bea, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8885,6 +11429,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Rock_02_Summer (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8952,7 +11512,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 0.98039216, g: 0.9033653, b: 0.60588235, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9438317, b: 0.80490196, a: 1}
   m_Intensity: 13.2
   m_Range: 20
   m_SpotAngle: 30
@@ -8992,7 +11552,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -9015,12 +11575,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2084273724}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.57, y: 11.42, z: -34.47}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -16.41, y: -7.4051495, z: -56.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2095265631
 PrefabInstance:
@@ -9085,6 +11645,22 @@ PrefabInstance:
     - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
       propertyPath: m_Name
       value: P_Rock_02_Summer (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283553698503474352, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420480411676207591, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7094161307122129248, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8792368934408273717, guid: 744140052737a92459c101dc667abdac, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9193,7 +11769,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -9216,13 +11792,103 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2113072376}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.75, y: 7.14, z: 0.74}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -25.446918, y: -11.68515, z: -23.67638}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 91549583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2139904084
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 59728835}
+    m_Modifications:
+    - target: {fileID: 3568019516708808555, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312187082979817629, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 14.983
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 6.8300004
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 14.983
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -28.738289
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.016161
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -20.35207
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5342371471094433770, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_Name
+      value: P_Rock_11_Summer
+      objectReference: {fileID: 0}
+    - target: {fileID: 5342371471094433770, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106037234720478127, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+--- !u!4 &2139904085 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4713080922821598544, guid: f0d31e0f37a2df34484881528401a27b, type: 3}
+  m_PrefabInstance: {fileID: 2139904084}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -9236,14 +11902,6 @@ SceneRoots:
   - {fileID: 2042674285}
   - {fileID: 633469166}
   - {fileID: 209079074}
-  - {fileID: 1413363043}
+  - {fileID: 59728835}
   - {fileID: 203844589}
-  - {fileID: 2113072379}
-  - {fileID: 1682175050}
-  - {fileID: 1603073246}
-  - {fileID: 101965393}
-  - {fileID: 561942214}
-  - {fileID: 1988455}
-  - {fileID: 218306387}
-  - {fileID: 2084273727}
-  - {fileID: 42231983}
+  - {fileID: 91549583}
