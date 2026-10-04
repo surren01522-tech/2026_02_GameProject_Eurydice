@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 03b38e13f61f19a45b9f31cde6b21fbe
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314902
+  packageName: Meadow Environment - Stylized Pack
+  packageVersion: 1.6
+  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Sources/Meshes/Background/SM_Hill_01.fbx
+  uploadId: 972270
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24300
   internalIDToNameTable: []
   externalObjects: {}
   materials:
@@ -9,6 +16,7 @@ ModelImporter:
     materialName: 0
     materialSearch: 1
     materialLocation: 1
+    searchTexturesGlobally: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -16,8 +24,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -61,6 +67,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -110,10 +119,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 314902
-  packageName: Meadow Environment - Stylized Pack
-  packageVersion: 1.6
-  assetPath: Assets/ANGRY MESH/Stylized Pack - Meadow Environment/Sources/Meshes/Background/SM_Hill_01.fbx
-  uploadId: 972270
