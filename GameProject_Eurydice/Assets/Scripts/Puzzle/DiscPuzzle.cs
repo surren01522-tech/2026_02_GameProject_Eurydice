@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -85,7 +85,7 @@ public class DiscPuzzle : PuzzleBase
 
     private void RestoreSavedState()
     {
-        var savedData = SaveManager.GetPuzzleState(uniqueId);
+        var savedData = SaveManager.GetPuzzleState(uniqueId, gameObject.scene.name);
         if (savedData == null) return;
 
         if (savedData.isCompleted)
@@ -115,7 +115,7 @@ public class DiscPuzzle : PuzzleBase
         for (int i = 0; i < pieces.Count; i++)
             angles.Add(pieces[i] != null ? pieces[i].currentAngle : 0f);
 
-        SaveManager.SavePuzzleState(uniqueId, completed, angles);
+        SaveManager.SavePuzzleState(uniqueId, completed, angles, gameObject.scene.name);
     }
 
     private void BindSocketEvents()

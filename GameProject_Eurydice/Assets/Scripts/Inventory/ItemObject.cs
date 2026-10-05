@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ItemObject : MonoBehaviour, IInteractable
 {
@@ -34,7 +34,7 @@ public class ItemObject : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        if (SaveManager.IsItemPicked(uniqueId))
+        if (SaveManager.IsItemPicked(uniqueId, gameObject.scene.name))
         {
             gameObject.SetActive(false);
             Destroy(gameObject);
@@ -54,7 +54,7 @@ public class ItemObject : MonoBehaviour, IInteractable
         if (!CanInteract) return;
 
         InventoryManager.Instance.AddItem(itemData, amount);
-        SaveManager.MarkItemPicked(uniqueId);
+        SaveManager.MarkItemPicked(uniqueId, gameObject.scene.name);
 
         if (destroyOnPickup)
             Destroy(gameObject);

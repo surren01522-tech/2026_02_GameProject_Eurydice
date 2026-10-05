@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -70,7 +70,7 @@ public class ItemSocket : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        if (SaveManager.GetSocketPlaced(uniqueId))
+        if (SaveManager.GetSocketPlaced(uniqueId, gameObject.scene.name))
         {
             isPlaced = true;
         }
@@ -150,7 +150,7 @@ public class ItemSocket : MonoBehaviour, IInteractable
         if (isPlaced) return;
 
         isPlaced = true;
-        SaveManager.SaveSocketPlaced(uniqueId, true);
+        SaveManager.SaveSocketPlaced(uniqueId, true, gameObject.scene.name);
 
         if (placedVisual != null)
             placedVisual.SetActive(true);
