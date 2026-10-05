@@ -64,6 +64,14 @@ public class PlayerController : MonoBehaviour
     {
         SettingManager.Instance?.ApplyBindings(inputActions.asset);
         RestorePlayerTransform();
+
+        if (SceneStreamer.Instance == null)
+            EnableControl();
+    }
+
+    public void EnableControl()
+    {
+        if (controller != null) controller.enabled = true;
     }
 
     private void RestorePlayerTransform()
@@ -76,7 +84,6 @@ public class PlayerController : MonoBehaviour
             if (controller != null) controller.enabled = false;
             transform.position = savedPlayer.position;
             transform.rotation = Quaternion.Euler(0, savedPlayer.yRotation, 0);
-            if (controller != null) controller.enabled = true;
 
             Vector3 delta = savedPlayer.position - prevPos;
             cameraModeController?.WarpCameras(transform, delta);
@@ -163,6 +170,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!SceneStreamer.IsReady || SceneLoader.IsLoading) return;
+
         if (inputActions != null && inputActions.Player.ToggleView.WasPressedThisFrame())
         {
             SetControlMode(controlMode == ControlMode.FreeLook ? ControlMode.Strafe : ControlMode.FreeLook);
@@ -240,6 +249,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleJump()
     {
+        if (controller == null || !controller.enabled) return;
+
         if (inputActions.Player.Jump.WasPressedThisFrame() && controller.isGrounded)
         {
             verticalVelocity = Mathf.Sqrt(jumpPower * -2f * gravity);
@@ -248,6 +259,8 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyGravity()
     {
+        if (controller == null || !controller.enabled) return;
+
         if (controller.isGrounded && verticalVelocity < 0f)
         {
             verticalVelocity = -2f;

@@ -1,11 +1,13 @@
-#if UNITY_EDITOR
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+#endif
 
 public class UIDebugger : MonoBehaviour
 {
+#if UNITY_EDITOR
     private GameObject _lastHovered;
 
     void Update()
@@ -43,5 +45,7 @@ public class UIDebugger : MonoBehaviour
             }
         }
     }
-}
+#else
+    private void Awake() => Destroy(this);
 #endif
+}

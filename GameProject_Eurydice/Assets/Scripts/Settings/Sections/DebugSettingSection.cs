@@ -14,6 +14,8 @@ public class DebugSettingSection : SettingSection
     [SerializeField] private Button loadSceneButton;
     [SerializeField] private Button quitGameButton;
 
+    private readonly List<string> loadableSceneNames = new List<string>();
+
     public override void Init(SettingManager manager)
     {
         if (deleteSaveDataButton != null) deleteSaveDataButton.onClick.AddListener(OnDeleteSaveDataClicked);
@@ -26,31 +28,44 @@ public class DebugSettingSection : SettingSection
         if (sceneSelector != null)
         {
             var options = new List<string>();
+            loadableSceneNames.Clear();
             int sceneCount = SceneManager.sceneCountInBuildSettings;
 
             for (int i = 0; i < sceneCount; i++)
             {
                 string path = SceneUtility.GetScenePathByBuildIndex(i);
+                if (IsSubScene(path)) continue;
+
                 string sceneName = Path.GetFileNameWithoutExtension(path);
-                options.Add("[" + i + "] " + sceneName);
+                loadableSceneNames.Add(sceneName);
+                options.Add(sceneName);
             }
 
             if (options.Count == 0)
             {
-                options.Add("[0] " + SceneManager.GetActiveScene().name);
+                string activeName = SceneManager.GetActiveScene().name;
+                loadableSceneNames.Add(activeName);
+                options.Add(activeName);
             }
 
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            int defaultIndex = Mathf.Clamp(currentSceneIndex, 0, options.Count - 1);
+            int defaultIndex = Mathf.Max(0, loadableSceneNames.IndexOf(SceneManager.GetActiveScene().name));
             sceneSelector.Init(options, defaultIndex);
         }
     }
 
+    private static bool IsSubScene(string path)
+    {
+        if (string.IsNullOrEmpty(path)) return false;
+        string lower = path.Replace('\\', '/').ToLowerInvariant();
+        return lower.Contains("/seamless") ||
+               lower.Contains("/subscene") ||
+               lower.Contains("/streaming") ||
+               Path.GetFileNameWithoutExtension(path).StartsWith("Region_", System.StringComparison.OrdinalIgnoreCase);
+    }
+
     private void ReloadCurrentScene()
     {
-        UIWindowManager.Instance?.CloseAllTabs(animatePanel: false);
-        GameStateManager.ResetState();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneLoader.Load(SceneManager.GetActiveScene().name, savePlayer: false);
     }
 
     private void OnDeleteSaveDataClicked()
@@ -70,11 +85,9 @@ public class DebugSettingSection : SettingSection
         if (sceneSelector == null) return;
 
         int index = sceneSelector.CurrentIndex;
-        if (index >= 0 && index < SceneManager.sceneCountInBuildSettings)
+        if (index >= 0 && index < loadableSceneNames.Count)
         {
-            UIWindowManager.Instance?.CloseAllTabs(animatePanel: false);
-            GameStateManager.ResetState();
-            SceneManager.LoadScene(index);
+            SceneLoader.Load(loadableSceneNames[index]);
         }
     }
 

@@ -31,6 +31,7 @@ public class GameStateManager : MonoBehaviour
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (mode == LoadSceneMode.Additive) return;
         ResetState();
     }
 
