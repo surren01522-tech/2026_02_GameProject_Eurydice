@@ -36,6 +36,8 @@ public class MinimapController : MonoBehaviour
 
     [Header("맵 그리기")]
     [SerializeField] private Transform player;
+    [Tooltip("지정 시 동적 캡처/자동 바운드 대신 베이크된 월드 맵 사용")]
+    [SerializeField] private MinimapBakeData bakeData;
     [SerializeField] private bool autoDetectBounds = true;
     [SerializeField] private Transform mapRoot;
     [SerializeField] private LayerMask mapLayer = ~0;
@@ -109,14 +111,20 @@ public class MinimapController : MonoBehaviour
             TryFindPlayer();
         }
 
-        if (autoDetectBounds)
+        if (bakeData != null)
+        {
+            worldCenter = bakeData.worldCenter;
+            worldSize = bakeData.worldSize;
+            if (mapBackgroundImage != null) mapBackgroundImage.texture = bakeData.mapTexture;
+        }
+        else if (autoDetectBounds)
         {
             CalculateWorldBounds();
         }
 
         InitializeFog();
 
-        if (useDynamicCapture && mapBackgroundImage != null)
+        if (bakeData == null && useDynamicCapture && mapBackgroundImage != null)
         {
             CaptureMapSnapshot();
         }
