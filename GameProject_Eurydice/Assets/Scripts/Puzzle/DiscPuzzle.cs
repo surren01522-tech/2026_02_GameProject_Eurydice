@@ -67,20 +67,55 @@ public class DiscPuzzle : PuzzleBase
         InitializePieces();
     }
 
-    private void Start()
+    protected override void OnValidate()
     {
-        cam = Camera.main;
-        BindSocketEvents();
-    }
-
-    private void OnDestroy() => UnbindSocketEvents();
-
-    private void OnValidate()
-    {
+        base.OnValidate();
         if (pieces == null) return;
         for (int i = 0; i < pieces.Count; i++)
             if (pieces[i]?.pieceTransform != null && pieces[i].clickCollider == null)
                 pieces[i].clickCollider = pieces[i].pieceTransform.GetComponentInChildren<Collider>();
+    }
+
+    private void Start()
+    {
+        cam = Camera.main;
+        BindSocketEvents();
+        RestoreSavedState();
+    }
+
+    private void RestoreSavedState()
+    {
+        var savedData = SaveManager.GetPuzzleState(uniqueId);
+        if (savedData == null) return;
+
+        if (savedData.isCompleted)
+        {
+            IsCompleted = true;
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                if (pieces[i] != null)
+                    pieces[i].SetAngle(pieces[i].targetAngle, defaultRotationAxis);
+            }
+            return;
+        }
+
+        if (savedData.pieceAngles != null && savedData.pieceAngles.Count > 0)
+        {
+            for (int i = 0; i < pieces.Count && i < savedData.pieceAngles.Count; i++)
+            {
+                if (pieces[i] != null)
+                    pieces[i].SetAngle(savedData.pieceAngles[i], defaultRotationAxis);
+            }
+        }
+    }
+
+    private void SaveCurrentPuzzleState(bool completed)
+    {
+        List<float> angles = new List<float>();
+        for (int i = 0; i < pieces.Count; i++)
+            angles.Add(pieces[i] != null ? pieces[i].currentAngle : 0f);
+
+        SaveManager.SavePuzzleState(uniqueId, completed, angles);
     }
 
     private void BindSocketEvents()
@@ -96,6 +131,8 @@ public class DiscPuzzle : PuzzleBase
         for (int i = 0; i < sockets.Count; i++)
             if (sockets[i] != null) sockets[i].OnPlaced -= HandleSocketInstalled;
     }
+
+    private void OnDestroy() => UnbindSocketEvents();
 
     private void HandleSocketInstalled(ItemSocket socket) => CheckSolution();
 
@@ -201,6 +238,7 @@ public class DiscPuzzle : PuzzleBase
 
                 activePieceIndex = -1;
                 isDragging = false;
+                SaveCurrentPuzzleState(false);
                 CheckSolution();
             }
             else
@@ -298,6 +336,7 @@ public class DiscPuzzle : PuzzleBase
 
         piece.SetAngle(targetSnap, defaultRotationAxis);
         piece.snapCoroutine = null;
+        SaveCurrentPuzzleState(false);
         CheckSolution();
     }
 
@@ -347,6 +386,7 @@ public class DiscPuzzle : PuzzleBase
             AudioManager.Instance.PlaySFXAt(solvedSound, transform.position);
 
         onSolvedEvent?.Invoke();
+        SaveCurrentPuzzleState(true);
         CompletePuzzle();
     }
 

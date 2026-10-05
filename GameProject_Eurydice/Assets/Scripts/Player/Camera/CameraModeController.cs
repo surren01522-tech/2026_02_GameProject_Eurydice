@@ -33,6 +33,8 @@ public class CameraModeController : MonoBehaviour
             strafeCamera = cameras[1];
     }
 
+    public CinemachineCamera ActiveCamera => (freeLookCamera != null && freeLookCamera.Priority.Value >= (strafeCamera != null ? strafeCamera.Priority.Value : 0)) ? freeLookCamera : strafeCamera;
+
     public void SetCameraMode(ControlMode mode)
     {
         bool isFreeLook = mode == ControlMode.FreeLook;
@@ -42,5 +44,32 @@ public class CameraModeController : MonoBehaviour
 
         if (strafeCamera != null)
             strafeCamera.Priority.Value = isFreeLook ? 0 : 10;
+    }
+
+    public void WarpCameras(Transform target, Vector3 delta)
+    {
+        if (target == null) return;
+        if (freeLookCamera != null) freeLookCamera.OnTargetObjectWarped(target, delta);
+        if (strafeCamera != null) strafeCamera.OnTargetObjectWarped(target, delta);
+    }
+
+    public void SetCameraOrientation(float yaw, float pitch)
+    {
+        ApplyOrientationToCamera(freeLookCamera, yaw, pitch);
+        ApplyOrientationToCamera(strafeCamera, yaw, pitch);
+    }
+
+    private void ApplyOrientationToCamera(CinemachineCamera vcam, float yaw, float pitch)
+    {
+        if (vcam == null) return;
+
+        var orbital = vcam.GetComponent<CinemachineOrbitalFollow>();
+        if (orbital != null)
+        {
+            orbital.HorizontalAxis.Value = yaw;
+            orbital.VerticalAxis.Value = pitch;
+        }
+
+        vcam.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
     }
 }

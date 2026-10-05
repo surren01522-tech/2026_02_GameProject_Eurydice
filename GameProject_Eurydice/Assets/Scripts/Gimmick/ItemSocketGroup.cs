@@ -33,6 +33,12 @@ public class ItemSocketGroup : MonoBehaviour
         CheckAllPlaced(notify: false);
     }
 
+    private void Start()
+    {
+        UpdateOrderLock();
+        CheckAllPlaced(notify: false);
+    }
+
     private void OnDestroy()
     {
         if (sockets == null) return;

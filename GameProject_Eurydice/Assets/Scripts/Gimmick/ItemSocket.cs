@@ -4,6 +4,9 @@ using UnityEngine.Events;
 
 public class ItemSocket : MonoBehaviour, IInteractable
 {
+    [Header("ID 설정")]
+    [SerializeField] private string uniqueId;
+
     [Header("요구 아이템 설정")]
     [SerializeField] private ItemData requiredItem;
     [SerializeField] private int requiredAmount = 1;
@@ -67,6 +70,11 @@ public class ItemSocket : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        if (SaveManager.GetSocketPlaced(uniqueId))
+        {
+            isPlaced = true;
+        }
+
         if (placedVisual != null)
             placedVisual.SetActive(isPlaced);
 
@@ -75,6 +83,14 @@ public class ItemSocket : MonoBehaviour, IInteractable
 
         if (parentPuzzle != null)
             requirePuzzleMode = true;
+    }
+
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(uniqueId))
+        {
+            uniqueId = System.Guid.NewGuid().ToString();
+        }
     }
 
     public void Interact(PlayerController player)
@@ -134,6 +150,7 @@ public class ItemSocket : MonoBehaviour, IInteractable
         if (isPlaced) return;
 
         isPlaced = true;
+        SaveManager.SaveSocketPlaced(uniqueId, true);
 
         if (placedVisual != null)
             placedVisual.SetActive(true);

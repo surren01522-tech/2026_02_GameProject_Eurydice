@@ -16,11 +16,15 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
     [SerializeField] private int activePriority = 20;
     [SerializeField] private int defaultPriority = -10;
 
+    [FoldGroup("ID 설정")]
+    [SerializeField] protected string uniqueId;
+
     [FoldGroup("퍼즐 상태")]
     [SerializeField] private bool isCompleted = false;
 
+    public string UniqueId => uniqueId;
     public bool IsActive { get; private set; }
-    public bool IsCompleted => isCompleted;
+    public bool IsCompleted { get => isCompleted; protected set => isCompleted = value; }
 
     public event Action OnPuzzleEntered;
     public event Action OnPuzzleExited;
@@ -31,6 +35,14 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
     public Vector3 WorldOffset => worldOffset;
     public Transform TargetTransform => this != null ? transform : null;
     public bool CanInteract => !IsActive && !isCompleted;
+
+    protected virtual void OnValidate()
+    {
+        if (string.IsNullOrEmpty(uniqueId))
+        {
+            uniqueId = Guid.NewGuid().ToString();
+        }
+    }
 
     protected virtual void Awake()
     {

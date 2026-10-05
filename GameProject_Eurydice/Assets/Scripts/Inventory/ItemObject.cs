@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class ItemObject : MonoBehaviour, IInteractable
 {
+    [Header("ID 설정")]
+    [SerializeField] private string uniqueId;
+
+    [Header("아이템 설정")]
     [SerializeField] private ItemData itemData;
     [SerializeField] private int amount = 1;
     [SerializeField] private bool destroyOnPickup = true;
@@ -28,11 +32,29 @@ public class ItemObject : MonoBehaviour, IInteractable
         }
     }
 
+    private void Awake()
+    {
+        if (SaveManager.IsItemPicked(uniqueId))
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(uniqueId))
+        {
+            uniqueId = System.Guid.NewGuid().ToString();
+        }
+    }
+
     public void Interact(PlayerController player)
     {
         if (!CanInteract) return;
 
         InventoryManager.Instance.AddItem(itemData, amount);
+        SaveManager.MarkItemPicked(uniqueId);
 
         if (destroyOnPickup)
             Destroy(gameObject);

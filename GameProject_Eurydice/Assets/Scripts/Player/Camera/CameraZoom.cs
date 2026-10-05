@@ -19,6 +19,8 @@ public class CameraZoom : MonoBehaviour
     private float currentDistance;
     private float targetDistance;
 
+    public float CurrentDistance => targetDistance;
+
     private void Awake()
     {
         FindOrbitalFollows();

@@ -42,6 +42,8 @@ public class PlayerController : MonoBehaviour
 
     private PlayerState currentState = PlayerState.Normal;
 
+    private CameraZoom cameraZoom;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -52,6 +54,8 @@ public class PlayerController : MonoBehaviour
         if (cameraModeController == null)
             cameraModeController = GetComponent<CameraModeController>();
 
+        cameraZoom = GetComponent<CameraZoom>() ?? FindFirstObjectByType<CameraZoom>();
+
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
     }
@@ -59,7 +63,60 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         SettingManager.Instance?.ApplyBindings(inputActions.asset);
-        cameraModeController?.SetCameraMode(controlMode);
+        RestorePlayerTransform();
+    }
+
+    private void RestorePlayerTransform()
+    {
+        var savedPlayer = SaveManager.GetPlayerTransform();
+
+        if (savedPlayer != null)
+        {
+            Vector3 prevPos = transform.position;
+            if (controller != null) controller.enabled = false;
+            transform.position = savedPlayer.position;
+            transform.rotation = Quaternion.Euler(0, savedPlayer.yRotation, 0);
+            if (controller != null) controller.enabled = true;
+
+            Vector3 delta = savedPlayer.position - prevPos;
+            cameraModeController?.WarpCameras(transform, delta);
+
+            controlMode = (ControlMode)savedPlayer.controlMode;
+            cameraModeController?.SetCameraMode(controlMode);
+            cameraModeController?.SetCameraOrientation(savedPlayer.cameraYaw, savedPlayer.cameraPitch);
+
+            if (cameraTransform != null)
+            {
+                cameraTransform.rotation = Quaternion.Euler(savedPlayer.cameraPitch, savedPlayer.cameraYaw, 0f);
+            }
+
+            if (cameraZoom != null && savedPlayer.cameraZoom > 0f)
+            {
+                cameraZoom.SetDistance(savedPlayer.cameraZoom, immediate: true);
+            }
+        }
+        else
+        {
+            cameraModeController?.SetCameraMode(controlMode);
+        }
+    }
+
+    public void SavePlayerTransform()
+    {
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        float camYaw = cameraTransform != null ? cameraTransform.eulerAngles.y : transform.eulerAngles.y;
+        float camPitch = cameraTransform != null ? cameraTransform.eulerAngles.x : 0f;
+        float zoomDist = cameraZoom != null ? cameraZoom.CurrentDistance : 5f;
+
+        SaveManager.SavePlayerTransform(
+            transform.position,
+            transform.eulerAngles.y,
+            sceneName,
+            (int)controlMode,
+            camYaw,
+            camPitch,
+            zoomDist
+        );
     }
 
     private void OnEnable()
@@ -74,6 +131,16 @@ public class PlayerController : MonoBehaviour
         if (SettingManager.Instance != null)
             SettingManager.Instance.OnBindingsChanged -= SyncBindings;
         inputActions?.Disable();
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus) SavePlayerTransform();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SavePlayerTransform();
     }
 
     private void OnDestroy()

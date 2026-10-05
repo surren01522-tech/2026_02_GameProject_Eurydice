@@ -9,15 +9,17 @@ public class DebugSettingSection : SettingSection
     [SerializeField] private Button deleteSaveDataButton;
     [SerializeField] private Button deleteSettingsButton;
     [SerializeField] private Button deleteAllDataButton;
+    [SerializeField] private Button reloadCurrentSceneButton;
     [SerializeField] private SettingSelectorControl sceneSelector;
     [SerializeField] private Button loadSceneButton;
     [SerializeField] private Button quitGameButton;
 
     public override void Init(SettingManager manager)
     {
-        if (deleteSaveDataButton != null) deleteSaveDataButton.onClick.AddListener(SaveManager.DeleteSaveData);
+        if (deleteSaveDataButton != null) deleteSaveDataButton.onClick.AddListener(OnDeleteSaveDataClicked);
         if (deleteSettingsButton != null) deleteSettingsButton.onClick.AddListener(SaveManager.DeleteSettings);
-        if (deleteAllDataButton != null) deleteAllDataButton.onClick.AddListener(SaveManager.DeleteAllData);
+        if (deleteAllDataButton != null) deleteAllDataButton.onClick.AddListener(OnDeleteAllDataClicked);
+        if (reloadCurrentSceneButton != null) reloadCurrentSceneButton.onClick.AddListener(ReloadCurrentScene);
         if (loadSceneButton != null) loadSceneButton.onClick.AddListener(LoadSelectedScene);
         if (quitGameButton != null) quitGameButton.onClick.AddListener(QuitGame);
 
@@ -44,6 +46,25 @@ public class DebugSettingSection : SettingSection
         }
     }
 
+    private void ReloadCurrentScene()
+    {
+        UIWindowManager.Instance?.CloseAllTabs(animatePanel: false);
+        GameStateManager.ResetState();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void OnDeleteSaveDataClicked()
+    {
+        SaveManager.DeleteSaveData();
+        ReloadCurrentScene();
+    }
+
+    private void OnDeleteAllDataClicked()
+    {
+        SaveManager.DeleteAllData();
+        ReloadCurrentScene();
+    }
+
     private void LoadSelectedScene()
     {
         if (sceneSelector == null) return;
@@ -51,7 +72,6 @@ public class DebugSettingSection : SettingSection
         int index = sceneSelector.CurrentIndex;
         if (index >= 0 && index < SceneManager.sceneCountInBuildSettings)
         {
-            Time.timeScale = 1f;
             UIWindowManager.Instance?.CloseAllTabs(animatePanel: false);
             GameStateManager.ResetState();
             SceneManager.LoadScene(index);

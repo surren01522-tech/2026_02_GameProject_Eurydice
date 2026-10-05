@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using UnityEngine;
@@ -65,6 +66,7 @@ public static class SaveManager
         {
             string json = File.ReadAllText(SaveDataPath);
             currentSaveData = JsonUtility.FromJson<SaveData>(json) ?? new SaveData();
+            if (currentSaveData.scenes == null) currentSaveData.scenes = new List<SceneSaveData>();
             return currentSaveData;
         }
         catch (Exception e)
@@ -127,6 +129,116 @@ public static class SaveManager
             Debug.LogError($"LoadMinimapFog 실패: {e.Message}");
             return null;
         }
+    }
+
+    public static SceneSaveData GetSceneData(string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+            sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+        var gameData = currentSaveData ?? LoadGame();
+        var sceneData = gameData.scenes.Find(s => s.sceneName == sceneName);
+        if (sceneData == null)
+        {
+            sceneData = new SceneSaveData(sceneName);
+            gameData.scenes.Add(sceneData);
+        }
+        return sceneData;
+    }
+
+    public static bool IsItemPicked(string itemId, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(itemId)) return false;
+        var sceneData = GetSceneData(sceneName);
+        return sceneData.pickedItemIds.Contains(itemId);
+    }
+
+    public static void MarkItemPicked(string itemId, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(itemId)) return;
+        var gameData = currentSaveData ?? LoadGame();
+        var sceneData = GetSceneData(sceneName);
+        if (!sceneData.pickedItemIds.Contains(itemId))
+        {
+            sceneData.pickedItemIds.Add(itemId);
+            SaveGame(gameData);
+        }
+    }
+
+    public static bool GetSocketPlaced(string socketId, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(socketId)) return false;
+        var sceneData = GetSceneData(sceneName);
+        var entry = sceneData.sockets.Find(s => s.socketId == socketId);
+        return entry != null && entry.isPlaced;
+    }
+
+    public static void SaveSocketPlaced(string socketId, bool isPlaced, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(socketId)) return;
+        var gameData = currentSaveData ?? LoadGame();
+        var sceneData = GetSceneData(sceneName);
+        var entry = sceneData.sockets.Find(s => s.socketId == socketId);
+        if (entry != null)
+        {
+            entry.isPlaced = isPlaced;
+        }
+        else
+        {
+            sceneData.sockets.Add(new SocketSaveData(socketId, isPlaced));
+        }
+        SaveGame(gameData);
+    }
+
+    public static DiscPuzzleSaveData GetPuzzleState(string puzzleId, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(puzzleId)) return null;
+        var sceneData = GetSceneData(sceneName);
+        return sceneData.puzzles.Find(p => p.puzzleId == puzzleId);
+    }
+
+    public static void SavePuzzleState(string puzzleId, bool isCompleted, List<float> angles, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(puzzleId)) return;
+        var gameData = currentSaveData ?? LoadGame();
+        var sceneData = GetSceneData(sceneName);
+        var entry = sceneData.puzzles.Find(p => p.puzzleId == puzzleId);
+        if (entry != null)
+        {
+            entry.isCompleted = isCompleted;
+            entry.pieceAngles = angles != null ? new List<float>(angles) : new List<float>();
+        }
+        else
+        {
+            sceneData.puzzles.Add(new DiscPuzzleSaveData(puzzleId, isCompleted, angles));
+        }
+        SaveGame(gameData);
+    }
+
+    public static PlayerSaveData GetPlayerTransform(string sceneName = null)
+    {
+        var sceneData = GetSceneData(sceneName);
+        return sceneData.player;
+    }
+
+    public static void SavePlayerTransform(Vector3 position, float yRotation, string sceneName = null, int controlMode = 1, float cameraYaw = 0f, float cameraPitch = 0f, float cameraZoom = 5f)
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        if (string.IsNullOrEmpty(sceneName))
+            sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+        gameData.lastActiveScene = sceneName;
+        var sceneData = GetSceneData(sceneName);
+        sceneData.player = new PlayerSaveData(position, yRotation, controlMode, cameraYaw, cameraPitch, cameraZoom);
+        SaveGame(gameData);
+    }
+
+    public static void ClearPlayerTransform(string sceneName = null)
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        var sceneData = GetSceneData(sceneName);
+        sceneData.player = null;
+        SaveGame(gameData);
     }
 
     private static byte[] Compress(byte[] data)

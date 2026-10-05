@@ -7,6 +7,76 @@ public class SaveData
 {
     public InventorySaveData inventory = new();
     public List<MinimapFogSaveData> fogRegions = new();
+    public string lastActiveScene = string.Empty;
+    public List<SceneSaveData> scenes = new();
+}
+
+[Serializable]
+public class SceneSaveData
+{
+    public string sceneName;
+    public PlayerSaveData player = null;
+    public List<string> pickedItemIds = new();
+    public List<SocketSaveData> sockets = new();
+    public List<DiscPuzzleSaveData> puzzles = new();
+
+    public SceneSaveData() { }
+
+    public SceneSaveData(string sceneName)
+    {
+        this.sceneName = sceneName;
+    }
+}
+
+[Serializable]
+public class PlayerSaveData
+{
+    public Vector3 position;
+    public float yRotation;
+    public int controlMode = 1; // 0: FreeLook, 1: Strafe
+    public float cameraYaw;
+    public float cameraPitch;
+    public float cameraZoom = 5f;
+
+    public PlayerSaveData() { }
+
+    public PlayerSaveData(Vector3 position, float yRotation, int controlMode = 1, float cameraYaw = 0f, float cameraPitch = 0f, float cameraZoom = 5f)
+    {
+        this.position = position;
+        this.yRotation = yRotation;
+        this.controlMode = controlMode;
+        this.cameraYaw = cameraYaw;
+        this.cameraPitch = cameraPitch;
+        this.cameraZoom = cameraZoom;
+    }
+}
+
+[Serializable]
+public class SocketSaveData
+{
+    public string socketId;
+    public bool isPlaced;
+
+    public SocketSaveData(string socketId, bool isPlaced)
+    {
+        this.socketId = socketId;
+        this.isPlaced = isPlaced;
+    }
+}
+
+[Serializable]
+public class DiscPuzzleSaveData
+{
+    public string puzzleId;
+    public bool isCompleted;
+    public List<float> pieceAngles = new();
+
+    public DiscPuzzleSaveData(string puzzleId, bool isCompleted, List<float> pieceAngles)
+    {
+        this.puzzleId = puzzleId;
+        this.isCompleted = isCompleted;
+        this.pieceAngles = pieceAngles ?? new List<float>();
+    }
 }
 
 [Serializable]
