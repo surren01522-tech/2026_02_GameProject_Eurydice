@@ -34,8 +34,6 @@ public class DebugSettingSection : SettingSection
             for (int i = 0; i < sceneCount; i++)
             {
                 string path = SceneUtility.GetScenePathByBuildIndex(i);
-                if (IsSubScene(path)) continue;
-
                 string sceneName = Path.GetFileNameWithoutExtension(path);
                 loadableSceneNames.Add(sceneName);
                 options.Add(sceneName);
@@ -51,16 +49,6 @@ public class DebugSettingSection : SettingSection
             int defaultIndex = Mathf.Max(0, loadableSceneNames.IndexOf(SceneManager.GetActiveScene().name));
             sceneSelector.Init(options, defaultIndex);
         }
-    }
-
-    private static bool IsSubScene(string path)
-    {
-        if (string.IsNullOrEmpty(path)) return false;
-        string lower = path.Replace('\\', '/').ToLowerInvariant();
-        return lower.Contains("/seamless") ||
-               lower.Contains("/subscene") ||
-               lower.Contains("/streaming") ||
-               Path.GetFileNameWithoutExtension(path).StartsWith("Region_", System.StringComparison.OrdinalIgnoreCase);
     }
 
     private void ReloadCurrentScene()

@@ -23,12 +23,6 @@ public class SceneLoader : MonoBehaviour
             return;
         }
 
-        if (sceneName.StartsWith("Region_", System.StringComparison.OrdinalIgnoreCase))
-        {
-            Debug.LogWarning("[SceneLoader] Sub-scene cannot be loaded directly: " + sceneName);
-            return;
-        }
-
         if (savePlayer) FindFirstObjectByType<PlayerController>()?.SavePlayerTransform();
         UIWindowManager.Instance?.CloseAllTabs(animatePanel: false);
 

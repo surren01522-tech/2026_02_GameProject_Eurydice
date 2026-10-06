@@ -20,12 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GodRay_test_night.unity
     guid: 676e4339acfce22458058b1409412693
-  - enabled: 1
-    path: Assets/Scenes/Seamless_test/Region_A.unity
-    guid: 101bdda55eaa7484b8bade726cdee0e9
-  - enabled: 1
-    path: Assets/Scenes/Seamless_test/Region_B.unity
-    guid: 569f35921fcdf0c419ad4f13e8b7fecd
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: c1b14114868871148bd70efd982e5022, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

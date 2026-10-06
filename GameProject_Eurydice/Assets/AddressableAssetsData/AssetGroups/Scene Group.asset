@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Scene Group
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Scene Group
+  m_GUID: c68fed0c43e5965458e2d2b603e50d98
+  m_SerializeEntries:
+  - m_GUID: 101bdda55eaa7484b8bade726cdee0e9
+    m_Address: Region_A
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Seamless_Scene
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 569f35921fcdf0c419ad4f13e8b7fecd
+    m_Address: Region_B
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Seamless_Scene
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de48cc1458fbb824e9fefd95cc256c55
+    m_Address: Region_C
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Seamless_Scene
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: be36d64ca79330340a92bbc6e726cb73, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ce5f9009212ae9e4fa883dd3eb87e3c0, type: 2}
+    - {fileID: 11400000, guid: 216a543e264131b449c3dbfa7047d0b9, type: 2}

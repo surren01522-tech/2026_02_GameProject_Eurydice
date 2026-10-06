@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 
 public class SceneStreamer : MonoBehaviour
 {
@@ -12,7 +15,7 @@ public class SceneStreamer : MonoBehaviour
     [SerializeField] private float unloadDelay = 4f;
 
     private readonly HashSet<SceneStreamZone> activeZones = new HashSet<SceneStreamZone>();
-    private readonly HashSet<string> loadedScenes = new HashSet<string>();
+    private readonly Dictionary<string, SceneInstance> loadedSceneInstances = new Dictionary<string, SceneInstance>();
     private readonly Dictionary<string, float> pendingUnloads = new Dictionary<string, float>();
 
     private bool isReady;
@@ -33,6 +36,7 @@ public class SceneStreamer : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
+        loadedSceneInstances.Clear();
     }
 
     private IEnumerator Start()
@@ -101,32 +105,21 @@ public class SceneStreamer : MonoBehaviour
             {
                 pendingUnloads.Remove(sceneName);
 
-                if (string.IsNullOrEmpty(sceneName) || loadedScenes.Contains(sceneName)) continue;
+                if (string.IsNullOrEmpty(sceneName) || loadedSceneInstances.ContainsKey(sceneName)) continue;
 
-                if (!SceneManager.GetSceneByName(sceneName).isLoaded)
-                {
-                    AsyncOperation op = null;
-                    try
-                    {
-                        op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError("[SceneStreamer] Failed to load scene: " + sceneName + " -> " + e.Message);
-                    }
+                var handle = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                yield return handle;
 
-                    if (op != null) yield return op;
-                }
-
-                loadedScenes.Add(sceneName);
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                    loadedSceneInstances[sceneName] = handle.Result;
+                else
+                    Debug.LogError("[SceneStreamer] Failed to load addressable scene: " + sceneName);
             }
 
-            foreach (var sceneName in loadedScenes)
+            foreach (var sceneName in loadedSceneInstances.Keys)
             {
                 if (!targetScenes.Contains(sceneName) && !pendingUnloads.ContainsKey(sceneName))
-                {
                     pendingUnloads[sceneName] = immediateUnload ? 0f : Time.time + unloadDelay;
-                }
             }
 
             var toUnload = new List<string>();
@@ -139,10 +132,12 @@ public class SceneStreamer : MonoBehaviour
             {
                 string sceneName = toUnload[i];
                 pendingUnloads.Remove(sceneName);
-                loadedScenes.Remove(sceneName);
 
-                if (SceneManager.GetSceneByName(sceneName).isLoaded)
-                    yield return SceneManager.UnloadSceneAsync(sceneName);
+                if (loadedSceneInstances.TryGetValue(sceneName, out var instance))
+                {
+                    loadedSceneInstances.Remove(sceneName);
+                    yield return Addressables.UnloadSceneAsync(instance);
+                }
             }
 
             if (pendingUnloads.Count > 0)
