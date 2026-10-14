@@ -120,7 +120,7 @@ public class InventoryUIManager : MonoBehaviour
         if (item == null || !IsSelectionMode) return;
         onItemSelectedCallback?.Invoke(item);
 
-        if (currentTargetSocket != null && currentTargetSocket.TryInsertItem(item))
+        if (currentTargetSocket != null && currentTargetSocket.InsertItem(item))
         {
             CloseSelection();
         }

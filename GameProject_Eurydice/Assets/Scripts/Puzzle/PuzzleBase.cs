@@ -91,6 +91,11 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
 
         PuzzleUI.Instance?.Hide();
 
+        if (InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode)
+            InventoryUIManager.Instance.CloseSelection();
+        else if (UIWindowManager.Instance != null && UIWindowManager.Instance.CurrentTab != UIWindowManager.WindowTab.None)
+            UIWindowManager.Instance.CloseAllTabs(animatePanel: false);
+
         GameStateManager.SetPuzzleActive(false);
 
         OnExit();

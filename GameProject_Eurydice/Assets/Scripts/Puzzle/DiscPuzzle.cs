@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,7 +54,7 @@ public class DiscPuzzle : PuzzleBase
         {
             if (sockets == null) return true;
             for (int i = 0; i < sockets.Count; i++)
-                if (sockets[i] != null && !sockets[i].IsPlaced) return false;
+                if (sockets[i] != null && !sockets[i].IsCorrect) return false;
             return true;
         }
     }
@@ -191,9 +191,9 @@ public class DiscPuzzle : PuzzleBase
                     ItemSocket hitSocket = hitBuffer[i].collider.GetComponentInParent<ItemSocket>();
                     if (hitSocket != null && sockets != null && sockets.Contains(hitSocket))
                     {
-                        if (!hitSocket.IsPlaced && InventoryUIManager.Instance != null)
+                        if (hitSocket.CanInteract)
                         {
-                            InventoryUIManager.Instance.OpenForSelection(hitSocket);
+                            hitSocket.Interact(null);
                         }
                         return;
                     }
@@ -206,12 +206,6 @@ public class DiscPuzzle : PuzzleBase
                     {
                         DiscPiece clickedPiece = pieces[pieceIdx];
                         if (!clickedPiece.canRotate) return;
-
-                        if (!CanRotatePieces)
-                        {
-                            TriggerSlotMissingFeedback();
-                            return;
-                        }
 
                         StopAllPieceSnaps();
 
@@ -338,19 +332,6 @@ public class DiscPuzzle : PuzzleBase
         piece.snapCoroutine = null;
         SaveCurrentPuzzleState(false);
         CheckSolution();
-    }
-
-    private void TriggerSlotMissingFeedback()
-    {
-        if (sockets == null) return;
-        for (int i = 0; i < sockets.Count; i++)
-        {
-            if (sockets[i] != null && !sockets[i].IsPlaced)
-            {
-                sockets[i].TriggerMissingFeedback();
-                return;
-            }
-        }
     }
 
     public bool AreAllPiecesCorrect()

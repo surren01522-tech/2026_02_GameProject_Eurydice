@@ -165,15 +165,20 @@ public static class SaveManager
         }
     }
 
+    public static SocketSaveData GetSocketData(string socketId, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(socketId)) return null;
+        var sceneData = GetSceneData(sceneName);
+        return sceneData.sockets.Find(s => s.socketId == socketId);
+    }
+
     public static bool GetSocketPlaced(string socketId, string sceneName = null)
     {
-        if (string.IsNullOrEmpty(socketId)) return false;
-        var sceneData = GetSceneData(sceneName);
-        var entry = sceneData.sockets.Find(s => s.socketId == socketId);
+        var entry = GetSocketData(socketId, sceneName);
         return entry != null && entry.isPlaced;
     }
 
-    public static void SaveSocketPlaced(string socketId, bool isPlaced, string sceneName = null)
+    public static void SaveSocketState(string socketId, bool isPlaced, string placedItemId, int placedAmount = 0, string sceneName = null)
     {
         if (string.IsNullOrEmpty(socketId)) return;
         var gameData = currentSaveData ?? LoadGame();
@@ -182,12 +187,19 @@ public static class SaveManager
         if (entry != null)
         {
             entry.isPlaced = isPlaced;
+            entry.placedItemId = placedItemId;
+            entry.placedAmount = placedAmount;
         }
         else
         {
-            sceneData.sockets.Add(new SocketSaveData(socketId, isPlaced));
+            sceneData.sockets.Add(new SocketSaveData(socketId, isPlaced, placedItemId, placedAmount));
         }
         SaveGame(gameData);
+    }
+
+    public static void SaveSocketPlaced(string socketId, bool isPlaced, string sceneName = null)
+    {
+        SaveSocketState(socketId, isPlaced, null, 0, sceneName);
     }
 
     public static DiscPuzzleSaveData GetPuzzleState(string puzzleId, string sceneName = null)

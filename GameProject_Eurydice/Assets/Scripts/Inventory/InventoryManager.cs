@@ -202,4 +202,12 @@ public class InventoryManager : MonoBehaviour
         }
         return false;
     }
+
+    public ItemData GetItemData(string itemId)
+    {
+        if (string.IsNullOrEmpty(itemId)) return null;
+        if (itemLookup.Count == 0) InitItemLookup();
+        if (itemLookup.TryGetValue(itemId, out var item)) return item;
+        return Resources.Load<ItemData>($"Items/{itemId}");
+    }
 }

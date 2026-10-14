@@ -56,11 +56,15 @@ public class SocketSaveData
 {
     public string socketId;
     public bool isPlaced;
+    public string placedItemId;
+    public int placedAmount;
 
-    public SocketSaveData(string socketId, bool isPlaced)
+    public SocketSaveData(string socketId, bool isPlaced, string placedItemId = null, int placedAmount = 0)
     {
         this.socketId = socketId;
         this.isPlaced = isPlaced;
+        this.placedItemId = placedItemId;
+        this.placedAmount = placedAmount;
     }
 }
 

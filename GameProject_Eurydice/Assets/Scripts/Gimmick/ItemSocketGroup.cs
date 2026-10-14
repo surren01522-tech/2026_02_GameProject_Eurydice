@@ -56,9 +56,6 @@ public class ItemSocketGroup : MonoBehaviour
         CheckAllPlaced(notify: true);
     }
 
-    /// <summary>
-    /// 순차 설치 옵션일 경우 다음 차례가 아닌 소켓들을 잠금 처리합니다.
-    /// </summary>
     private void UpdateOrderLock()
     {
         if (!requireOrder || sockets == null) return;
@@ -68,7 +65,7 @@ public class ItemSocketGroup : MonoBehaviour
         {
             if (sockets[i] == null) continue;
 
-            if (sockets[i].IsPlaced)
+            if (sockets[i].IsCorrect)
             {
                 sockets[i].IsLocked = false;
             }
@@ -90,7 +87,7 @@ public class ItemSocketGroup : MonoBehaviour
 
         for (int i = 0; i < sockets.Length; i++)
         {
-            if (sockets[i] == null || !sockets[i].IsPlaced)
+            if (sockets[i] == null || !sockets[i].IsCorrect)
                 return;
         }
 
