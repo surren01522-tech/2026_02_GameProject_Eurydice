@@ -169,7 +169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 42c3e26514702a145874528c3539cdf0, type: 3}
       propertyPath: m_Name
-      value: "GameProjectEurydice_\uB808\uBCA8\uB514\uC790\uC778_\uCD08\uC548_0\uCC55\uD130"
+      value: Chapter_00_Level
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
