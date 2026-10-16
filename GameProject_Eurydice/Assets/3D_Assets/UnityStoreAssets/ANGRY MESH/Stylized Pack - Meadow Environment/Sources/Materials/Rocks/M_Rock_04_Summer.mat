@@ -151,6 +151,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AddPrecomputedVelocity: 1
+    - _AlphaClip: 0
     - _AlphaCutoff: 0.5
     - _BaseAOIntensity: 0.5
     - _BaseAlbedoBrightness: 1
@@ -212,7 +214,7 @@ Material:
     - _TopLayerSmoothnessIntensity: 1
     - _TopLayerSmoothnessMax: 1
     - _TopLayerSmoothnessMin: 0
-    - _TopLayerUVScale: 5
+    - _TopLayerUVScale: 25
     - _TopLayerVColorMaskIntensity: 0
     - _TopLayerVPaintIntensity: 0
     - _TopLayerVPaintMaskIntensity: 0
@@ -222,6 +224,7 @@ Material:
     - _TopSmoothness: 1
     - _TopUVScale: 10
     - _UVSec: 0
+    - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
@@ -235,3 +238,4 @@ Material:
     - _TopColor: {r: 1, g: 1, b: 1, a: 0}
     - _TopLayerAlbedoColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 0.5019608}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
