@@ -48,15 +48,16 @@ Material:
     - _Radius: 1.2
     - _Smoothness: 0
     - _TerrainColorMultiply: 2
+    - _TerrainSize: 200
     - _USETERRAINCOLOR: 0
     - _WindHeight: 0.5
     - _WindInlntensisty: 0.05
     - _WindNoiseSpeed: 0.3
     - _WindSpeed: 0.2
     m_Colors:
-    - _BottomColor: {r: 0.07195122, g: 0.13955233, b: 0.21383637, a: 1}
-    - _FarColor: {r: 0.56626534, g: 0.6, b: 0.12156863, a: 1}
-    - _NearColor: {r: 0.6847527, g: 0.7372549, b: 0.1490196, a: 1}
+    - _BottomColor: {r: 0.4191045, g: 0.585, b: 0.22119403, a: 1}
+    - _FarColor: {r: 0.9411765, g: 1, b: 0.20261437, a: 1}
+    - _NearColor: {r: 0.80797875, g: 0.86800003, b: 0.1754468, a: 1}
     - _ShadowColor: {r: 0.030412838, g: 0.08188075, b: 0.255, a: 1}
     - _WindNoiseScale: {r: 40, g: 100, b: 0, a: 0}
   m_BuildTextureStacks: []
