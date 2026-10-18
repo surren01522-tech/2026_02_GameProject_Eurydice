@@ -8,9 +8,9 @@ public enum FeedbackDisplayMode
     Floating
 }
 
-public class InteractionFeedbackUI : MonoBehaviour
+public class InteractionFeedbackUIManager : MonoBehaviour
 {
-    public static InteractionFeedbackUI Instance { get; private set; }
+    public static InteractionFeedbackUIManager Instance { get; private set; }
 
     [Header("Fixed HUD Feedback")]
     [SerializeField] private GameObject fixedPanel;

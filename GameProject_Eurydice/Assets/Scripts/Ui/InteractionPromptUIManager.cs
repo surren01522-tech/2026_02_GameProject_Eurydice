@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InteractionPromptUI : MonoBehaviour
+public class InteractionPromptUIManager : MonoBehaviour
 {
     [Header("Fixed HUD UI")]
     [SerializeField] private GameObject fixedPanel;
