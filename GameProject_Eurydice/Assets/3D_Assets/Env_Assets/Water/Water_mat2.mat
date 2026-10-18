@@ -141,7 +141,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _Depth: 2.47
-    - _Depth_Fade: 1
+    - _Depth_Fade: 3.14
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _Displacement: 0.5

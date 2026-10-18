@@ -124,8 +124,8 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 0.19715957
-          value: 0.17813027
+          time: 0.23893067
+          value: 0.1887123
           inSlope: 1.2340968
           outSlope: 1.2340968
           tangentMode: 0
@@ -133,8 +133,8 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 0.5296575
-          value: 0.5802467
+          time: 0.40935674
+          value: 0.4462077
           inSlope: 1
           outSlope: 1
           tangentMode: 0
@@ -187,7 +187,7 @@ MonoBehaviour:
   green:
     m_OverrideState: 1
     m_Value:
-      <length>k__BackingField: 2
+      <length>k__BackingField: 3
       m_Loop: 0
       m_ZeroValue: 0
       m_Range: 1
@@ -198,6 +198,15 @@ MonoBehaviour:
           time: 0
           value: 0
           inSlope: 0
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.55806184
+          value: 0.4673717
+          inSlope: 1
           outSlope: 1
           tangentMode: 0
           weightedMode: 0
@@ -218,7 +227,7 @@ MonoBehaviour:
   blue:
     m_OverrideState: 1
     m_Value:
-      <length>k__BackingField: 2
+      <length>k__BackingField: 4
       m_Loop: 0
       m_ZeroValue: 0
       m_Range: 1
@@ -228,6 +237,24 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 0
           value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.28070176
+          value: 0.2627864
+          inSlope: 1.174018
+          outSlope: 1.174018
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.49456978
+          value: 0.5555556
           inSlope: 1
           outSlope: 1
           tangentMode: 0
@@ -483,13 +510,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70afe9e12c7a7ed47911bb608a23a8ff, type: 3}
   m_Name: SplitToning
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {r: 0.44654083, g: 0.44654083, b: 0.44654083, a: 1}
+    m_Value: {r: 0.34509805, g: 0.34509805, b: 0.34509805, a: 1}
   highlights:
     m_OverrideState: 1
-    m_Value: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
+    m_Value: {r: 0.7327451, g: 0.76184475, b: 0.7921569, a: 1}
   balance:
     m_OverrideState: 1
     m_Value: 5
@@ -552,13 +579,13 @@ MonoBehaviour:
   active: 1
   distance:
     m_OverrideState: 1
-    m_Value: 54
+    m_Value: 217
   baseHeight:
     m_OverrideState: 1
     m_Value: 0
   maximumHeight:
     m_OverrideState: 1
-    m_Value: 24.7
+    m_Value: 87.66
   enableGround:
     m_OverrideState: 0
     m_Value: 1
@@ -567,7 +594,7 @@ MonoBehaviour:
     m_Value: 3.4
   density:
     m_OverrideState: 1
-    m_Value: 0.072
+    m_Value: 0.074
   attenuationDistance:
     m_OverrideState: 1
     m_Value: 128
@@ -582,13 +609,13 @@ MonoBehaviour:
     m_Value: 1
   anisotropy:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.02
   scattering:
     m_OverrideState: 1
-    m_Value: 0.283
+    m_Value: 0.467
   tint:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 1, g: 0.8401175, b: 0.6509433, a: 1}
   enableAdditionalLightsContribution:
     m_OverrideState: 0
     m_Value: 0

@@ -11,8 +11,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 9fd1e3c464f629b4ea366d85224c4d6b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _ENABLETOPLAYERBLEND_ON
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _ENABLETOPLAYER_ON
   m_LightmapFlags: 4
@@ -184,7 +183,7 @@ Material:
     - _EnableDetail: 0
     - _EnableDetail1: 0
     - _EnableTopLayer: 1
-    - _EnableTopLayerBlend: 1
+    - _EnableTopLayerBlend: 0
     - _EnableTopLayerNoise: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
