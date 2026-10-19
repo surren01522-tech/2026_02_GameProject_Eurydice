@@ -184,7 +184,7 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.24114941, g: 0.811372, b: 0.8616352, a: 1}
+    - _BaseColor: {r: 0.23921567, g: 0.8610749, b: 0.8627451, a: 1}
     - _Color: {r: 0.70754707, g: 0.84478474, b: 1, a: 1}
     - _Deep_Water_Color: {r: 0, g: 0.3150967, b: 0.49056602, a: 0.70980394}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

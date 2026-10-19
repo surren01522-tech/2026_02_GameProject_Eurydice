@@ -157,7 +157,7 @@ Material:
     - _Lerp: 0.05
     - _Metallic: 0
     - _NomalStrength: 1.65
-    - _NormalStrength: 0.14
+    - _NormalStrength: 0.53
     - _Normal_Strangth: 0.797
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -171,7 +171,7 @@ Material:
     - _Reflection_Refraction: 0.025
     - _Reflection_Refraction_Lerp: 0.6
     - _Refraction: 1.16
-    - _Smoothness: 0.701
+    - _Smoothness: 0.853
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
