@@ -9,6 +9,7 @@ public class SaveData
     public List<MinimapFogSaveData> fogRegions = new();
     public string lastActiveScene = string.Empty;
     public List<SceneSaveData> scenes = new();
+    public AchievementSaveData achievements = new();
 }
 
 [Serializable]
@@ -138,5 +139,35 @@ public class InventorySlotSaveData
     {
         this.itemId = itemId;
         this.count = count;
+    }
+}
+
+[Serializable]
+public class AchievementSaveData
+{
+    public float totalPlayTime;
+    public int clearedPuzzleCount;
+    public int totalCollectedItemCount;
+    public int socketedCount;
+    public int clearedSocketGroupCount;
+    public List<string> clearedPuzzleIds = new();
+    public List<string> clearedSocketIds = new();
+    public List<string> clearedSocketGroupIds = new();
+    public List<string> unlockedIds = new();
+    public List<AchievementProgressSaveData> progresses = new();
+}
+
+[Serializable]
+public class AchievementProgressSaveData
+{
+    public string id;
+    public float current;
+
+    public AchievementProgressSaveData() { }
+
+    public AchievementProgressSaveData(string id, float current)
+    {
+        this.id = id;
+        this.current = current;
     }
 }

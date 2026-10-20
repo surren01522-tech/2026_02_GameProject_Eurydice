@@ -4,6 +4,8 @@ using UnityEngine.Events;
 
 public class ItemSocket : MonoBehaviour, IInteractable
 {
+    public static event Action<ItemSocket, ItemData> OnAnySocketPlaced;
+
     [Header("ID 설정")]
     [SerializeField] private string uniqueId;
 
@@ -32,6 +34,7 @@ public class ItemSocket : MonoBehaviour, IInteractable
     [SerializeField] private ItemData placedItem;
     [SerializeField] private int placedAmount = 0;
 
+    public string UniqueId => uniqueId;
     public ItemData PlacedItem => placedItem;
     public int PlacedAmount => placedAmount;
     public bool IsPlaced => isPlaced && placedItem != null;
@@ -99,14 +102,8 @@ public class ItemSocket : MonoBehaviour, IInteractable
 
         if (parentPuzzle != null)
             requirePuzzleMode = true;
-    }
 
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(uniqueId))
-        {
-            uniqueId = System.Guid.NewGuid().ToString();
-        }
+        if (string.IsNullOrEmpty(uniqueId)) Debug.LogWarning($"{gameObject.name} | 소켓의 Unique Id가 설정되지 않았습니다.");
     }
 
     public void Interact(PlayerController player)
@@ -155,6 +152,7 @@ public class ItemSocket : MonoBehaviour, IInteractable
             AudioManager.Instance.PlaySFXAt(placeSound, transform.position);
 
         OnPlaced?.Invoke(this);
+        OnAnySocketPlaced?.Invoke(this, item);
         onPlacedEvent?.Invoke();
     }
 

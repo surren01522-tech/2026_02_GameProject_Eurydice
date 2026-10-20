@@ -1350,6 +1350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120c7ae7f38b8dc44b77752540c23035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemSocketGroup
+  uniqueId: Test-Group-Socket-00
   sockets:
   - {fileID: 568467940}
   - {fileID: 1519760999}

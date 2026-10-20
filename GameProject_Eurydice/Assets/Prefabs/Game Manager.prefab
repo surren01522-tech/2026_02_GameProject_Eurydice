@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8954200534861265922}
   - component: {fileID: 766799276271429593}
   - component: {fileID: 8689828517501176970}
+  - component: {fileID: 5965155381694548891}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -85,9 +86,24 @@ MonoBehaviour:
   uiSource: {fileID: 7778571596993015554}
   sfxSource2D: {fileID: 5098337567088394674}
   sfxPoolSize: 8
+  maxSfxPoolSize: 16
   navClip: {fileID: 0}
   submitClip: {fileID: 0}
   cancelClip: {fileID: 0}
+--- !u!114 &5965155381694548891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2424944371094158774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c451811c0b687e94f83a4aed5805c9f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AchievementManager
+  achievementDatabase: []
+  autoTrackPlayTime: 1
 --- !u!1 &4580254319417259335
 GameObject:
   m_ObjectHideFlags: 0

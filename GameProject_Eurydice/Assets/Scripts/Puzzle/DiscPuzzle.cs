@@ -67,9 +67,8 @@ public class DiscPuzzle : PuzzleBase
         InitializePieces();
     }
 
-    protected override void OnValidate()
+    private void OnValidate()
     {
-        base.OnValidate();
         if (pieces == null) return;
         for (int i = 0; i < pieces.Count; i++)
             if (pieces[i]?.pieceTransform != null && pieces[i].clickCollider == null)

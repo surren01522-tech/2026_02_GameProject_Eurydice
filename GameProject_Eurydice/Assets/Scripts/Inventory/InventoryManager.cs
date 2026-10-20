@@ -5,6 +5,7 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
+    public static event Action<ItemData, int> OnItemAdded;
 
     [SerializeField] private List<InventorySlot> slots = new();
     [SerializeField] private List<ItemData> itemDatabase = new();
@@ -139,6 +140,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"{item.name} {totalAmount}개 획득");
+        OnItemAdded?.Invoke(item, totalAmount);
         OnInventoryChanged?.Invoke();
         Save();
     }

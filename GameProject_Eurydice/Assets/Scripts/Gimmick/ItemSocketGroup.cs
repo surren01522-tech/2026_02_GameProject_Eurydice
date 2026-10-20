@@ -5,6 +5,11 @@ using UnityEngine.Events;
 
 public class ItemSocketGroup : MonoBehaviour
 {
+    public static event Action<ItemSocketGroup> OnAnySocketGroupAllPlaced;
+
+    [Header("ID 설정")]
+    [SerializeField] private string uniqueId;
+
     [Header("소켓 설정")]
     [SerializeField] private ItemSocket[] sockets;
     [SerializeField] private bool requireOrder = false;
@@ -12,6 +17,7 @@ public class ItemSocketGroup : MonoBehaviour
     [Header("상태")]
     [SerializeField] private bool isAllPlaced = false;
 
+    public string UniqueId => uniqueId;
     public bool IsAllPlaced => isAllPlaced;
     public IReadOnlyList<ItemSocket> Sockets => sockets;
 
@@ -31,6 +37,8 @@ public class ItemSocketGroup : MonoBehaviour
 
         UpdateOrderLock();
         CheckAllPlaced(notify: false);
+
+        if (string.IsNullOrEmpty(uniqueId)) Debug.LogWarning($"{gameObject.name} | 소켓 그룹의 Unique Id가 설정되지 않았습니다.");
     }
 
     private void Start()
@@ -96,6 +104,7 @@ public class ItemSocketGroup : MonoBehaviour
         if (notify)
         {
             OnAllPlaced?.Invoke();
+            OnAnySocketGroupAllPlaced?.Invoke(this);
             onAllPlacedEvent?.Invoke();
         }
     }

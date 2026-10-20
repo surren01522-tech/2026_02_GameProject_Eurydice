@@ -356,32 +356,34 @@ public static class FoldGroupEditorUtility
 
     private static void BeginGroupBlock()
     {
-        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.BeginVertical();
         EditorGUI.indentLevel++;
         EditorGUILayout.Space(2f);
     }
 
     private static void EndGroupBlock()
     {
-        EditorGUILayout.Space(2f);
+        EditorGUILayout.Space(4f);
         EditorGUI.indentLevel--;
         EditorGUILayout.EndVertical();
     }
 
     private static bool DrawHeader(string title, bool isExpanded)
     {
-        EditorGUILayout.Space(3f);
+        EditorGUILayout.Space(5f);
         Rect rect = GUILayoutUtility.GetRect(16f, 22f, GUILayout.ExpandWidth(true));
         Rect indented = EditorGUI.IndentedRect(rect);
 
-        Color prevColor = GUI.backgroundColor;
-        GUI.backgroundColor = isExpanded ? new Color(0.85f, 0.92f, 1f, 1f) : new Color(0.78f, 0.78f, 0.78f, 1f);
-        GUI.Box(indented, GUIContent.none, EditorStyles.toolbarButton);
-        GUI.backgroundColor = prevColor;
+        Event evt = Event.current;
+        if (evt.type == EventType.MouseDown && evt.button == 0 && indented.Contains(evt.mousePosition))
+        {
+            isExpanded = !isExpanded;
+            evt.Use();
+            GUI.changed = true;
+            return isExpanded;
+        }
 
-        Rect foldoutRect = new Rect(indented.x + 8f, indented.y + 2f, indented.width - 16f, indented.height - 4f);
-        bool newExpanded = EditorGUI.Foldout(foldoutRect, isExpanded, title, true, EditorStyles.boldLabel);
-        return newExpanded;
+        return EditorGUI.Foldout(indented, isExpanded, title, true, EditorStyles.foldoutHeader);
     }
 
     private static string GetPrefsKey(Type type, string identifier)

@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class PuzzleBase : MonoBehaviour, IInteractable
 {
     public static PuzzleBase ActivePuzzle { get; private set; }
+    public static event Action<PuzzleBase> OnAnyPuzzleCompleted;
 
     [FoldGroup("상호작용 팝업 설정")]
     [SerializeField] private string interactionPrompt = "Interact";
@@ -36,18 +37,12 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
     public Transform TargetTransform => this != null ? transform : null;
     public bool CanInteract => !IsActive && !isCompleted;
 
-    protected virtual void OnValidate()
-    {
-        if (string.IsNullOrEmpty(uniqueId))
-        {
-            uniqueId = Guid.NewGuid().ToString();
-        }
-    }
-
     protected virtual void Awake()
     {
         if (puzzleCamera != null)
             puzzleCamera.Priority = defaultPriority;
+            
+        if (string.IsNullOrEmpty(uniqueId)) Debug.LogWarning($"{gameObject.name} | 퍼즐의 Unique Id가 설정되지 않았습니다.");
     }
 
     public void Interact(PlayerController player)
@@ -106,6 +101,7 @@ public abstract class PuzzleBase : MonoBehaviour, IInteractable
     {
         isCompleted = true;
         OnPuzzleCompleted?.Invoke();
+        OnAnyPuzzleCompleted?.Invoke(this);
         ExitPuzzle();
     }
 

@@ -67,6 +67,7 @@ public static class SaveManager
             string json = File.ReadAllText(SaveDataPath);
             currentSaveData = JsonUtility.FromJson<SaveData>(json) ?? new SaveData();
             if (currentSaveData.scenes == null) currentSaveData.scenes = new List<SceneSaveData>();
+            if (currentSaveData.achievements == null) currentSaveData.achievements = new AchievementSaveData();
             return currentSaveData;
         }
         catch (Exception e)
@@ -88,6 +89,20 @@ public static class SaveManager
     {
         var gameData = currentSaveData ?? LoadGame();
         return gameData.inventory;
+    }
+
+    public static void SaveAchievements(AchievementSaveData achievements)
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        gameData.achievements = achievements;
+        SaveGame(gameData);
+    }
+
+    public static AchievementSaveData LoadAchievements()
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        if (gameData.achievements == null) gameData.achievements = new AchievementSaveData();
+        return gameData.achievements;
     }
 
     public static void SaveMinimapFog(string mapId, byte[] fogBytes)
