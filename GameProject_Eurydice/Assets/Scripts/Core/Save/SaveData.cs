@@ -20,6 +20,7 @@ public class SceneSaveData
     public List<string> pickedItemIds = new();
     public List<SocketSaveData> sockets = new();
     public List<DiscPuzzleSaveData> puzzles = new();
+    public List<string> openPortalIds = new();
 
     public SceneSaveData() { }
 

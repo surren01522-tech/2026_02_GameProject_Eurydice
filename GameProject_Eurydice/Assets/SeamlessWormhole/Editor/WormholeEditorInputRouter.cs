@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using System;
+/*using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -68,5 +68,5 @@ namespace SeamlessWormhole.Editor
             hasOverriddenInputSettings = false;
         }
     }
-}
+}*/
 #endif

@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using UnityEditor;
+/*using UnityEditor;
 using UnityEngine;
 
 namespace SeamlessWormhole.Editor
@@ -46,5 +46,5 @@ namespace SeamlessWormhole.Editor
             serializedObject.ApplyModifiedProperties();
         }
     }
-}
+}*/
 #endif

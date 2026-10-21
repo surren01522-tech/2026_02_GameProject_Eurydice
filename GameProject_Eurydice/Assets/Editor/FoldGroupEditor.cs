@@ -223,13 +223,13 @@ public static class FoldGroupEditorUtility
         if (prop.isArray && prop.propertyType != SerializedPropertyType.String)
         {
             Type elemType = GetElementType(fieldType);
-            if (elemType != null && HasFoldGroups(elemType))
+            if (elemType != null && !typeof(UnityEngine.Object).IsAssignableFrom(elemType) && HasFoldGroups(elemType))
             {
                 DrawListWithFoldGroups(prop, elemType);
                 return;
             }
         }
-        else if (fieldType != null && HasFoldGroups(fieldType))
+        else if (prop.propertyType == SerializedPropertyType.Generic && fieldType != null && !typeof(UnityEngine.Object).IsAssignableFrom(fieldType) && HasFoldGroups(fieldType))
         {
             DrawClassWithFoldGroups(prop, fieldType);
             return;

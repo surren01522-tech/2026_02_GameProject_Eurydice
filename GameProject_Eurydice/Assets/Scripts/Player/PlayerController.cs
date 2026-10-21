@@ -39,6 +39,31 @@ public class PlayerController : MonoBehaviour
     private float verticalVelocity;
 
     public InputSystem_Actions InputActions => inputActions;
+    public Transform CameraTransform => cameraTransform;
+    public CameraModeController CameraModeController => cameraModeController;
+
+    /// <summary>
+    /// 플레이어 및 추적 카메라를 목표 위치/회전으로 댐핑 스윙 없이 즉시 순간이동시킵니다.
+    /// </summary>
+    public void Teleport(Vector3 targetPosition, Quaternion targetRotation, Vector3 targetCameraPosition, Quaternion targetCameraRotation)
+    {
+        Quaternion rotDelta = Quaternion.Euler(0f, targetRotation.eulerAngles.y - transform.eulerAngles.y, 0f);
+
+        if (controller != null) controller.enabled = false;
+        transform.position = targetPosition;
+        transform.rotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
+        moveVelocity = rotDelta * moveVelocity;
+
+        float camYaw = targetCameraRotation.eulerAngles.y;
+        float camPitch = targetCameraRotation.eulerAngles.x;
+        if (camPitch > 180f) camPitch -= 360f;
+
+        cameraModeController?.ForceCameraPose(targetCameraPosition, targetCameraRotation, camYaw, camPitch);
+        if (cameraTransform != null)
+            cameraTransform.SetPositionAndRotation(targetCameraPosition, targetCameraRotation);
+
+        if (controller != null) controller.enabled = true;
+    }
 
     private PlayerState currentState = PlayerState.Normal;
 

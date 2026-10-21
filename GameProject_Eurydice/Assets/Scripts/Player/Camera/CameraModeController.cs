@@ -59,17 +59,60 @@ public class CameraModeController : MonoBehaviour
         ApplyOrientationToCamera(strafeCamera, yaw, pitch);
     }
 
+    /// <summary>
+    /// 댐핑 스윙 없이 시네머신 카메라의 월드 위치와 회전을 즉시 강제 동기화합니다.
+    /// </summary>
+    public void ForceCameraPose(Vector3 worldPos, Quaternion worldRot, float yaw, float pitch)
+    {
+        ForcePoseOnCamera(freeLookCamera, worldPos, worldRot, yaw, pitch);
+        ForcePoseOnCamera(strafeCamera, worldPos, worldRot, yaw, pitch);
+    }
+
+    /// <summary>
+    /// 포탈 통과 직후 카메라가 벽 뒤에 위치할 때 장애물 충돌 줌인(Deoccluder)을 일시 제어합니다.
+    /// </summary>
+    public void SetDeoccluderEnabled(bool enabled)
+    {
+        SetDeoccluderOnCamera(freeLookCamera, enabled);
+        SetDeoccluderOnCamera(strafeCamera, enabled);
+    }
+
+    private void SetDeoccluderOnCamera(CinemachineCamera vcam, bool enabled)
+    {
+        if (vcam == null) return;
+        if (vcam.TryGetComponent<CinemachineDeoccluder>(out var deoccluder))
+            deoccluder.enabled = enabled;
+    }
+
+    private void ForcePoseOnCamera(CinemachineCamera vcam, Vector3 worldPos, Quaternion worldRot, float yaw, float pitch)
+    {
+        if (vcam == null) return;
+
+        float wrappedYaw = Mathf.DeltaAngle(0f, yaw);
+        var orbital = vcam.GetComponent<CinemachineOrbitalFollow>();
+        if (orbital != null)
+        {
+            orbital.HorizontalAxis.Value = wrappedYaw;
+            orbital.VerticalAxis.Value = Mathf.Clamp(pitch, orbital.VerticalAxis.Range.x, orbital.VerticalAxis.Range.y);
+        }
+
+        vcam.ForceCameraPosition(worldPos, worldRot);
+        vcam.PreviousStateIsValid = false;
+    }
+
     private void ApplyOrientationToCamera(CinemachineCamera vcam, float yaw, float pitch)
     {
         if (vcam == null) return;
 
+        float wrappedYaw = Mathf.DeltaAngle(0f, yaw);
         var orbital = vcam.GetComponent<CinemachineOrbitalFollow>();
         if (orbital != null)
         {
-            orbital.HorizontalAxis.Value = yaw;
-            orbital.VerticalAxis.Value = pitch;
+            orbital.HorizontalAxis.Value = wrappedYaw;
+            orbital.VerticalAxis.Value = Mathf.Clamp(pitch, orbital.VerticalAxis.Range.x, orbital.VerticalAxis.Range.y);
         }
 
-        vcam.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        vcam.transform.rotation = Quaternion.Euler(pitch, wrappedYaw, 0f);
+        vcam.PreviousStateIsValid = false;
     }
 }

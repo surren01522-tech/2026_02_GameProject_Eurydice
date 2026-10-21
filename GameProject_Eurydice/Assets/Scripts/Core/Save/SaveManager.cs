@@ -158,6 +158,7 @@ public static class SaveManager
             sceneData = new SceneSaveData(sceneName);
             gameData.scenes.Add(sceneData);
         }
+        sceneData.openPortalIds ??= new List<string>();
         return sceneData;
     }
 
@@ -191,6 +192,26 @@ public static class SaveManager
     {
         var entry = GetSocketData(socketId, sceneName);
         return entry != null && entry.isPlaced;
+    }
+
+    /// <summary>
+    /// 서브 씬 구분 없이 모든 저장된 씬 데이터에서 특정 소켓 ID의 배치 완료 여부를 조회합니다.
+    /// </summary>
+    public static bool IsSocketPlacedAnyScene(string socketId)
+    {
+        if (string.IsNullOrEmpty(socketId)) return false;
+        var gameData = currentSaveData ?? LoadGame();
+        if (gameData.scenes == null) return false;
+
+        for (int i = 0; i < gameData.scenes.Count; i++)
+        {
+            var scene = gameData.scenes[i];
+            if (scene?.sockets == null) continue;
+            var entry = scene.sockets.Find(s => s.socketId == socketId);
+            if (entry != null && entry.isPlaced)
+                return true;
+        }
+        return false;
     }
 
     public static void SaveSocketState(string socketId, bool isPlaced, string placedItemId, int placedAmount = 0, string sceneName = null)
@@ -240,6 +261,55 @@ public static class SaveManager
             sceneData.puzzles.Add(new DiscPuzzleSaveData(puzzleId, isCompleted, angles));
         }
         SaveGame(gameData);
+    }
+
+    /// <summary>
+    /// 서브 씬 구분 없이 모든 저장된 씬 데이터에서 특정 포탈 ID의 개방 여부를 조회합니다.
+    /// </summary>
+    public static bool IsPortalOpenAnyScene(string portalId)
+    {
+        if (string.IsNullOrEmpty(portalId)) return false;
+        var gameData = currentSaveData ?? LoadGame();
+        if (gameData.scenes == null) return false;
+
+        for (int i = 0; i < gameData.scenes.Count; i++)
+        {
+            var scene = gameData.scenes[i];
+            if (scene?.openPortalIds != null && scene.openPortalIds.Contains(portalId))
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 포탈의 개폐 상태를 세이브 데이터에 기록하고 저장합니다.
+    /// </summary>
+    public static void SetPortalOpenState(string portalId, bool isOpen, string sceneName = null)
+    {
+        if (string.IsNullOrEmpty(portalId)) return;
+        var gameData = currentSaveData ?? LoadGame();
+
+        if (isOpen)
+        {
+            var sceneData = GetSceneData(sceneName);
+            if (!sceneData.openPortalIds.Contains(portalId))
+            {
+                sceneData.openPortalIds.Add(portalId);
+                SaveGame(gameData);
+            }
+        }
+        else if (gameData.scenes != null)
+        {
+            bool changed = false;
+            for (int i = 0; i < gameData.scenes.Count; i++)
+            {
+                var s = gameData.scenes[i];
+                if (s?.openPortalIds != null && s.openPortalIds.Remove(portalId))
+                    changed = true;
+            }
+            if (changed)
+                SaveGame(gameData);
+        }
     }
 
     public static PlayerSaveData GetPlayerTransform(string sceneName = null)

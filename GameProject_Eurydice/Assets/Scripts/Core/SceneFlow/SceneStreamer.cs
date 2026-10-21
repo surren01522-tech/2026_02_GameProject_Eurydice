@@ -15,6 +15,7 @@ public class SceneStreamer : MonoBehaviour
     [SerializeField] private float unloadDelay = 4f;
 
     private readonly HashSet<SceneStreamZone> activeZones = new HashSet<SceneStreamZone>();
+    private readonly Dictionary<string, int> pinnedSceneCounts = new Dictionary<string, int>();
     private readonly Dictionary<string, SceneInstance> loadedSceneInstances = new Dictionary<string, SceneInstance>();
     private readonly Dictionary<string, float> pendingUnloads = new Dictionary<string, float>();
 
@@ -37,6 +38,7 @@ public class SceneStreamer : MonoBehaviour
     {
         if (Instance == this) Instance = null;
         loadedSceneInstances.Clear();
+        pinnedSceneCounts.Clear();
     }
 
     private IEnumerator Start()
@@ -80,6 +82,74 @@ public class SceneStreamer : MonoBehaviour
         if (activeZones.Remove(zone)) RequestUpdate();
     }
 
+    /// <summary>
+    /// 포탈 개방 등으로 특정 서브 씬을 강제 로드 및 유지(Pin)하도록 요청합니다.
+    /// </summary>
+    public void PinScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName)) return;
+        pinnedSceneCounts.TryGetValue(sceneName, out int count);
+        pinnedSceneCounts[sceneName] = count + 1;
+        pendingUnloads.Remove(sceneName);
+        RequestUpdate();
+    }
+
+    /// <summary>
+    /// 포탈 닫힘 등으로 특정 서브 씬의 강제 유지(Pin)를 해제합니다.
+    /// </summary>
+    public void UnpinScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName)) return;
+        if (!pinnedSceneCounts.TryGetValue(sceneName, out int count)) return;
+
+        if (count <= 1)
+            pinnedSceneCounts.Remove(sceneName);
+        else
+            pinnedSceneCounts[sceneName] = count - 1;
+
+        RequestUpdate();
+    }
+
+    /// <summary>
+    /// 해당 서브 씬이 현재 로드 완료된 상태인지 반환합니다.
+    /// </summary>
+    public bool IsSceneLoaded(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName)) return true;
+        if (loadedSceneInstances.ContainsKey(sceneName)) return true;
+
+        Scene s = SceneManager.GetSceneByName(sceneName);
+        return s.IsValid() && s.isLoaded;
+    }
+
+    /// <summary>
+    /// 플레이어 순간이동 직후 새로운 월드 좌표를 기준으로 활성 스트리밍 존을 즉시 재계산합니다.
+    /// </summary>
+    public void RefreshZonesForPosition(Vector3 worldPos)
+    {
+        Physics.SyncTransforms();
+        var zones = FindObjectsByType<SceneStreamZone>(FindObjectsSortMode.None);
+        bool changed = false;
+
+        for (int i = 0; i < zones.Length; i++)
+        {
+            var zone = zones[i];
+            if (zone == null) continue;
+
+            if (zone.Contains(worldPos))
+            {
+                if (activeZones.Add(zone)) changed = true;
+            }
+            else
+            {
+                if (activeZones.Remove(zone)) changed = true;
+            }
+        }
+
+        if (changed)
+            RequestUpdate();
+    }
+
     private void RequestUpdate()
     {
         pendingUpdate = true;
@@ -96,9 +166,16 @@ public class SceneStreamer : MonoBehaviour
             var targetScenes = new HashSet<string>(alwaysLoadedScenes);
             foreach (var zone in activeZones)
             {
+                if (zone == null) continue;
                 var scenes = zone.Scenes;
                 for (int i = 0; i < scenes.Count; i++)
                     targetScenes.Add(scenes[i]);
+            }
+
+            foreach (var kvp in pinnedSceneCounts)
+            {
+                if (kvp.Value > 0 && !string.IsNullOrEmpty(kvp.Key))
+                    targetScenes.Add(kvp.Key);
             }
 
             foreach (var sceneName in targetScenes)
