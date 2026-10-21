@@ -1,0 +1,19 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Unity Shader Graph assets MUST use LF line endings (MultiJson parser requirement)
+*.shadergraph text eol=lf
+*.shadersubgraph text eol=lf
+
+# Code and shaders
+*.cs diff=csharp text eol=lf
+*.hlsl text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
+
+# Unity YAML assets
+*.unity text eol=lf
+*.prefab text eol=lf
+*.asset text eol=lf
+*.mat text eol=lf
+*.meta text eol=lf

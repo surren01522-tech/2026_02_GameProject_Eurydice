@@ -55,12 +55,8 @@
                              "m_Id":  "cb2bf29fdf06d0e58052d4d42f51de70"
                          }
                      ],
-    "m_Keywords":  [
-
-                   ],
-    "m_Dropdowns":  [
-
-                    ],
+    "m_Keywords":  [],
+    "m_Dropdowns":  [],
     "m_CategoryData":  [
                            {
                                "m_Id":  "2e6e2dc31afc5ff37cd0696f357d6775"
@@ -184,9 +180,7 @@
                              "m_Id":  "8d603fc233fda9b1b8903e3dff502e1c"
                          }
                      ],
-    "m_StickyNoteDatas":  [
-
-                          ],
+    "m_StickyNoteDatas":  [],
     "m_Edges":  [
                     {
                         "m_OutputSlot":  {
@@ -656,9 +650,7 @@
     "m_OutputNode":  {
                          "m_Id":  ""
                      },
-    "m_SubDatas":  [
-
-                   ],
+    "m_SubDatas":  [],
     "m_ActiveTargets":  [
                             {
                                 "m_Id":  "406591322fe69545999e0b1ad7d69a99"
@@ -689,17 +681,13 @@
                         "m_Id":  "b1ac01af176f2473fd50e40ba2857b78"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "8ede58111e015c7bce0dd6ffd3553677"
@@ -728,9 +716,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -757,9 +743,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  {
                     "m_SerializedTexture":  "{\"texture\":{\"instanceID\":0}}",
                     "m_Guid":  ""
@@ -794,9 +778,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -811,9 +793,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -829,9 +809,7 @@
     "m_StageCapability":  2,
     "m_Value":  1,
     "m_DefaultValue":  1,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -859,9 +837,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  {
                     "r":  0.12,
                     "g":  0.24,
@@ -890,9 +866,7 @@
                            "x":  0,
                            "y":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -907,9 +881,7 @@
     "m_StageCapability":  3,
     "m_Value":  0.004,
     "m_DefaultValue":  0.004,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -933,9 +905,7 @@
                            "y":  0,
                            "z":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -961,17 +931,13 @@
                         "m_Id":  "04d6aee6523cfb64e2cc40888da93c61"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "3f61520ced23a4a9c843694d11cc5cce"
@@ -1001,17 +967,13 @@
                         "m_Id":  "5496b3753816cae0d2eca7c2fe61f58d"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "31e5bbec5ee06f405bff38d851628035"
@@ -1030,9 +992,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1058,9 +1018,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -1075,9 +1033,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1099,9 +1055,7 @@
                            "x":  0,
                            "y":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -1128,9 +1082,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  0,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -1162,9 +1114,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1191,17 +1141,13 @@
                         "m_Id":  "14bd5537e73d99bb89265538b836f78e"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "2c958612d5a5b5b558eb0dc4ff621a20"
@@ -1246,9 +1192,7 @@
                            "y":  0.5,
                            "z":  0.5
                        },
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_ColorMode":  0,
     "m_DefaultColor":  {
                            "r":  0.5,
@@ -1281,17 +1225,13 @@
                         "m_Id":  "62b7afc0d91f43bbc81e0d98adddc555"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "dc81e29954ed447d3c7b53df9c0d1fb3"
@@ -1310,9 +1250,7 @@
     "m_StageCapability":  3,
     "m_Value":  0.14,
     "m_DefaultValue":  0.14,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1328,9 +1266,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1357,17 +1293,13 @@
                         "m_Id":  "cb1a77a91ba68fb8c8dd48a600bb9a16"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "7de392081b2badb2c32419f5bf6ac210"
@@ -1394,9 +1326,7 @@
                            "y":  0,
                            "z":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -1421,9 +1351,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -1450,9 +1378,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  {
                     "r":  0.35,
                     "g":  1.7,
@@ -1487,9 +1413,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  1.05,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -1572,9 +1496,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  true,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  0,
     "m_FloatType":  0,
     "m_LiteralFloatMode":  false,
@@ -1625,9 +1547,7 @@
                            "x":  0,
                            "y":  0
                        },
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_Channel":  0
 }
 
@@ -1643,9 +1563,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1661,9 +1579,7 @@
     "m_StageCapability":  3,
     "m_Value":  4,
     "m_DefaultValue":  4,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1690,17 +1606,13 @@
                         "m_Id":  "2060abdb01962c1a3e4bc1147aab52b9"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SerializedDescriptor":  "SurfaceDescription.BaseColor"
 }
@@ -1727,9 +1639,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -1769,9 +1679,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  {
                     "r":  0.15,
                     "g":  0.55,
@@ -1786,9 +1694,7 @@
     "m_SGVersion":  1,
     "m_Type":  "UnityEditor.Rendering.Universal.ShaderGraph.UniversalTarget",
     "m_ObjectId":  "406591322fe69545999e0b1ad7d69a99",
-    "m_Datas":  [
-
-                ],
+    "m_Datas":  [],
     "m_ActiveSubTarget":  {
                               "m_Id":  "652233d364d794a44e8ca312cd1ba311"
                           },
@@ -1822,9 +1728,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -1851,17 +1755,13 @@
                         "m_Id":  "3e058396502f3ca9be1c1fb2b8ea5ad2"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "02c84a436d34f7b02c0f54cdf5357e19"
@@ -1903,9 +1803,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  4,
     "m_FloatType":  0,
     "m_LiteralFloatMode":  false,
@@ -1947,9 +1845,7 @@
                            "z":  1,
                            "w":  1
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -1993,17 +1889,13 @@
                         "m_Id":  "da467563ab360fbb450c1edb7e69f06e"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SerializedDescriptor":  "SurfaceDescription.AlphaClipThreshold"
 }
@@ -2020,9 +1912,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2038,9 +1928,7 @@
     "m_StageCapability":  3,
     "m_Value":  1.2,
     "m_DefaultValue":  1.2,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2056,9 +1944,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2089,9 +1975,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2184,9 +2068,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SourceType":  0,
     "m_FunctionName":  "EvaluatePortalShapeAndLens",
@@ -2217,9 +2099,7 @@
                            "z":  0.38,
                            "w":  1
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -2272,9 +2152,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  2,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Space":  2,
     "m_PositionSource":  0
@@ -2302,9 +2180,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -2330,17 +2206,13 @@
                         "m_Id":  "1e0e8be7f0d40f409c45cfd93cd4fb09"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "43e6d69dc9f4533e6d632733daf91c1d"
@@ -2359,9 +2231,7 @@
     "m_StageCapability":  3,
     "m_Value":  1.05,
     "m_DefaultValue":  1.05,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2409,9 +2279,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  2,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Space":  2
 }
@@ -2428,9 +2296,7 @@
     "m_StageCapability":  3,
     "m_Value":  3,
     "m_DefaultValue":  3,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2446,9 +2312,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2472,9 +2336,7 @@
                            "y":  0,
                            "z":  1
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -2499,9 +2361,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -2549,9 +2409,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2579,9 +2437,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  1,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -2625,9 +2481,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  0.07,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -2670,9 +2524,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2688,9 +2540,7 @@
     "m_StageCapability":  3,
     "m_Value":  2,
     "m_DefaultValue":  2,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2706,9 +2556,7 @@
     "m_StageCapability":  3,
     "m_Value":  0.55,
     "m_DefaultValue":  0.55,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2724,9 +2572,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2765,9 +2611,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  1.2,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -2839,9 +2683,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_TextureType":  0,
     "m_NormalMapSpace":  0,
@@ -2871,9 +2713,7 @@
                            "z":  1.2,
                            "w":  1
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -2888,9 +2728,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2906,9 +2744,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2924,9 +2760,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -2954,9 +2788,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  0.55,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -2996,9 +2828,7 @@
                            "y":  0,
                            "z":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -3023,9 +2853,7 @@
                            "z":  2.4,
                            "w":  1
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -3040,9 +2868,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3069,17 +2895,13 @@
                         "m_Id":  "8c9329576b298085ebcd9021f75841dd"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "df205592a1356167b9ba90355e3a63f7"
@@ -3098,9 +2920,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3127,17 +2947,13 @@
                         "m_Id":  "fc054033c9c9fe85d6f314116ec018ba"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "0793a5010d3a94ac8030893bdebbb93a"
@@ -3167,17 +2983,13 @@
                         "m_Id":  "3af7bd423c79d5142540912e539ac523"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  false,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_ScreenSpaceType":  0
 }
@@ -3202,9 +3014,7 @@
                            "y":  0,
                            "z":  0
                        },
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_Space":  0
 }
 
@@ -3231,17 +3041,13 @@
                         "m_Id":  "e1c5305384a601c01c660b0c4be39894"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "99337d25227cb38ed17e47b8a467ca0e"
@@ -3260,9 +3066,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3286,9 +3090,7 @@
                            "y":  0,
                            "z":  0
                        },
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_Space":  0
 }
 
@@ -3304,9 +3106,7 @@
     "m_StageCapability":  3,
     "m_Value":  0.07,
     "m_DefaultValue":  0.07,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3362,9 +3162,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_TextureType":  0,
     "m_NormalMapSpace":  0,
@@ -3384,9 +3182,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3413,17 +3209,13 @@
                         "m_Id":  "cefdcbb835ee4ebd9cdc81b3dfdf0c3b"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "7c401756c4a299265633d93b3e8bd51e"
@@ -3463,9 +3255,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -3480,9 +3270,7 @@
     "m_StageCapability":  3,
     "m_Value":  1,
     "m_DefaultValue":  1,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3510,9 +3298,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  {
                     "m_SerializedTexture":  "{\"texture\":{\"instanceID\":0}}",
                     "m_Guid":  ""
@@ -3548,17 +3334,13 @@
                         "m_Id":  "d0fdf8783a3b734d426045baa0418e46"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SerializedDescriptor":  "VertexDescription.Position"
 }
@@ -3575,9 +3357,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3593,9 +3373,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3623,9 +3401,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  2,
     "m_FloatType":  0,
     "m_LiteralFloatMode":  false,
@@ -3657,9 +3433,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3681,9 +3455,7 @@
                            "x":  0,
                            "y":  0
                        },
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_Channel":  0
 }
 
@@ -3707,9 +3479,7 @@
                            "y":  0,
                            "z":  0
                        },
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_Space":  0
 }
 
@@ -3725,9 +3495,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3743,9 +3511,7 @@
     "m_StageCapability":  2,
     "m_Value":  0.5,
     "m_DefaultValue":  0.5,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -3808,9 +3574,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SourceType":  0,
     "m_FunctionName":  "ComposePortalColor",
@@ -3850,9 +3614,7 @@
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_OutputChannel":  0
 }
@@ -3881,9 +3643,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  0.004,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -3927,9 +3687,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  3,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -3972,17 +3730,13 @@
                         "m_Id":  "51f9540bfa6241be021afb4bca644237"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "e53d8ee5702a18816c729c5f7e13c5ac"
@@ -4001,9 +3755,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -4019,9 +3771,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -4048,17 +3798,13 @@
                         "m_Id":  "6d828aef6411b40de92832723f6a8328"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "c3d9a1798da65d8d8d5b43a969edd16d"
@@ -4089,9 +3835,7 @@
     "hlslDeclarationOverride":  0,
     "m_Hidden":  false,
     "m_PerRendererData":  false,
-    "m_customAttributes":  [
-
-                           ],
+    "m_customAttributes":  [],
     "m_Value":  0.14,
     "m_FloatType":  1,
     "m_LiteralFloatMode":  false,
@@ -4134,17 +3878,13 @@
                         "m_Id":  "373a3fab5628066ab19fe1f9140441fc"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "181ea59136c8212887c08c03a3a74d7d"
@@ -4163,9 +3903,7 @@
     "m_StageCapability":  2,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -4181,9 +3919,7 @@
     "m_StageCapability":  3,
     "m_Value":  0,
     "m_DefaultValue":  0,
-    "m_Labels":  [
-
-                 ],
+    "m_Labels":  [],
     "m_LiteralMode":  false
 }
 
@@ -4210,17 +3946,13 @@
                         "m_Id":  "0621df3ac27c278c4340b1d1227c0087"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SerializedDescriptor":  "SurfaceDescription.Alpha"
 }
@@ -4248,17 +3980,13 @@
                         "m_Id":  "7be3fc3f38ea6aca629b091c4f6d2627"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "2d06f7733a76627e7418cb08b31a8527"
@@ -4288,17 +4016,13 @@
                         "m_Id":  "b204deceecf544aaf4bb837e1e933221"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SerializedDescriptor":  "VertexDescription.Normal"
 }
@@ -4326,17 +4050,13 @@
                         "m_Id":  "410f91ecb2e6e8cd0cb482858288b2ea"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_Property":  {
                        "m_Id":  "cb2bf29fdf06d0e58052d4d42f51de70"
@@ -4363,9 +4083,7 @@
                            "y":  0,
                            "z":  1
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -4390,9 +4108,7 @@
                            "z":  0,
                            "w":  0
                        },
-    "m_Labels":  [
-
-                 ]
+    "m_Labels":  []
 }
 
 {
@@ -4418,17 +4134,13 @@
                         "m_Id":  "ae9bbab3483ae912da0003e71609619f"
                     }
                 ],
-    "synonyms":  [
-
-                 ],
+    "synonyms":  [],
     "m_Precision":  0,
     "m_PreviewExpanded":  true,
     "m_DismissedVersion":  0,
     "m_PreviewMode":  0,
     "m_CustomColors":  {
-                           "m_SerializableColors":  [
-
-                                                    ]
+                           "m_SerializableColors":  []
                        },
     "m_SerializedDescriptor":  "VertexDescription.Tangent"
 }
