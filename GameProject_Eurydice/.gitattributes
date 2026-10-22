@@ -5,15 +5,61 @@
 *.shadergraph text eol=lf
 *.shadersubgraph text eol=lf
 
-# Code and shaders
+# Code and Shaders (Modern compilers & IDEs prefer LF, prevents noisy git diffs)
 *.cs diff=csharp text eol=lf
 *.hlsl text eol=lf
 *.shader text eol=lf
 *.cginc text eol=lf
 
-# Unity YAML assets
+# Unity YAML assets (Always LF to prevent git merge conflicts)
 *.unity text eol=lf
 *.prefab text eol=lf
 *.asset text eol=lf
 *.mat text eol=lf
 *.meta text eol=lf
+*.anim text eol=lf
+*.controller text eol=lf
+*.overrideController text eol=lf
+*.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
+*.guiskin text eol=lf
+*.mask text eol=lf
+*.playable text eol=lf
+
+# Explicitly protect 3D models, textures, audio, and binary files
+*.fbx binary
+*.obj binary
+*.blend binary
+*.dae binary
+*.3ds binary
+*.max binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tga binary
+*.psd binary
+*.tif binary
+*.tiff binary
+*.exr binary
+*.hdr binary
+*.renderTexture binary
+*.cubemap binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.aif binary
+*.aiff binary
+*.ttf binary
+*.otf binary
+*.fon binary
+*.fnt binary
+*.dll binary
+*.so binary
+*.bundle binary
+*.dylib binary
+*.aar binary
+*.jar binary
+*.unitypackage binary
+*.zip binary
+*.7z binary
+*.rar binary
