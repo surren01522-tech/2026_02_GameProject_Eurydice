@@ -165,6 +165,8 @@ public class UIWindowManager : MonoBehaviour
             return;
         }
 
+        if (GameStateManager.IsMainMenuActive) return;
+
         openedViaEscape = true;
         if (buttonContainer != null) buttonContainer.SetActive(false);
         OpenTab(WindowTab.Setting);
@@ -232,11 +234,12 @@ public class UIWindowManager : MonoBehaviour
     {
         if (hudCanvasGroup == null) return;
 
+        bool isMainMenu = GameStateManager.IsMainMenuActive;
         bool isAltMode = (mode == InputMode.HUDOverlay);
         bool isSelection = InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode;
         bool isPuzzle = GameStateManager.IsPuzzleActive;
 
-        bool showButtons = isAltMode || (mode == InputMode.UIModal && !openedViaEscape && !isSelection && !isPuzzle);
+        bool showButtons = !isMainMenu && (isAltMode || (mode == InputMode.UIModal && !openedViaEscape && !isSelection && !isPuzzle));
         if (buttonContainer != null)
         {
             buttonContainer.SetActive(showButtons);

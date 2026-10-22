@@ -11,6 +11,8 @@ public static class SaveManager
 
     private static SaveData currentSaveData;
 
+    public static bool HasSaveData() => File.Exists(SaveDataPath);
+
     public static void SaveSettings(GameSettingsData data)
     {
         try

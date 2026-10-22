@@ -7,7 +7,8 @@ public enum InputMode
     GamePlay,
     HUDOverlay,
     UIModal,
-    Puzzle
+    Puzzle,
+    MainMenu
 }
 
 public class GameStateManager : MonoBehaviour
@@ -18,6 +19,7 @@ public class GameStateManager : MonoBehaviour
     public static bool IsAltHeld { get; private set; }
     public static bool HasActiveModal { get; private set; }
     public static bool IsPuzzleActive { get; private set; }
+    public static bool IsMainMenuActive { get; private set; }
 
     public static bool IsGamePlaying => CurrentInputMode == InputMode.GamePlay;
 
@@ -40,6 +42,7 @@ public class GameStateManager : MonoBehaviour
         IsAltHeld = false;
         HasActiveModal = false;
         IsPuzzleActive = false;
+        IsMainMenuActive = false;
         CurrentInputMode = InputMode.GamePlay;
         ApplyCursorState(InputMode.GamePlay);
         OnInputModeChanged?.Invoke(CurrentInputMode);
@@ -48,6 +51,13 @@ public class GameStateManager : MonoBehaviour
     private void Awake()
     {
         ResetState();
+    }
+
+    public static void SetMainMenuActive(bool active)
+    {
+        if (IsMainMenuActive == active) return;
+        IsMainMenuActive = active;
+        RefreshInputMode();
     }
 
     public static void SetAltHeld(bool isHeld)
@@ -77,6 +87,10 @@ public class GameStateManager : MonoBehaviour
         if (HasActiveModal)
         {
             newMode = InputMode.UIModal;
+        }
+        else if (IsMainMenuActive)
+        {
+            newMode = InputMode.MainMenu;
         }
         else if (IsPuzzleActive)
         {
