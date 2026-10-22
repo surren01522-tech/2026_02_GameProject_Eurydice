@@ -868,7 +868,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 797973106}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!84 &987486072
+--- !u!84 &810217064
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1129,7 +1129,7 @@ Transform:
   m_GameObject: {fileID: 996426917}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.7, y: -0.23, z: 1.62}
+  m_LocalPosition: {x: 22.35, y: -0.71, z: 1.62}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3139,7 +3139,7 @@ PrefabInstance:
     - target: {fileID: 6385616490527466911, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 987486072}
+      objectReference: {fileID: 810217064}
     - target: {fileID: 9085568319551039248, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
       propertyPath: m_Name
       value: WaterShader_Group
