@@ -19,6 +19,7 @@ public class PlayerWaterParticle : MonoBehaviour
         ParticleCam.transform.position = transform.position + Vector3.up * 10;
 
         Shader.SetGlobalVector("_Player", transform.position);
+        Shader.SetGlobalVector("_PlayerPosV4", new Vector4(this.transform.position.x, this.transform.position.y,this.transform.position.z,this.transform.localScale.x));
     }
 
 
