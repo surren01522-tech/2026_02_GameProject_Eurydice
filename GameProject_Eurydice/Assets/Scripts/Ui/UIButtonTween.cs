@@ -5,19 +5,24 @@ using DG.Tweening;
 
 public class UIButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
+    [Header("버튼 연출")]
     [SerializeField] private float hoverScale = 1.05f;
     [SerializeField] private float pressScale = 0.95f;
     [SerializeField] private float duration = 0.15f;
+    [SerializeField] private Ease hoverEase = Ease.OutBack;
+    [SerializeField] private Ease pressEase = Ease.OutQuad;
+    [SerializeField] private Ease releaseEase = Ease.OutBack;
 
     private Selectable selectable;
     private Vector3 defaultScale;
     private Tween scaleTween;
     private bool isHovered;
 
-    public static void Bind(Selectable target)
+    public static UIButtonTween Bind(Selectable target)
     {
-        if (target != null && target.GetComponent<UIButtonTween>() == null)
-            target.gameObject.AddComponent<UIButtonTween>();
+        if (target == null) return null;
+        var comp = target.GetComponent<UIButtonTween>();
+        return comp != null ? comp : target.gameObject.AddComponent<UIButtonTween>();
     }
 
     private void Awake()
@@ -37,7 +42,7 @@ public class UIButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (selectable != null && !selectable.interactable) return;
         isHovered = true;
-        AnimateScale(defaultScale * hoverScale, Ease.OutBack);
+        AnimateScale(defaultScale * hoverScale, hoverEase);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -49,13 +54,13 @@ public class UIButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerDown(PointerEventData eventData)
     {
         if (selectable != null && !selectable.interactable) return;
-        AnimateScale(defaultScale * pressScale, Ease.OutQuad, duration * 0.6f);
+        AnimateScale(defaultScale * pressScale, pressEase, duration * 0.6f);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         if (selectable != null && !selectable.interactable) return;
-        AnimateScale(isHovered ? defaultScale * hoverScale : defaultScale, Ease.OutBack);
+        AnimateScale(isHovered ? defaultScale * hoverScale : defaultScale, releaseEase);
     }
 
     private void AnimateScale(Vector3 target, Ease ease, float customDuration = -1f)

@@ -25,7 +25,6 @@ public class AchievementNoticeUIManager : MonoBehaviour
     [SerializeField] private AudioClip unlockSound;
 
     private RectTransform rectTransform;
-    private Vector2 baseAnchoredPosition;
     private readonly Queue<AchievementData> pendingQueue = new();
     private Coroutine displayCoroutine;
     private Sequence activeSeq;
@@ -36,10 +35,7 @@ public class AchievementNoticeUIManager : MonoBehaviour
         else { Destroy(gameObject); return; }
 
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
-        rectTransform = canvasGroup.transform as RectTransform;
-
-        if (rectTransform != null)
-            baseAnchoredPosition = rectTransform.anchoredPosition;
+        rectTransform = canvasGroup != null ? canvasGroup.transform as RectTransform : null;
 
         HideImmediate();
     }
@@ -90,33 +86,14 @@ public class AchievementNoticeUIManager : MonoBehaviour
 
     private IEnumerator CoShowSingle()
     {
+        if (canvasGroup == null) yield break;
+
         activeSeq?.Kill();
-        canvasGroup.gameObject.SetActive(true);
-        canvasGroup.alpha = 0f;
-
-        if (rectTransform != null)
-            rectTransform.anchoredPosition = baseAnchoredPosition + slideOffset;
-
-        activeSeq = DOTween.Sequence()
-            .Append(canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.OutCubic))
-            .AppendInterval(displayDuration)
-            .Append(canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InCubic))
-            .SetUpdate(true)
-            .SetLink(gameObject);
-
-        if (rectTransform != null)
-        {
-            activeSeq.Insert(0f, rectTransform.DOAnchorPos(baseAnchoredPosition, fadeDuration).SetEase(Ease.OutBack));
-            activeSeq.Insert(fadeDuration + displayDuration, rectTransform.DOAnchorPos(baseAnchoredPosition + slideOffset, fadeDuration).SetEase(Ease.InCubic));
-        }
+        activeSeq = canvasGroup.PlayNoticeSequence(displayDuration, rectTransform, slideOffset, fadeDuration);
 
         yield return activeSeq.WaitForCompletion();
-        HideImmediate();
     }
 
-    /// <summary>
-    /// 업적 데이터를 UI 요소들에 바인딩합니다.
-    /// </summary>
     private void ApplyData(AchievementData data)
     {
         if (iconImage != null)
@@ -149,8 +126,5 @@ public class AchievementNoticeUIManager : MonoBehaviour
             canvasGroup.alpha = 0f;
             canvasGroup.gameObject.SetActive(false);
         }
-
-        if (rectTransform != null)
-            rectTransform.anchoredPosition = baseAnchoredPosition;
     }
 }

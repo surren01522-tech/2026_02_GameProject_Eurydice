@@ -1,6 +1,6 @@
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using DG.Tweening;
 
 public enum TriggerUIMode
 {
@@ -26,13 +26,20 @@ public class TextObject : MonoBehaviour
     [SerializeField] private bool hideOnExit = false;
 
     private readonly List<CanvasGroup> targetCanvasGroups = new List<CanvasGroup>();
-    private Coroutine fadeCoroutine;
     private bool hasTriggered;
 
     private void Awake()
     {
         GetComponent<Collider>().isTrigger = true;
         InitTargetCanvasGroups();
+    }
+
+    private void OnDisable()
+    {
+        for (int i = 0; i < targetCanvasGroups.Count; i++)
+        {
+            if (targetCanvasGroups[i] != null) targetCanvasGroups[i].DOKill();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -77,7 +84,7 @@ public class TextObject : MonoBehaviour
             if (obj == null) continue;
 
             var cg = obj.GetComponent<CanvasGroup>();
-            if (cg == null) cg = obj.AddComponent<CanvasGroup>();
+            if (cg == null) continue;
 
             cg.alpha = 0f;
             obj.SetActive(false);
@@ -87,52 +94,25 @@ public class TextObject : MonoBehaviour
 
     private void StartFade(float targetAlpha)
     {
-        if (targetCanvasGroups.Count == 0) return;
-
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(CoFade(targetAlpha));
-    }
-
-    private IEnumerator CoFade(float targetAlpha)
-    {
-        if (targetAlpha > 0f)
-        {
-            for (int i = 0; i < targetCanvasGroups.Count; i++)
-            {
-                if (targetCanvasGroups[i] != null)
-                    targetCanvasGroups[i].gameObject.SetActive(true);
-            }
-        }
-
-        float startAlpha = targetCanvasGroups.Count > 0 && targetCanvasGroups[0] != null ? targetCanvasGroups[0].alpha : 0f;
-        float elapsed = 0f;
-        float duration = fadeDuration > 0f ? fadeDuration : 0.01f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            float currentAlpha = Mathf.Lerp(startAlpha, targetAlpha, t);
-
-            for (int i = 0; i < targetCanvasGroups.Count; i++)
-            {
-                if (targetCanvasGroups[i] != null)
-                    targetCanvasGroups[i].alpha = currentAlpha;
-            }
-
-            yield return null;
-        }
+        float dur = fadeDuration > 0f ? fadeDuration : 0.01f;
 
         for (int i = 0; i < targetCanvasGroups.Count; i++)
         {
-            if (targetCanvasGroups[i] == null) continue;
-            targetCanvasGroups[i].alpha = targetAlpha;
+            var cg = targetCanvasGroups[i];
+            if (cg == null) continue;
 
-            if (targetAlpha <= 0f)
-                targetCanvasGroups[i].gameObject.SetActive(false);
+            cg.DOKill();
+            if (targetAlpha > 0f) cg.gameObject.SetActive(true);
+
+            cg.DOFade(targetAlpha, dur)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true)
+                .SetLink(cg.gameObject)
+                .OnComplete(() =>
+                {
+                    if (targetAlpha <= 0f) cg.gameObject.SetActive(false);
+                });
         }
-
-        fadeCoroutine = null;
     }
 
     private bool IsPlayer(Collider other)

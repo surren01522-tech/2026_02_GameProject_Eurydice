@@ -195,12 +195,7 @@ public class SettingUIManager : MonoBehaviour
         GameObject targetPanel = menuList[index].panel;
         if (targetPanel != null)
         {
-            targetPanel.transform.DOKill();
-            targetPanel.transform.localScale = Vector3.one * 0.96f;
-            targetPanel.transform.DOScale(1f, 0.2f)
-                .SetEase(Ease.OutCubic)
-                .SetUpdate(true)
-                .SetLink(targetPanel);
+            targetPanel.transform.PlayPopIn(0.2f, 0.96f, Ease.OutCubic);
 
             Selectable firstSelectable = targetPanel.GetComponentInChildren<Selectable>();
             if (firstSelectable != null)
@@ -234,20 +229,16 @@ public class SettingUIManager : MonoBehaviour
         if (settingPanel == null) return;
 
         CanvasGroup cg = settingPanel.GetComponent<CanvasGroup>();
-        bool addedCg = false;
-        if (cg == null)
+        float prevAlpha = cg != null ? cg.alpha : 1f;
+        bool prevInteractable = cg != null && cg.interactable;
+        bool prevBlocksRaycasts = cg != null && cg.blocksRaycasts;
+
+        if (cg != null)
         {
-            cg = settingPanel.AddComponent<CanvasGroup>();
-            addedCg = true;
+            cg.alpha = 0f;
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
         }
-
-        float prevAlpha = cg.alpha;
-        bool prevInteractable = cg.interactable;
-        bool prevBlocksRaycasts = cg.blocksRaycasts;
-
-        cg.alpha = 0f;
-        cg.interactable = false;
-        cg.blocksRaycasts = false;
 
         settingPanel.SetActive(true);
         for (int i = 0; i < menuList.Count; i++)
@@ -272,13 +263,11 @@ public class SettingUIManager : MonoBehaviour
         HideAllSubPanels();
         settingPanel.SetActive(false);
 
-        cg.alpha = prevAlpha;
-        cg.interactable = prevInteractable;
-        cg.blocksRaycasts = prevBlocksRaycasts;
-
-        if (addedCg && settingPanel.GetComponent<IUIPanelTransition>() == null)
+        if (cg != null)
         {
-            Destroy(cg);
+            cg.alpha = prevAlpha;
+            cg.interactable = prevInteractable;
+            cg.blocksRaycasts = prevBlocksRaycasts;
         }
     }
 

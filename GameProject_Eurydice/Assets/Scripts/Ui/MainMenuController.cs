@@ -15,6 +15,12 @@ public class MainMenuController : MonoBehaviour
     [Tooltip("새 게임 시 플레이어가 배치될 시작 위치")]
     [SerializeField] private Transform initialSpawnPoint;
 
+    [Header("에디터 설정")]
+    [Tooltip("게임 시작 시 메인 메뉴를 자동으로 띄울지 여부")]
+    [SerializeField] private bool autoShowOnStart = true;
+    [Tooltip("에디터 플레이 시 메인 메뉴를 스킵하고 현재 위치에서 바로 플레이할지 여부")]
+    [SerializeField] private bool bypassInEditor = true;
+
     [Header("메인 메뉴 UI")]
     [SerializeField] private CanvasGroup menuCanvasGroup;
     [SerializeField] private Button startButton;
@@ -22,6 +28,8 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button settingButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private float fadeDuration = 0.3f;
+
+    public static bool HasGameStarted { get; set; } = false;
 
     private bool isTransitioning;
     private CinemachineSplineDolly splineDolly;
@@ -47,9 +55,38 @@ public class MainMenuController : MonoBehaviour
 
     private void Start()
     {
+        bool shouldBypass = (Application.isEditor && bypassInEditor) || HasGameStarted || !autoShowOnStart;
+        if (shouldBypass)
+        {
+            BypassMainMenu();
+            return;
+        }
+
         GameStateManager.SetMainMenuActive(true);
         if (continueButton != null)
             continueButton.interactable = SaveManager.HasSaveData();
+    }
+
+    private void BypassMainMenu()
+    {
+        if (menuCanvasGroup != null)
+        {
+            menuCanvasGroup.alpha = 0f;
+            menuCanvasGroup.interactable = false;
+            menuCanvasGroup.blocksRaycasts = false;
+            menuCanvasGroup.gameObject.SetActive(false);
+        }
+
+        if (splineDolly != null)
+            splineDolly.enabled = false;
+
+        if (titleCamera != null)
+        {
+            titleCamera.Priority.Value = 0;
+            titleCamera.gameObject.SetActive(false);
+        }
+
+        GameStateManager.SetMainMenuActive(false);
     }
 
     private void FindReferences()
@@ -155,6 +192,7 @@ public class MainMenuController : MonoBehaviour
         if (titleCamera != null)
             titleCamera.gameObject.SetActive(false);
 
+        HasGameStarted = true;
         GameStateManager.SetMainMenuActive(false);
         isTransitioning = false;
     }

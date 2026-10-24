@@ -2,25 +2,21 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 
-/// <summary>
-/// Sky/Journey 스타일의 소프트 드리프트 & 페이드 UI 패널 트랜지션 컴포넌트
-/// </summary>
 [RequireComponent(typeof(RectTransform))]
 public class UIPanelTween : MonoBehaviour, IUIPanelTransition
 {
-    [Header("재생 시간")]
+    [Header("컴포넌트 바인딩")]
+    [SerializeField] private CanvasGroup canvasGroup;
+
+    [Header("트랜지션 연출")]
     [SerializeField] private float openDuration = 0.35f;
     [SerializeField] private float closeDuration = 0.2f;
-
-    [Header("드리프트 & 스케일")]
+    [SerializeField] private Ease openEase = Ease.OutCubic;
+    [SerializeField] private Ease closeEase = Ease.InCubic;
     [SerializeField] private float driftDistance = 35f;
     [SerializeField] private float startScaleRatio = 0.92f;
 
-    [Header("애니메이션 곡선")]
-    [SerializeField] private AnimationCurve motionCurve = new AnimationCurve(new Keyframe(0f, 0f, 2f, 2f), new Keyframe(1f, 1f, 0f, 0f));
-
     private RectTransform rectTransform;
-    private CanvasGroup canvasGroup;
     private Vector2 defaultAnchoredPos;
     private Vector3 defaultScale;
     private Sequence transitionSeq;
@@ -28,7 +24,8 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+
         defaultAnchoredPos = rectTransform.anchoredPosition;
         defaultScale = rectTransform.localScale;
     }
@@ -37,7 +34,7 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
     {
         transitionSeq?.Kill();
     }
-    
+
     public void PlayOpen(Vector3? originScreenPos = null, Action onComplete = null)
     {
         transitionSeq?.Kill();
@@ -46,14 +43,21 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
         Vector2 startOffset = CalculateStartOffset(originScreenPos);
         rectTransform.anchoredPosition = defaultAnchoredPos + startOffset;
         rectTransform.localScale = defaultScale * startScaleRatio;
-        canvasGroup.alpha = 0f;
-        canvasGroup.blocksRaycasts = false;
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.blocksRaycasts = false;
+        }
 
         transitionSeq = DOTween.Sequence()
-            .Join(rectTransform.DOAnchorPos(defaultAnchoredPos, openDuration).SetEase(motionCurve))
-            .Join(rectTransform.DOScale(defaultScale, openDuration).SetEase(motionCurve))
-            .Join(canvasGroup.DOFade(1f, openDuration).SetEase(motionCurve))
-            .SetUpdate(true)
+            .Join(rectTransform.DOAnchorPos(defaultAnchoredPos, openDuration).SetEase(openEase))
+            .Join(rectTransform.DOScale(defaultScale, openDuration).SetEase(openEase));
+
+        if (canvasGroup != null)
+            transitionSeq.Join(canvasGroup.DOFade(1f, openDuration).SetEase(openEase));
+
+        transitionSeq.SetUpdate(true)
             .SetLink(gameObject)
             .OnComplete(() =>
             {
@@ -61,7 +65,7 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
                 onComplete?.Invoke();
             });
     }
-    
+
     public void PlayClose(Vector3? targetScreenPos = null, Action onComplete = null)
     {
         transitionSeq?.Kill();
@@ -73,14 +77,19 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
             return;
         }
 
-        canvasGroup.blocksRaycasts = false;
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
+
         Vector2 targetOffset = CalculateStartOffset(targetScreenPos);
 
         transitionSeq = DOTween.Sequence()
-            .Join(rectTransform.DOAnchorPos(defaultAnchoredPos + targetOffset * 0.5f, closeDuration).SetEase(motionCurve))
-            .Join(rectTransform.DOScale(defaultScale * startScaleRatio, closeDuration).SetEase(motionCurve))
-            .Join(canvasGroup.DOFade(0f, closeDuration).SetEase(motionCurve))
-            .SetUpdate(true)
+            .Join(rectTransform.DOAnchorPos(defaultAnchoredPos + targetOffset * 0.5f, closeDuration).SetEase(closeEase))
+            .Join(rectTransform.DOScale(defaultScale * startScaleRatio, closeDuration).SetEase(closeEase));
+
+        if (canvasGroup != null)
+            transitionSeq.Join(canvasGroup.DOFade(0f, closeDuration).SetEase(closeEase));
+
+        transitionSeq.SetUpdate(true)
             .SetLink(gameObject)
             .OnComplete(() =>
             {
@@ -89,7 +98,7 @@ public class UIPanelTween : MonoBehaviour, IUIPanelTransition
                 onComplete?.Invoke();
             });
     }
-    
+
     public void StopImmediate()
     {
         transitionSeq?.Kill();

@@ -47,12 +47,7 @@ public class PuzzleUI : MonoBehaviour
         if (exitPanel != null)
         {
             exitPanel.SetActive(true);
-            exitPanel.transform.DOKill();
-            exitPanel.transform.localScale = Vector3.one * 0.85f;
-            exitPanel.transform.DOScale(1f, 0.2f)
-                .SetEase(Ease.OutBack)
-                .SetUpdate(true)
-                .SetLink(exitPanel);
+            exitPanel.transform.PlayPopIn(0.2f, 0.85f);
         }
     }
 

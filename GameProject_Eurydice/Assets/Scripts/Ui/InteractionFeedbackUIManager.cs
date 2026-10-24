@@ -50,28 +50,9 @@ public class InteractionFeedbackUIManager : MonoBehaviour
     {
         if (currentMode != FeedbackDisplayMode.Floating || floatingPanel == null || !floatingPanel.activeSelf) return;
 
-        if (floatingTarget == null)
-        {
-            floatingPanel.SetActive(false);
-            return;
-        }
-
-        if (mainCam == null) mainCam = Camera.main;
-        if (mainCam == null) return;
-
-        Vector3 worldPos = floatingTarget.position + floatingOffset;
-        Vector3 screenPos = mainCam.WorldToScreenPoint(worldPos);
-
-        if (screenPos.z > 0)
-        {
-            floatingPanel.transform.position = screenPos;
-        }
-        else
-        {
-            floatingPanel.SetActive(false);
-        }
+        UITweenExtensions.TryUpdateWorldToScreen(mainCam, floatingTarget, floatingOffset, floatingPanel);
     }
-    
+
     public void Show(string message, FeedbackDisplayMode mode = FeedbackDisplayMode.Fixed, Transform target = null, Vector3 worldOffset = default, float duration = 1.5f)
     {
         HideAll();
@@ -80,33 +61,27 @@ public class InteractionFeedbackUIManager : MonoBehaviour
         floatingTarget = target;
         floatingOffset = worldOffset == default ? defaultFloatingOffset : worldOffset;
 
-        GameObject activePanel = null;
-
         if (mode == FeedbackDisplayMode.Fixed)
         {
             if (fixedText != null) fixedText.text = message;
-            activePanel = fixedPanel;
+            if (fixedPanel != null)
+            {
+                fixedPanel.SetActive(true);
+                fixedPanel.transform.PlayPopIn(0.2f, 0.85f);
+            }
         }
         else if (mode == FeedbackDisplayMode.Floating)
         {
             if (floatingText != null) floatingText.text = message;
-            if (floatingPanel != null && target != null && mainCam != null)
-            {
-                Vector3 screenPos = mainCam.WorldToScreenPoint(target.position + floatingOffset);
-                if (screenPos.z > 0) floatingPanel.transform.position = screenPos;
-            }
-            activePanel = floatingPanel;
-        }
 
-        if (activePanel != null)
-        {
-            activePanel.SetActive(true);
-            activePanel.transform.DOKill();
-            activePanel.transform.localScale = Vector3.one * 0.85f;
-            activePanel.transform.DOScale(1f, 0.2f)
-                .SetEase(Ease.OutBack)
-                .SetUpdate(true)
-                .SetLink(activePanel);
+            if (floatingPanel != null && target != null)
+            {
+                if (UITweenExtensions.TryUpdateWorldToScreen(mainCam, target, floatingOffset, floatingPanel))
+                {
+                    floatingPanel.SetActive(true);
+                    floatingPanel.transform.PlayPopIn(0.2f, 0.85f);
+                }
+            }
         }
 
         dismissTween?.Kill();
@@ -116,16 +91,19 @@ public class InteractionFeedbackUIManager : MonoBehaviour
     public void HideAll()
     {
         dismissTween?.Kill();
+
         if (fixedPanel != null)
         {
             fixedPanel.transform.DOKill();
             fixedPanel.SetActive(false);
         }
+
         if (floatingPanel != null)
         {
             floatingPanel.transform.DOKill();
             floatingPanel.SetActive(false);
         }
+
         floatingTarget = null;
     }
 }

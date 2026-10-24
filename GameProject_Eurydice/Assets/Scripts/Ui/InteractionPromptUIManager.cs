@@ -19,7 +19,6 @@ public class InteractionPromptUIManager : MonoBehaviour
     [SerializeField] private string keyFormat = "[{key}]";
 
     private PlayerInteraction playerInteraction;
-
     private Camera mainCam;
     private IInteractable currentTarget;
 
@@ -46,44 +45,22 @@ public class InteractionPromptUIManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (currentTarget == null || currentTarget.DisplayMode != InteractionDisplayMode.Floating || floatingPanel == null) return;
+        if (currentTarget == null || currentTarget.DisplayMode != InteractionDisplayMode.Floating) return;
 
-        if (currentTarget is UnityEngine.Object uObj && uObj == null)
+        if (currentTarget is Object uObj && uObj == null)
         {
             currentTarget = null;
-            floatingPanel.SetActive(false);
+            if (floatingPanel != null) floatingPanel.SetActive(false);
             return;
         }
 
         if (!currentTarget.CanInteract)
         {
-            if (floatingPanel.activeSelf) floatingPanel.SetActive(false);
+            if (floatingPanel != null && floatingPanel.activeSelf) floatingPanel.SetActive(false);
             return;
         }
 
-        Transform targetTransform = currentTarget.TargetTransform;
-        if (targetTransform == null)
-        {
-            if (floatingPanel.activeSelf) floatingPanel.SetActive(false);
-            return;
-        }
-
-        if (mainCam == null) mainCam = Camera.main;
-        if (mainCam == null) return;
-
-        Vector3 worldPos = targetTransform.position + currentTarget.WorldOffset;
-        Vector3 screenPos = mainCam.WorldToScreenPoint(worldPos);
-
-        if (screenPos.z > 0)
-        {
-            floatingPanel.transform.position = screenPos;
-            if (!floatingPanel.activeSelf)
-                ShowPanelWithTween(floatingPanel);
-        }
-        else if (floatingPanel.activeSelf)
-        {
-            floatingPanel.SetActive(false);
-        }
+        UITweenExtensions.TryUpdateWorldToScreen(mainCam, currentTarget.TargetTransform, currentTarget.WorldOffset, floatingPanel);
     }
 
     private void UpdatePrompt(IInteractable target)
@@ -109,7 +86,10 @@ public class InteractionPromptUIManager : MonoBehaviour
             if (fixedDescriptionText != null) fixedDescriptionText.text = description;
 
             if (fixedPanel != null && (isNewTarget || !fixedPanel.activeSelf))
-                ShowPanelWithTween(fixedPanel);
+            {
+                fixedPanel.SetActive(true);
+                fixedPanel.transform.PlayPopIn(0.18f, 0.88f);
+            }
         }
         else if (target.DisplayMode == InteractionDisplayMode.Floating)
         {
@@ -118,21 +98,18 @@ public class InteractionPromptUIManager : MonoBehaviour
             if (floatingKeyText != null) floatingKeyText.text = formattedKey;
             if (floatingDescriptionText != null) floatingDescriptionText.text = description;
 
-            if (floatingPanel != null && (isNewTarget || !floatingPanel.activeSelf))
-                ShowPanelWithTween(floatingPanel);
+            if (floatingPanel != null)
+            {
+                if (UITweenExtensions.TryUpdateWorldToScreen(mainCam, target.TargetTransform, target.WorldOffset, floatingPanel))
+                {
+                    if (isNewTarget || !floatingPanel.activeSelf)
+                    {
+                        floatingPanel.SetActive(true);
+                        floatingPanel.transform.PlayPopIn(0.18f, 0.88f);
+                    }
+                }
+            }
         }
-    }
-
-    private void ShowPanelWithTween(GameObject panel)
-    {
-        if (panel == null) return;
-        panel.SetActive(true);
-        panel.transform.DOKill();
-        panel.transform.localScale = Vector3.one * 0.88f;
-        panel.transform.DOScale(1f, 0.18f)
-            .SetEase(Ease.OutBack)
-            .SetUpdate(true)
-            .SetLink(panel);
     }
 
     private void HideAll()
@@ -142,6 +119,7 @@ public class InteractionPromptUIManager : MonoBehaviour
             fixedPanel.transform.DOKill();
             fixedPanel.SetActive(false);
         }
+
         if (floatingPanel != null)
         {
             floatingPanel.transform.DOKill();

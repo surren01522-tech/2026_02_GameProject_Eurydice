@@ -109,12 +109,7 @@ public class SettingKeyRebindSlot : MonoBehaviour
 
         if (keyNameText != null)
         {
-            keyNameText.transform.DOKill();
-            keyNameText.transform.localScale = Vector3.one * 0.85f;
-            keyNameText.transform.DOScale(1f, 0.2f)
-                .SetEase(Ease.OutBack)
-                .SetUpdate(true)
-                .SetLink(keyNameText.gameObject);
+            keyNameText.transform.PlayPopIn(0.2f, 0.85f);
         }
     }
 

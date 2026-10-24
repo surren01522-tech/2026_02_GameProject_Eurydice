@@ -4465,6 +4465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingWindow
   settingPanel: {fileID: 3450581652466230357}
+  settingCanvasGroup: {fileID: 3696494908299601798}
   arrow: {fileID: 5316450103737045950}
   spacing: 2.25
   moveSpeed: 20
@@ -11970,6 +11971,7 @@ GameObject:
   - component: {fileID: 7038730663668386649}
   - component: {fileID: 7231908705024356255}
   - component: {fileID: 3959293714916686188}
+  - component: {fileID: 3696494908299601798}
   m_Layer: 5
   m_Name: Setting Panel
   m_TagString: Untagged
@@ -12075,6 +12077,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2496de1cbfc43b54ea5217d96750b2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIPanelTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
+  canvasGroup: {fileID: 3696494908299601798}
   openDuration: 0.3
   closeDuration: 0.2
   driftDistance: 35
@@ -12103,6 +12108,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!225 &3696494908299601798
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3450581652466230357}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3482824300632717797
 GameObject:
   m_ObjectHideFlags: 0
@@ -12983,6 +13000,7 @@ GameObject:
   - component: {fileID: 3949607587345473364}
   - component: {fileID: 7232189885520298771}
   - component: {fileID: 6485927691991060596}
+  - component: {fileID: 807009975241987235}
   m_Layer: 5
   m_Name: Inventory Panel
   m_TagString: Untagged
@@ -13081,6 +13099,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2496de1cbfc43b54ea5217d96750b2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIPanelTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
+  canvasGroup: {fileID: 807009975241987235}
   openDuration: 0.35
   closeDuration: 0.2
   driftDistance: 35
@@ -13109,6 +13130,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!225 &807009975241987235
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3841145289408265695}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3862182096533866867
 GameObject:
   m_ObjectHideFlags: 0
@@ -15591,6 +15624,7 @@ GameObject:
   - component: {fileID: 2760889609798314550}
   - component: {fileID: 8876198811910679723}
   - component: {fileID: 3525821256707128881}
+  - component: {fileID: 3409759220633253705}
   m_Layer: 5
   m_Name: Map Panel
   m_TagString: Untagged
@@ -15669,6 +15703,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2496de1cbfc43b54ea5217d96750b2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIPanelTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
+  canvasGroup: {fileID: 3409759220633253705}
   openDuration: 0.3
   closeDuration: 0.2
   driftDistance: 35
@@ -15697,6 +15734,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!225 &3409759220633253705
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4805211029673086554}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4885888306865879658
 GameObject:
   m_ObjectHideFlags: 0
@@ -19643,18 +19692,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6130746440536600768}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5992765436674475478}
-  m_Father: {fileID: 7796154008565783859}
+  m_Father: {fileID: 3714611026318423819}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &5526675981293166947
 CanvasGroup:
@@ -23447,6 +23496,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2446359724432432096}
   - {fileID: 9084919674823234678}
   - {fileID: 1408430306591878055}
   - {fileID: 7789727542895678169}
@@ -25306,7 +25356,6 @@ RectTransform:
   m_Children:
   - {fileID: 5000910460418252458}
   - {fileID: 5997785658953313902}
-  - {fileID: 2446359724432432096}
   - {fileID: 3714611026318423819}
   - {fileID: 3103734291006579718}
   - {fileID: 8540644887342669243}
@@ -27924,9 +27973,9 @@ MonoBehaviour:
   cinemachineBrain: {fileID: 0}
   titleCamera: {fileID: 0}
   titlePriority: 20
-  introCamera: {fileID: 0}
-  introHoldDuration: 1.5
   initialSpawnPoint: {fileID: 0}
+  autoShowOnStart: 1
+  bypassInEditor: 1
   menuCanvasGroup: {fileID: 1191968851443662069}
   startButton: {fileID: 4423969508322793477}
   continueButton: {fileID: 5229723700299212070}

@@ -12,9 +12,9 @@ public class TriggerNoticeUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI messageText;
 
     [Header("연출 설정")]
-    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float fadeDuration = 0.3f;
 
-    private Sequence noticeSeq;
+    private Tween noticeTween;
 
     private void Awake()
     {
@@ -23,16 +23,12 @@ public class TriggerNoticeUIManager : MonoBehaviour
 
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
 
-        if (canvasGroup != null)
-        {
-            canvasGroup.alpha = 0f;
-            canvasGroup.gameObject.SetActive(false);
-        }
+        Hide(immediate: true);
     }
 
     private void OnDisable()
     {
-        noticeSeq?.Kill();
+        noticeTween?.Kill();
     }
 
     private void OnDestroy()
@@ -42,8 +38,6 @@ public class TriggerNoticeUIManager : MonoBehaviour
 
     public void Show(string message, float duration = 3f, string title = null)
     {
-        if (canvasGroup == null) return;
-
         if (titleText != null)
         {
             titleText.gameObject.SetActive(!string.IsNullOrEmpty(title));
@@ -56,30 +50,18 @@ public class TriggerNoticeUIManager : MonoBehaviour
             messageText.text = message ?? string.Empty;
         }
 
-        noticeSeq?.Kill();
-        canvasGroup.gameObject.SetActive(true);
-        canvasGroup.transform.localScale = Vector3.one * 0.95f;
-        float dur = fadeDuration > 0f ? fadeDuration : 0.25f;
-
-        noticeSeq = DOTween.Sequence()
-            .Append(canvasGroup.DOFade(1f, dur).SetEase(Ease.OutQuad))
-            .Join(canvasGroup.transform.DOScale(1f, dur).SetEase(Ease.OutBack));
-
-        if (duration > 0f)
+        if (canvasGroup != null)
         {
-            noticeSeq.AppendInterval(duration)
-                .Append(canvasGroup.DOFade(0f, dur).SetEase(Ease.InQuad))
-                .OnComplete(() => canvasGroup.gameObject.SetActive(false));
+            noticeTween?.Kill();
+            noticeTween = canvasGroup.PlayNoticeSequence(duration, fadeDuration: fadeDuration);
         }
-
-        noticeSeq.SetLink(gameObject);
     }
-    
+
     public void Hide(bool immediate = false)
     {
-        if (canvasGroup == null) return;
+        noticeTween?.Kill();
 
-        noticeSeq?.Kill();
+        if (canvasGroup == null) return;
 
         if (immediate)
         {
@@ -88,11 +70,15 @@ public class TriggerNoticeUIManager : MonoBehaviour
         }
         else
         {
-            float dur = fadeDuration > 0f ? fadeDuration : 0.25f;
-            noticeSeq = DOTween.Sequence()
-                .Append(canvasGroup.DOFade(0f, dur).SetEase(Ease.InQuad))
-                .OnComplete(() => canvasGroup.gameObject.SetActive(false))
-                .SetLink(gameObject);
+            noticeTween = canvasGroup.DOFade(0f, fadeDuration)
+                .SetEase(Ease.InQuad)
+                .SetUpdate(true)
+                .SetLink(gameObject)
+                .OnComplete(() =>
+                {
+                    canvasGroup.alpha = 0f;
+                    canvasGroup.gameObject.SetActive(false);
+                });
         }
     }
 }

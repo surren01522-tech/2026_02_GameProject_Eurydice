@@ -58,12 +58,7 @@ public class SettingSelectorControl : MonoBehaviour
             valueText.text = options[CurrentIndex];
             if (notify && prevIdx != CurrentIndex)
             {
-                valueText.transform.DOKill();
-                valueText.transform.localScale = Vector3.one * 0.9f;
-                valueText.transform.DOScale(1f, 0.15f)
-                    .SetEase(Ease.OutBack)
-                    .SetUpdate(true)
-                    .SetLink(valueText.gameObject);
+                valueText.transform.PlayPopIn(0.15f, 0.9f);
             }
         }
 
