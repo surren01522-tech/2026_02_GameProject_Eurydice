@@ -1,6 +1,6 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public enum FeedbackDisplayMode
 {
@@ -22,7 +22,7 @@ public class InteractionFeedbackUIManager : MonoBehaviour
     [SerializeField] private Vector3 defaultFloatingOffset = new Vector3(0, 0.8f, 0);
 
     private Camera mainCam;
-    private Coroutine hideCoroutine;
+    private Tween dismissTween;
     private Transform floatingTarget;
     private Vector3 floatingOffset;
     private FeedbackDisplayMode currentMode;
@@ -34,6 +34,11 @@ public class InteractionFeedbackUIManager : MonoBehaviour
 
         mainCam = Camera.main;
         HideAll();
+    }
+
+    private void OnDisable()
+    {
+        dismissTween?.Kill();
     }
 
     private void OnDestroy()
@@ -66,10 +71,7 @@ public class InteractionFeedbackUIManager : MonoBehaviour
             floatingPanel.SetActive(false);
         }
     }
-
-    /// <summary>
-    /// 지정된 메시지와 모드로 피드백 알림을 표시합니다.
-    /// </summary>
+    
     public void Show(string message, FeedbackDisplayMode mode = FeedbackDisplayMode.Fixed, Transform target = null, Vector3 worldOffset = default, float duration = 1.5f)
     {
         HideAll();
@@ -78,40 +80,52 @@ public class InteractionFeedbackUIManager : MonoBehaviour
         floatingTarget = target;
         floatingOffset = worldOffset == default ? defaultFloatingOffset : worldOffset;
 
+        GameObject activePanel = null;
+
         if (mode == FeedbackDisplayMode.Fixed)
         {
             if (fixedText != null) fixedText.text = message;
-            if (fixedPanel != null) fixedPanel.SetActive(true);
+            activePanel = fixedPanel;
         }
         else if (mode == FeedbackDisplayMode.Floating)
         {
             if (floatingText != null) floatingText.text = message;
-            if (floatingPanel != null)
+            if (floatingPanel != null && target != null && mainCam != null)
             {
-                if (target != null && mainCam != null)
-                {
-                    Vector3 screenPos = mainCam.WorldToScreenPoint(target.position + floatingOffset);
-                    if (screenPos.z > 0) floatingPanel.transform.position = screenPos;
-                }
-                floatingPanel.SetActive(true);
+                Vector3 screenPos = mainCam.WorldToScreenPoint(target.position + floatingOffset);
+                if (screenPos.z > 0) floatingPanel.transform.position = screenPos;
             }
+            activePanel = floatingPanel;
         }
 
-        if (hideCoroutine != null) StopCoroutine(hideCoroutine);
-        hideCoroutine = StartCoroutine(CoAutoDismiss(duration));
-    }
+        if (activePanel != null)
+        {
+            activePanel.SetActive(true);
+            activePanel.transform.DOKill();
+            activePanel.transform.localScale = Vector3.one * 0.85f;
+            activePanel.transform.DOScale(1f, 0.2f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true)
+                .SetLink(activePanel);
+        }
 
-    private IEnumerator CoAutoDismiss(float delay)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        HideAll();
-        hideCoroutine = null;
+        dismissTween?.Kill();
+        dismissTween = DOVirtual.DelayedCall(duration, HideAll, ignoreTimeScale: true).SetLink(gameObject);
     }
 
     public void HideAll()
     {
-        if (fixedPanel != null) fixedPanel.SetActive(false);
-        if (floatingPanel != null) floatingPanel.SetActive(false);
+        dismissTween?.Kill();
+        if (fixedPanel != null)
+        {
+            fixedPanel.transform.DOKill();
+            fixedPanel.SetActive(false);
+        }
+        if (floatingPanel != null)
+        {
+            floatingPanel.transform.DOKill();
+            floatingPanel.SetActive(false);
+        }
         floatingTarget = null;
     }
 }

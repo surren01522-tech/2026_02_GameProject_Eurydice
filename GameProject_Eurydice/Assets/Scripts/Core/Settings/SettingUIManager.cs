@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class SettingUIManager : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class SettingUIManager : MonoBehaviour
     private int activeEntryIndex = -1;
     private GameObject lastSelected;
     private GameObject lastMenuButton;
-    private Coroutine arrowCoroutine;
+    private Tween arrowTween;
 
     public bool IsOpen
     {
@@ -68,6 +69,7 @@ public class SettingUIManager : MonoBehaviour
             if (btn != null)
             {
                 BindButtonEvents(btn, i);
+                UIButtonTween.Bind(btn);
             }
         }
 
@@ -193,6 +195,13 @@ public class SettingUIManager : MonoBehaviour
         GameObject targetPanel = menuList[index].panel;
         if (targetPanel != null)
         {
+            targetPanel.transform.DOKill();
+            targetPanel.transform.localScale = Vector3.one * 0.96f;
+            targetPanel.transform.DOScale(1f, 0.2f)
+                .SetEase(Ease.OutCubic)
+                .SetUpdate(true)
+                .SetLink(targetPanel);
+
             Selectable firstSelectable = targetPanel.GetComponentInChildren<Selectable>();
             if (firstSelectable != null)
             {
@@ -394,11 +403,7 @@ public class SettingUIManager : MonoBehaviour
 
     private void StopArrow()
     {
-        if (arrowCoroutine != null)
-        {
-            StopCoroutine(arrowCoroutine);
-            arrowCoroutine = null;
-        }
+        arrowTween?.Kill();
     }
 
     private void MoveArrowTo(GameObject target)
@@ -406,23 +411,11 @@ public class SettingUIManager : MonoBehaviour
         if (arrow == null || target == null) return;
 
         StopArrow();
-        arrowCoroutine = StartCoroutine(MoveArrow(GetArrowPosition(target)));
-    }
-
-    private IEnumerator MoveArrow(Vector3 targetLocalPos)
-    {
-        while (arrow != null && Vector3.Distance(arrow.localPosition, targetLocalPos) > 0.1f)
-        {
-            arrow.localPosition = Vector3.Lerp(arrow.localPosition, targetLocalPos, Time.unscaledDeltaTime * moveSpeed);
-            yield return null;
-        }
-
-        if (arrow != null)
-        {
-            arrow.localPosition = targetLocalPos;
-        }
-
-        arrowCoroutine = null;
+        float duration = moveSpeed > 0f ? Mathf.Clamp(2.5f / moveSpeed, 0.08f, 0.35f) : 0.15f;
+        arrowTween = arrow.DOLocalMove(GetArrowPosition(target), duration)
+            .SetEase(Ease.OutCubic)
+            .SetUpdate(true)
+            .SetLink(arrow.gameObject);
     }
 
     private Vector3 GetArrowPosition(GameObject target)

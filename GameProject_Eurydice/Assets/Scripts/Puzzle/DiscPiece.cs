@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public enum DiscRotationAxis
 {
@@ -50,7 +51,7 @@ public class DiscPiece
     public Collider clickCollider;
 
     [NonSerialized] public float currentAngle;
-    [NonSerialized] public Coroutine snapCoroutine;
+    [NonSerialized] public Tween snapTween;
 
     public Transform TargetTransform => pieceTransform;
 

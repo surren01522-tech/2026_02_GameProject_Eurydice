@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class SettingKeyRebindSlot : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class SettingKeyRebindSlot : MonoBehaviour
         if (rebindButton != null)
         {
             rebindButton.onClick.AddListener(StartRebinding);
+            UIButtonTween.Bind(rebindButton);
         }
     }
 
@@ -104,6 +106,16 @@ public class SettingKeyRebindSlot : MonoBehaviour
         }
 
         RefreshDisplay();
+
+        if (keyNameText != null)
+        {
+            keyNameText.transform.DOKill();
+            keyNameText.transform.localScale = Vector3.one * 0.85f;
+            keyNameText.transform.DOScale(1f, 0.2f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true)
+                .SetLink(keyNameText.gameObject);
+        }
     }
 
     private bool HasValidBinding()

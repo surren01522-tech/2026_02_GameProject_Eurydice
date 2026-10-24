@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class AchievementNoticeUIManager : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class AchievementNoticeUIManager : MonoBehaviour
     private Vector2 baseAnchoredPosition;
     private readonly Queue<AchievementData> pendingQueue = new();
     private Coroutine displayCoroutine;
+    private Sequence activeSeq;
 
     private void Awake()
     {
@@ -50,6 +52,7 @@ public class AchievementNoticeUIManager : MonoBehaviour
     private void OnDisable()
     {
         AchievementManager.OnAchievementUnlocked -= EnqueueAchievement;
+        activeSeq?.Kill();
         if (displayCoroutine != null)
         {
             StopCoroutine(displayCoroutine);
@@ -57,7 +60,7 @@ public class AchievementNoticeUIManager : MonoBehaviour
         }
         HideImmediate();
     }
-    
+
     public void EnqueueAchievement(AchievementData data)
     {
         if (data == null) return;
@@ -67,7 +70,7 @@ public class AchievementNoticeUIManager : MonoBehaviour
         if (displayCoroutine == null)
             displayCoroutine = StartCoroutine(CoProcessQueue());
     }
-    
+
     private IEnumerator CoProcessQueue()
     {
         while (pendingQueue.Count > 0)
@@ -84,44 +87,30 @@ public class AchievementNoticeUIManager : MonoBehaviour
 
         displayCoroutine = null;
     }
-    
+
     private IEnumerator CoShowSingle()
     {
+        activeSeq?.Kill();
         canvasGroup.gameObject.SetActive(true);
+        canvasGroup.alpha = 0f;
 
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
+        if (rectTransform != null)
+            rectTransform.anchoredPosition = baseAnchoredPosition + slideOffset;
+
+        activeSeq = DOTween.Sequence()
+            .Append(canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.OutCubic))
+            .AppendInterval(displayDuration)
+            .Append(canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InCubic))
+            .SetUpdate(true)
+            .SetLink(gameObject);
+
+        if (rectTransform != null)
         {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / fadeDuration);
-            float smooth = Mathf.SmoothStep(0f, 1f, t);
-
-            canvasGroup.alpha = smooth;
-            if (rectTransform != null)
-                rectTransform.anchoredPosition = Vector2.Lerp(baseAnchoredPosition + slideOffset, baseAnchoredPosition, smooth);
-
-            yield return null;
+            activeSeq.Insert(0f, rectTransform.DOAnchorPos(baseAnchoredPosition, fadeDuration).SetEase(Ease.OutBack));
+            activeSeq.Insert(fadeDuration + displayDuration, rectTransform.DOAnchorPos(baseAnchoredPosition + slideOffset, fadeDuration).SetEase(Ease.InCubic));
         }
 
-        canvasGroup.alpha = 1f;
-        if (rectTransform != null) rectTransform.anchoredPosition = baseAnchoredPosition;
-
-        yield return new WaitForSecondsRealtime(displayDuration);
-
-        elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / fadeDuration);
-            float smooth = Mathf.SmoothStep(0f, 1f, t);
-
-            canvasGroup.alpha = 1f - smooth;
-            if (rectTransform != null)
-                rectTransform.anchoredPosition = Vector2.Lerp(baseAnchoredPosition, baseAnchoredPosition + slideOffset, smooth);
-
-            yield return null;
-        }
-
+        yield return activeSeq.WaitForCompletion();
         HideImmediate();
     }
 
@@ -154,6 +143,7 @@ public class AchievementNoticeUIManager : MonoBehaviour
 
     public void HideImmediate()
     {
+        activeSeq?.Kill();
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 0f;

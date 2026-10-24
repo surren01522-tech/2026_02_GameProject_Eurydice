@@ -110,11 +110,13 @@ public class SettingSliderControl : MonoBehaviour
         if (decreaseButton != null)
         {
             decreaseButton.onClick.AddListener(OnDecreaseClicked);
+            UIButtonTween.Bind(decreaseButton);
         }
 
         if (increaseButton != null)
         {
             increaseButton.onClick.AddListener(OnIncreaseClicked);
+            UIButtonTween.Bind(increaseButton);
         }
     }
 

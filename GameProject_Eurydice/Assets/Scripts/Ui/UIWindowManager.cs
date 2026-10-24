@@ -1,7 +1,7 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class UIWindowManager : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class UIWindowManager : MonoBehaviour
     public WindowTab CurrentTab => currentTab;
 
     private WindowTab currentTab = WindowTab.None;
-    private Coroutine fadeCoroutine;
+    private Tween fadeTween;
     private InputSystem_Actions inputActions;
     private bool openedViaEscape;
 
@@ -57,7 +57,7 @@ public class UIWindowManager : MonoBehaviour
         inputActions.UI.Disable();
         GameStateManager.OnInputModeChanged -= HandleInputModeChanged;
 
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+        fadeTween?.Kill();
     }
 
     private void OnDestroy()
@@ -94,7 +94,9 @@ public class UIWindowManager : MonoBehaviour
 
     private void BindButton(Button btn, WindowTab tab)
     {
-        if (btn != null) btn.onClick.AddListener(() => ToggleTab(tab));
+        if (btn == null) return;
+        btn.onClick.AddListener(() => ToggleTab(tab));
+        UIButtonTween.Bind(btn);
     }
 
     private void OnEscapePerformed(InputAction.CallbackContext _) => HandleEscape();
@@ -249,27 +251,11 @@ public class UIWindowManager : MonoBehaviour
         hudCanvasGroup.interactable = shouldShowHud;
         hudCanvasGroup.blocksRaycasts = shouldShowHud;
 
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-
-        fadeCoroutine = StartCoroutine(CoFade(shouldShowHud ? 1f : 0f));
-    }
-
-    private IEnumerator CoFade(float targetAlpha, System.Action onComplete = null)
-    {
-        float startAlpha = hudCanvasGroup.alpha;
-        float elapsed = 0f;
+        fadeTween?.Kill();
         float duration = fadeDuration > 0f ? fadeDuration : 0.25f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / duration));
-            hudCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
-            yield return null;
-        }
-
-        hudCanvasGroup.alpha = targetAlpha;
-        fadeCoroutine = null;
-        onComplete?.Invoke();
+        fadeTween = hudCanvasGroup.DOFade(shouldShowHud ? 1f : 0f, duration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .SetLink(hudCanvasGroup.gameObject);
     }
 }

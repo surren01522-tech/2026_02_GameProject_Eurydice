@@ -1,7 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using DG.Tweening;
 
 public class AudioManager : MonoBehaviour
 {
@@ -31,8 +31,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip submitClip;
     [SerializeField] private AudioClip cancelClip;
 
-    private Coroutine bgmFadeCoroutine;
-    private Coroutine ambFadeCoroutine;
+    private Sequence bgmFadeSeq;
+    private Sequence ambFadeSeq;
 
     private void Awake()
     {
@@ -45,6 +45,12 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnDestroy()
+    {
+        bgmFadeSeq?.Kill();
+        ambFadeSeq?.Kill();
     }
 
     private void InitSources()
@@ -147,7 +153,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBGM(AudioClip clip, bool loop = true)
     {
-        if (bgmFadeCoroutine != null) StopCoroutine(bgmFadeCoroutine);
+        bgmFadeSeq?.Kill();
         if (bgmSource == null) return;
 
         if (clip == null)
@@ -165,53 +171,47 @@ public class AudioManager : MonoBehaviour
     public void FadeBGM(AudioClip newClip, float duration = 1.5f, bool loop = true)
     {
         if (bgmSource == null) return;
-        if (bgmFadeCoroutine != null) StopCoroutine(bgmFadeCoroutine);
-        bgmFadeCoroutine = StartCoroutine(CoFadeAudioSource(bgmSource, newClip, duration, loop));
+        bgmFadeSeq?.Kill();
+        bgmFadeSeq = FadeAudioSource(bgmSource, newClip, duration, loop);
     }
 
     public void PlayAmbience(AudioClip clip, float duration = 1.5f)
     {
         if (ambienceSource == null) return;
-        if (ambFadeCoroutine != null) StopCoroutine(ambFadeCoroutine);
-        ambFadeCoroutine = StartCoroutine(CoFadeAudioSource(ambienceSource, clip, duration, true));
+        ambFadeSeq?.Kill();
+        ambFadeSeq = FadeAudioSource(ambienceSource, clip, duration, true);
     }
 
     public void StopAmbience(float duration = 1.5f)
     {
         if (ambienceSource == null) return;
-        if (ambFadeCoroutine != null) StopCoroutine(ambFadeCoroutine);
-        ambFadeCoroutine = StartCoroutine(CoFadeAudioSource(ambienceSource, null, duration, true));
+        ambFadeSeq?.Kill();
+        ambFadeSeq = FadeAudioSource(ambienceSource, null, duration, true);
     }
 
-    private IEnumerator CoFadeAudioSource(AudioSource source, AudioClip newClip, float duration, bool loop)
+    private Sequence FadeAudioSource(AudioSource source, AudioClip newClip, float duration, bool loop)
     {
         float halfDuration = Mathf.Max(duration * 0.5f, 0.01f);
-        float startVol = source.volume;
+        Sequence seq = DOTween.Sequence().SetUpdate(true).SetLink(source.gameObject);
 
         if (source.isPlaying && source.clip != null)
         {
-            for (float t = 0; t < halfDuration; t += Time.unscaledDeltaTime)
-            {
-                source.volume = Mathf.Lerp(startVol, 0f, t / halfDuration);
-                yield return null;
-            }
-            source.volume = 0f;
-            source.Stop();
+            seq.Append(source.DOFade(0f, halfDuration))
+               .AppendCallback(source.Stop);
         }
 
         if (newClip != null)
         {
-            source.clip = newClip;
-            source.loop = loop;
-            source.Play();
-
-            for (float t = 0; t < halfDuration; t += Time.unscaledDeltaTime)
+            seq.AppendCallback(() =>
             {
-                source.volume = Mathf.Lerp(0f, 1f, t / halfDuration);
-                yield return null;
-            }
-            source.volume = 1f;
+                source.clip = newClip;
+                source.loop = loop;
+                source.volume = 0f;
+                source.Play();
+            }).Append(source.DOFade(1f, halfDuration));
         }
+
+        return seq;
     }
 
     public void SetMixerVolume(string paramName, float linearVolume)

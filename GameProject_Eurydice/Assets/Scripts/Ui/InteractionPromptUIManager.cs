@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class InteractionPromptUIManager : MonoBehaviour
 {
@@ -76,7 +77,8 @@ public class InteractionPromptUIManager : MonoBehaviour
         if (screenPos.z > 0)
         {
             floatingPanel.transform.position = screenPos;
-            if (!floatingPanel.activeSelf) floatingPanel.SetActive(true);
+            if (!floatingPanel.activeSelf)
+                ShowPanelWithTween(floatingPanel);
         }
         else if (floatingPanel.activeSelf)
         {
@@ -86,6 +88,7 @@ public class InteractionPromptUIManager : MonoBehaviour
 
     private void UpdatePrompt(IInteractable target)
     {
+        bool isNewTarget = currentTarget != target;
         currentTarget = target;
 
         if (target == null || !target.CanInteract)
@@ -105,7 +108,8 @@ public class InteractionPromptUIManager : MonoBehaviour
             if (fixedKeyText != null) fixedKeyText.text = formattedKey;
             if (fixedDescriptionText != null) fixedDescriptionText.text = description;
 
-            if (fixedPanel != null) fixedPanel.SetActive(true);
+            if (fixedPanel != null && (isNewTarget || !fixedPanel.activeSelf))
+                ShowPanelWithTween(fixedPanel);
         }
         else if (target.DisplayMode == InteractionDisplayMode.Floating)
         {
@@ -114,14 +118,35 @@ public class InteractionPromptUIManager : MonoBehaviour
             if (floatingKeyText != null) floatingKeyText.text = formattedKey;
             if (floatingDescriptionText != null) floatingDescriptionText.text = description;
 
-            if (floatingPanel != null) floatingPanel.SetActive(true);
+            if (floatingPanel != null && (isNewTarget || !floatingPanel.activeSelf))
+                ShowPanelWithTween(floatingPanel);
         }
+    }
+
+    private void ShowPanelWithTween(GameObject panel)
+    {
+        if (panel == null) return;
+        panel.SetActive(true);
+        panel.transform.DOKill();
+        panel.transform.localScale = Vector3.one * 0.88f;
+        panel.transform.DOScale(1f, 0.18f)
+            .SetEase(Ease.OutBack)
+            .SetUpdate(true)
+            .SetLink(panel);
     }
 
     private void HideAll()
     {
-        if (fixedPanel != null) fixedPanel.SetActive(false);
-        if (floatingPanel != null) floatingPanel.SetActive(false);
+        if (fixedPanel != null)
+        {
+            fixedPanel.transform.DOKill();
+            fixedPanel.SetActive(false);
+        }
+        if (floatingPanel != null)
+        {
+            floatingPanel.transform.DOKill();
+            floatingPanel.SetActive(false);
+        }
     }
 
     private string GetKeyString()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class SettingSelectorControl : MonoBehaviour
 {
@@ -49,10 +50,22 @@ public class SettingSelectorControl : MonoBehaviour
             return;
         }
 
+        int prevIdx = CurrentIndex;
         CurrentIndex = Mathf.Clamp(index, 0, options.Count - 1);
 
         if (valueText != null)
+        {
             valueText.text = options[CurrentIndex];
+            if (notify && prevIdx != CurrentIndex)
+            {
+                valueText.transform.DOKill();
+                valueText.transform.localScale = Vector3.one * 0.9f;
+                valueText.transform.DOScale(1f, 0.15f)
+                    .SetEase(Ease.OutBack)
+                    .SetUpdate(true)
+                    .SetLink(valueText.gameObject);
+            }
+        }
 
         UpdateButtons();
 
@@ -114,7 +127,15 @@ public class SettingSelectorControl : MonoBehaviour
 
     private void BindEvents()
     {
-        prevButton?.onClick.AddListener(Prev);
-        nextButton?.onClick.AddListener(Next);
+        if (prevButton != null)
+        {
+            prevButton.onClick.AddListener(Prev);
+            UIButtonTween.Bind(prevButton);
+        }
+        if (nextButton != null)
+        {
+            nextButton.onClick.AddListener(Next);
+            UIButtonTween.Bind(nextButton);
+        }
     }
 }

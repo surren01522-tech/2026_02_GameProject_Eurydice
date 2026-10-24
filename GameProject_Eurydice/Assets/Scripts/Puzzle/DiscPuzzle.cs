@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class DiscPuzzle : PuzzleBase
 {
@@ -131,7 +131,11 @@ public class DiscPuzzle : PuzzleBase
             if (sockets[i] != null) sockets[i].OnPlaced -= HandleSocketInstalled;
     }
 
-    private void OnDestroy() => UnbindSocketEvents();
+    private void OnDestroy()
+    {
+        StopAllPieceSnaps();
+        UnbindSocketEvents();
+    }
 
     private void HandleSocketInstalled(ItemSocket socket) => CheckSolution();
 
@@ -196,6 +200,19 @@ public class DiscPuzzle : PuzzleBase
                         }
                         return;
                     }
+                }
+
+                if (!CanRotatePieces)
+                {
+                    for (int i = 0; i < hitCount; i++)
+                    {
+                        if (FindPieceIndexByCollider(hitBuffer[i].collider) >= 0)
+                        {
+                            InteractionFeedbackUIManager.Instance?.Show("필요한 장치를 먼저 끼워야 합니다.");
+                            return;
+                        }
+                    }
+                    return;
                 }
 
                 for (int i = 0; i < hitCount; i++)
@@ -274,16 +291,28 @@ public class DiscPuzzle : PuzzleBase
 
     private void SnapAllAffectedPieces()
     {
+        float duration = smoothSnapSpeed > 0f ? Mathf.Clamp(2.5f / smoothSnapSpeed, 0.08f, 0.35f) : 0.2f;
+
         foreach (int idx in visitedIndices)
         {
             if (idx >= 0 && idx < pieces.Count && pieces[idx] != null && pieces[idx].canRotate)
             {
                 DiscPiece p = pieces[idx];
-                float targetSnap = Mathf.Round(p.currentAngle / snapAngle) * snapAngle;
-                targetSnap = Mathf.Repeat(targetSnap, 360f);
+                float targetSnap = Mathf.Repeat(Mathf.Round(p.currentAngle / snapAngle) * snapAngle, 360f);
+                float startAngle = p.currentAngle;
+                float endAngle = startAngle + Mathf.DeltaAngle(startAngle, targetSnap);
 
-                if (p.snapCoroutine != null) StopCoroutine(p.snapCoroutine);
-                p.snapCoroutine = StartCoroutine(CoSmoothSnap(p, targetSnap));
+                p.snapTween?.Kill();
+                p.snapTween = DOVirtual.Float(startAngle, endAngle, duration, val => p.SetAngle(val, defaultRotationAxis))
+                    .SetEase(Ease.OutBack)
+                    .SetLink(gameObject)
+                    .OnComplete(() =>
+                    {
+                        p.SetAngle(targetSnap, defaultRotationAxis);
+                        p.snapTween = null;
+                        SaveCurrentPuzzleState(false);
+                        CheckSolution();
+                    });
             }
         }
     }
@@ -292,9 +321,9 @@ public class DiscPuzzle : PuzzleBase
     {
         for (int i = 0; i < pieces.Count; i++)
         {
-            if (pieces[i]?.snapCoroutine == null) continue;
-            StopCoroutine(pieces[i].snapCoroutine);
-            pieces[i].snapCoroutine = null;
+            if (pieces[i]?.snapTween == null) continue;
+            pieces[i].snapTween.Kill();
+            pieces[i].snapTween = null;
         }
     }
 
@@ -316,21 +345,6 @@ public class DiscPuzzle : PuzzleBase
     {
         Vector2 dir = Mouse.current.position.ReadValue() - screenPivot;
         return Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    }
-
-    private IEnumerator CoSmoothSnap(DiscPiece piece, float targetSnap)
-    {
-        while (Mathf.Abs(Mathf.DeltaAngle(piece.currentAngle, targetSnap)) > 0.1f)
-        {
-            float nextAngle = Mathf.MoveTowardsAngle(piece.currentAngle, targetSnap, smoothSnapSpeed * 30f * Time.deltaTime);
-            piece.SetAngle(nextAngle, defaultRotationAxis);
-            yield return null;
-        }
-
-        piece.SetAngle(targetSnap, defaultRotationAxis);
-        piece.snapCoroutine = null;
-        SaveCurrentPuzzleState(false);
-        CheckSolution();
     }
 
     public bool AreAllPiecesCorrect()

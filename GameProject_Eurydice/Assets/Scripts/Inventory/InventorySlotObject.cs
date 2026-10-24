@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class InventorySlotObject : MonoBehaviour, IPointerClickHandler
 {
@@ -21,6 +22,7 @@ public class InventorySlotObject : MonoBehaviour, IPointerClickHandler
         if (button != null)
         {
             button.onClick.AddListener(HandleClick);
+            UIButtonTween.Bind(button);
         }
     }
 
@@ -48,6 +50,7 @@ public class InventorySlotObject : MonoBehaviour, IPointerClickHandler
 
     public void SetItem(ItemData item, int count = 1)
     {
+        bool isChanged = currentItem != item && item != null;
         currentItem = item;
         bool hasItem = item != null;
         bool hasIcon = hasItem && item.icon != null;
@@ -60,9 +63,20 @@ public class InventorySlotObject : MonoBehaviour, IPointerClickHandler
                 icon.sprite = hasIcon ? item.icon : null;
                 icon.color = hasIcon ? Color.white : new Color(1f, 1f, 1f, 0.35f);
                 icon.gameObject.SetActive(true);
+
+                if (isChanged)
+                {
+                    icon.transform.DOKill();
+                    icon.transform.localScale = Vector3.one * 0.75f;
+                    icon.transform.DOScale(1f, 0.2f)
+                        .SetEase(Ease.OutBack)
+                        .SetUpdate(true)
+                        .SetLink(icon.gameObject);
+                }
             }
             else
             {
+                icon.transform.DOKill();
                 icon.sprite = null;
                 icon.color = Color.clear;
                 icon.gameObject.SetActive(false);
@@ -94,6 +108,7 @@ public class InventorySlotObject : MonoBehaviour, IPointerClickHandler
         currentItem = null;
         if (icon != null)
         {
+            icon.transform.DOKill();
             icon.sprite = null;
             icon.color = Color.clear;
             icon.gameObject.SetActive(false);

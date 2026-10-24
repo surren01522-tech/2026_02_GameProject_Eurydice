@@ -1,6 +1,6 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class TriggerNoticeUIManager : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class TriggerNoticeUIManager : MonoBehaviour
     [Header("연출 설정")]
     [SerializeField] private float fadeDuration = 0.5f;
 
-    private Coroutine currentCoroutine;
+    private Sequence noticeSeq;
 
     private void Awake()
     {
@@ -30,15 +30,16 @@ public class TriggerNoticeUIManager : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        noticeSeq?.Kill();
+    }
+
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
     }
 
-    /// <summary>
-    /// 지정된 메시지와 타이틀을 페이드인 연출과 함께 HUD에 표시합니다.
-    /// duration이 0 이하이면 외부에서 Hide를 호출할 때까지 유지됩니다.
-    /// </summary>
     public void Show(string message, float duration = 3f, string title = null)
     {
         if (canvasGroup == null) return;
@@ -55,60 +56,43 @@ public class TriggerNoticeUIManager : MonoBehaviour
             messageText.text = message ?? string.Empty;
         }
 
-        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
-        currentCoroutine = StartCoroutine(CoShow(duration));
-    }
+        noticeSeq?.Kill();
+        canvasGroup.gameObject.SetActive(true);
+        canvasGroup.transform.localScale = Vector3.one * 0.95f;
+        float dur = fadeDuration > 0f ? fadeDuration : 0.25f;
 
-    /// <summary>
-    /// 표시 중인 HUD 알림을 숨깁니다.
-    /// </summary>
+        noticeSeq = DOTween.Sequence()
+            .Append(canvasGroup.DOFade(1f, dur).SetEase(Ease.OutQuad))
+            .Join(canvasGroup.transform.DOScale(1f, dur).SetEase(Ease.OutBack));
+
+        if (duration > 0f)
+        {
+            noticeSeq.AppendInterval(duration)
+                .Append(canvasGroup.DOFade(0f, dur).SetEase(Ease.InQuad))
+                .OnComplete(() => canvasGroup.gameObject.SetActive(false));
+        }
+
+        noticeSeq.SetLink(gameObject);
+    }
+    
     public void Hide(bool immediate = false)
     {
         if (canvasGroup == null) return;
 
-        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+        noticeSeq?.Kill();
 
         if (immediate)
         {
             canvasGroup.alpha = 0f;
             canvasGroup.gameObject.SetActive(false);
-            currentCoroutine = null;
         }
         else
         {
-            currentCoroutine = StartCoroutine(CoFade(0f, () => canvasGroup.gameObject.SetActive(false)));
+            float dur = fadeDuration > 0f ? fadeDuration : 0.25f;
+            noticeSeq = DOTween.Sequence()
+                .Append(canvasGroup.DOFade(0f, dur).SetEase(Ease.InQuad))
+                .OnComplete(() => canvasGroup.gameObject.SetActive(false))
+                .SetLink(gameObject);
         }
-    }
-
-    private IEnumerator CoShow(float duration)
-    {
-        canvasGroup.gameObject.SetActive(true);
-        yield return CoFade(1f);
-
-        if (duration > 0f)
-        {
-            yield return new WaitForSeconds(duration);
-            yield return CoFade(0f);
-            canvasGroup.gameObject.SetActive(false);
-        }
-
-        currentCoroutine = null;
-    }
-
-    private IEnumerator CoFade(float targetAlpha, System.Action onComplete = null)
-    {
-        float startAlpha = canvasGroup.alpha;
-        float elapsed = 0f;
-        float dur = fadeDuration > 0f ? fadeDuration : 0.01f;
-
-        while (elapsed < dur)
-        {
-            elapsed += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsed / dur);
-            yield return null;
-        }
-
-        canvasGroup.alpha = targetAlpha;
-        onComplete?.Invoke();
     }
 }

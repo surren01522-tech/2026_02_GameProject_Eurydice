@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -78,13 +79,13 @@ public class SceneLoader : MonoBehaviour
     {
         if (canvasGroup == null) yield break;
 
+        canvasGroup.alpha = from;
         canvasGroup.blocksRaycasts = true;
-        for (float t = 0f; t < fadeDuration; t += Time.unscaledDeltaTime)
-        {
-            canvasGroup.alpha = Mathf.Lerp(from, to, t / fadeDuration);
-            yield return null;
-        }
-        canvasGroup.alpha = to;
+        yield return canvasGroup.DOFade(to, fadeDuration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .SetLink(gameObject)
+            .WaitForCompletion();
         canvasGroup.blocksRaycasts = to > 0f;
     }
 

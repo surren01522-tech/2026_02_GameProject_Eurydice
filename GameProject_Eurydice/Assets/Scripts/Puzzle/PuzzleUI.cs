@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class PuzzleUI : MonoBehaviour
 {
@@ -21,7 +22,10 @@ public class PuzzleUI : MonoBehaviour
 
         if (exitPanel == null) exitPanel = gameObject;
         if (exitButton != null)
+        {
             exitButton.onClick.AddListener(HandleExitClicked);
+            UIButtonTween.Bind(exitButton);
+        }
 
         exitPanel.SetActive(false);
     }
@@ -40,7 +44,16 @@ public class PuzzleUI : MonoBehaviour
     public void Show(Action onExit)
     {
         onExitCallback = onExit;
-        if (exitPanel != null) exitPanel.SetActive(true);
+        if (exitPanel != null)
+        {
+            exitPanel.SetActive(true);
+            exitPanel.transform.DOKill();
+            exitPanel.transform.localScale = Vector3.one * 0.85f;
+            exitPanel.transform.DOScale(1f, 0.2f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true)
+                .SetLink(exitPanel);
+        }
     }
 
     /// <summary>
@@ -49,7 +62,11 @@ public class PuzzleUI : MonoBehaviour
     public void Hide()
     {
         onExitCallback = null;
-        if (exitPanel != null) exitPanel.SetActive(false);
+        if (exitPanel != null)
+        {
+            exitPanel.transform.DOKill();
+            exitPanel.SetActive(false);
+        }
     }
 
     private void HandleExitClicked()

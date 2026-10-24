@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Cinemachine;
+using DG.Tweening;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class MainMenuController : MonoBehaviour
 
     private bool isTransitioning;
     private CinemachineSplineDolly splineDolly;
+    private Tween fadeTween;
 
     private void Awake()
     {
@@ -40,6 +42,7 @@ public class MainMenuController : MonoBehaviour
     private void OnDisable()
     {
         GameStateManager.OnInputModeChanged -= HandleInputModeChanged;
+        fadeTween?.Kill();
     }
 
     private void Start()
@@ -70,10 +73,17 @@ public class MainMenuController : MonoBehaviour
 
     private void BindButtons()
     {
-        if (startButton != null) startButton.onClick.AddListener(() => StartGame(isNewGame: true));
-        if (continueButton != null) continueButton.onClick.AddListener(() => StartGame(isNewGame: false));
-        if (settingButton != null) settingButton.onClick.AddListener(OnSettingClicked);
-        if (quitButton != null) quitButton.onClick.AddListener(OnQuitClicked);
+        BindMenuButton(startButton, () => StartGame(isNewGame: true));
+        BindMenuButton(continueButton, () => StartGame(isNewGame: false));
+        BindMenuButton(settingButton, OnSettingClicked);
+        BindMenuButton(quitButton, OnQuitClicked);
+    }
+
+    private void BindMenuButton(Button btn, UnityEngine.Events.UnityAction action)
+    {
+        if (btn == null) return;
+        btn.onClick.AddListener(action);
+        UIButtonTween.Bind(btn);
     }
 
     private void HandleInputModeChanged(InputMode mode)
@@ -82,7 +92,7 @@ public class MainMenuController : MonoBehaviour
 
         if (mode == InputMode.MainMenu)
         {
-            StartCoroutine(FadeCanvasGroup(menuCanvasGroup, 0f, 1f, fadeDuration, activateOnStart: true));
+            FadeMenu(1f, fadeDuration, activateOnStart: true);
         }
     }
 
@@ -94,10 +104,10 @@ public class MainMenuController : MonoBehaviour
 
     public void OnSettingClicked()
     {
-        StartCoroutine(FadeCanvasGroup(menuCanvasGroup, 1f, 0f, 0.15f, activateOnStart: false, deactivateOnEnd: true, onComplete: () =>
+        FadeMenu(0f, 0.15f, deactivateOnEnd: true, onComplete: () =>
         {
             UIWindowManager.Instance?.OpenTab(UIWindowManager.WindowTab.Setting);
-        }));
+        });
     }
 
     public void OnQuitClicked()
@@ -122,7 +132,6 @@ public class MainMenuController : MonoBehaviour
         if (splineDolly != null)
             splineDolly.enabled = false;
 
-        // 새 게임일 때만 위치 초기화 및 스폰 지점 이동
         if (isNewGame)
         {
             SaveManager.DeleteSaveData();
@@ -133,10 +142,9 @@ public class MainMenuController : MonoBehaviour
             }
         }
 
-        // 메뉴 UI 페이드아웃
-        yield return FadeCanvasGroup(menuCanvasGroup, menuCanvasGroup != null ? menuCanvasGroup.alpha : 1f, 0f, fadeDuration, deactivateOnEnd: true);
+        Tween fade = FadeMenu(0f, fadeDuration, deactivateOnEnd: true);
+        if (fade != null) yield return fade.WaitForCompletion();
 
-        // 타이틀 카메라 우선순위 해제 -> 플레이어 카메라로 시네머신 비행
         if (titleCamera != null)
             titleCamera.Priority.Value = 0;
 
@@ -151,34 +159,32 @@ public class MainMenuController : MonoBehaviour
         isTransitioning = false;
     }
 
-    private IEnumerator FadeCanvasGroup(CanvasGroup cg, float from, float to, float duration, bool activateOnStart = false, bool deactivateOnEnd = false, System.Action onComplete = null)
+    private Tween FadeMenu(float targetAlpha, float duration, bool activateOnStart = false, bool deactivateOnEnd = false, System.Action onComplete = null)
     {
-        if (cg == null)
+        fadeTween?.Kill();
+        if (menuCanvasGroup == null)
         {
             onComplete?.Invoke();
-            yield break;
+            return null;
         }
 
         if (activateOnStart)
-        {
-            cg.gameObject.SetActive(true);
-        }
+            menuCanvasGroup.gameObject.SetActive(true);
 
-        cg.interactable = to > 0f;
-        cg.blocksRaycasts = to > 0f;
+        menuCanvasGroup.interactable = targetAlpha > 0f;
+        menuCanvasGroup.blocksRaycasts = targetAlpha > 0f;
 
-        for (float t = 0f; t < duration; t += Time.unscaledDeltaTime)
-        {
-            cg.alpha = Mathf.Lerp(from, to, t / duration);
-            yield return null;
-        }
+        fadeTween = menuCanvasGroup.DOFade(targetAlpha, duration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .SetLink(menuCanvasGroup.gameObject)
+            .OnComplete(() =>
+            {
+                if (deactivateOnEnd && targetAlpha <= 0f)
+                    menuCanvasGroup.gameObject.SetActive(false);
+                onComplete?.Invoke();
+            });
 
-        cg.alpha = to;
-        if (deactivateOnEnd && to <= 0f)
-        {
-            cg.gameObject.SetActive(false);
-        }
-
-        onComplete?.Invoke();
+        return fadeTween;
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using DG.Tweening;
 
 public class ItemSocket : MonoBehaviour, IInteractable
 {
@@ -45,6 +46,8 @@ public class ItemSocket : MonoBehaviour, IInteractable
     public event Action<ItemSocket> OnPlaced;
     public UnityEvent onPlacedEvent;
 
+    private Vector3 defaultVisualScale = Vector3.one;
+
     public string InteractionPrompt
     {
         get
@@ -78,6 +81,9 @@ public class ItemSocket : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        if (placedVisual != null)
+            defaultVisualScale = placedVisual.transform.localScale;
+
         var data = SaveManager.GetSocketData(uniqueId, gameObject.scene.name);
         if (data != null && data.isPlaced && !string.IsNullOrEmpty(data.placedItemId))
         {
@@ -143,7 +149,14 @@ public class ItemSocket : MonoBehaviour, IInteractable
         SaveManager.SaveSocketState(uniqueId, true, item.id, count, gameObject.scene.name);
 
         if (placedVisual != null)
+        {
             placedVisual.SetActive(true);
+            placedVisual.transform.DOKill();
+            placedVisual.transform.localScale = defaultVisualScale * 0.2f;
+            placedVisual.transform.DOScale(defaultVisualScale, 0.25f)
+                .SetEase(Ease.OutBack)
+                .SetLink(placedVisual);
+        }
 
         if (placeFX != null)
             placeFX.Play();
@@ -171,7 +184,11 @@ public class ItemSocket : MonoBehaviour, IInteractable
         SaveManager.SaveSocketState(uniqueId, false, null, 0, gameObject.scene.name);
 
         if (placedVisual != null)
+        {
+            placedVisual.transform.DOKill();
+            placedVisual.transform.localScale = defaultVisualScale;
             placedVisual.SetActive(false);
+        }
 
         if (retrieveSound != null && AudioManager.Instance != null)
             AudioManager.Instance.PlaySFXAt(retrieveSound, transform.position);
