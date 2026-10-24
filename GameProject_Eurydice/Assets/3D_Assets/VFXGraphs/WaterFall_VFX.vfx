@@ -3192,7 +3192,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 5
+      m_SerializableObject: 10
     m_Space: -1
   m_Property:
     name: Rate
@@ -3420,7 +3420,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Position, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"position":{"x":-2.3306539058685304,"y":0.5570224523544312,"z":-4.492908942665963e-7}}'
+      m_SerializableObject: '{"position":{"x":-2.597355604171753,"y":0.6135189533233643,"z":-4.713882901796751e-7}}'
     m_Space: 0
   m_Property:
     name: _Position
@@ -4304,7 +4304,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 5
+      m_SerializableObject: 6
     m_Space: -1
   m_Property:
     name: _VoronoiScale
@@ -4521,7 +4521,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.6
+      m_SerializableObject: 0.3
     m_Space: -1
   m_Property:
     name: _Dissolve
@@ -4555,7 +4555,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 4
+      m_SerializableObject: 2.86
     m_Space: -1
   m_Property:
     name: _DissoslvePower
