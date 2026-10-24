@@ -182,7 +182,7 @@ public class SceneStreamer : MonoBehaviour
             {
                 pendingUnloads.Remove(sceneName);
 
-                if (string.IsNullOrEmpty(sceneName) || loadedSceneInstances.ContainsKey(sceneName)) continue;
+                if (IsSceneLoaded(sceneName)) continue;
 
                 var handle = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
                 yield return handle;

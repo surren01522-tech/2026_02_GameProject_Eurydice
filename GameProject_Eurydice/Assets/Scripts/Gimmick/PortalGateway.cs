@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -15,19 +16,60 @@ public enum PortalState
 }
 
 [ExecuteAlways]
+[DefaultExecutionOrder(-10)]
 public class PortalGateway : MonoBehaviour
 {
-    private static readonly Dictionary<string, PortalGateway> ActivePortalsById = new();
-    private static readonly List<PortalGateway> AllActivePortals = new();
-    private static readonly Plane[] CachedFrustumPlanes = new Plane[6];
-    private static readonly List<Renderer> HiddenRenderersBuffer = new(16);
+    private struct SplitSession
+    {
+        public bool active;
+        public PortalGateway entry;
+        public PortalGateway exit;
+        public PlayerController player;
+        public float entrySide;
+        public float exitSide;
+        public bool mirror;
+        public Vector3 lastGhostWorld;
+        public float funnelPull;
+        public string pinnedEntryScene;
+        public string pinnedExitScene;
+    }
+
+    private const float PortalCamNearClip = 0.01f;
+    private const float SplitCrossDist = 0.025f;
+    private const float FrontCameraClearance = 0.045f;
+    private const float MinPlayerClearance = 0.005f;
+    private const float ProximityFadeRange = 0.65f;
+
+    private static readonly Dictionary<string, PortalGateway> PortalsById = new();
+    private static readonly List<PortalGateway> ActivePortals = new();
+    private static readonly Plane[] FrustumPlanes = new Plane[6];
+    private static readonly List<Renderer> HiddenRenderers = new(16);
+    private static readonly PortalTravellerVisual TravellerVisual = new();
+    private static readonly Quaternion HalfTurn = Quaternion.Euler(0f, 180f, 0f);
+
+    private static readonly int PortalTexId = Shader.PropertyToID("_PortalTex");
+    private static readonly int HasPortalTexId = Shader.PropertyToID("_HasPortalTex");
+    private static readonly int OpenProgressId = Shader.PropertyToID("_OpenProgress");
+    private static readonly int RippleStrengthId = Shader.PropertyToID("_RippleStrength");
+    private static readonly int LensCurvatureId = Shader.PropertyToID("_LensCurvature");
+    private static readonly int InnerGlowColorId = Shader.PropertyToID("_InnerGlowColor");
+    private static readonly int TargetBrightnessId = Shader.PropertyToID("_TargetBrightness");
+
+    private static SplitSession split;
+    private static PlayerController trackedPlayer;
+    private static Vector3 prevPlayerPos;
+    private static bool hasPrevPlayerPos;
+    private static int lastSteppedFrame = -1;
+    private static bool isRenderingPortal;
+    private static bool isBrainHooked;
+    private static bool isNearAnyPortal;
 
     [FoldGroup("포탈 연결 및 심리스 설정")]
     [SerializeField] private string portalId;
     [SerializeField] private string targetPortalId;
     [SerializeField] private string targetSceneName;
     [SerializeField] private PortalGateway linkedPortal;
-    [SerializeField] private bool startOpen = false;
+    [SerializeField] private bool startOpen;
     [SerializeField] private bool syncStateWithLinked = true;
     [SerializeField] private bool mirrorForwardDirection = true;
     [SerializeField] private Renderer portalRenderer;
@@ -37,7 +79,7 @@ public class PortalGateway : MonoBehaviour
     [SerializeField] private float closeDuration = 0.6f;
     [SerializeField] private AnimationCurve openCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     [SerializeField] private AnimationCurve closeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-    [SerializeField] private bool animateTransformScale = false;
+    [SerializeField] private bool animateTransformScale;
     [SerializeField] private ParticleSystem activationParticle;
     [SerializeField] private Light portalLight;
     [SerializeField] private float maxLightIntensity = 3f;
@@ -70,110 +112,109 @@ public class PortalGateway : MonoBehaviour
     public PortalState CurrentState { get; private set; } = PortalState.Closed;
     public bool IsOpen => CurrentState == PortalState.Open;
     public PortalGateway LinkedPortal => linkedPortal;
+    public Vector3 ApertureSize => defaultScale;
+    public bool MirrorForward => mirrorForwardDirection;
 
     private Camera portalCamera;
     private UniversalAdditionalCameraData cameraData;
-    private RenderTexture renderTexture2D;
-    private Material runtimeMaterial;
-    private Coroutine transitionCoroutine;
-    private Vector3 defaultRendererScale = new Vector3(2.2f, 3.0f, 1f);
+    private RenderTexture renderTex;
+    private Material runtimeMat;
+    private Coroutine transitionRoutine;
+    private Vector3 defaultScale = new Vector3(2.2f, 3.0f, 1f);
     private float currentProgress = 1f;
     private float lastTeleportTime = -10f;
     private bool isScenePinned;
 
-    private PlayerController cachedPlayer;
-    private Vector3 previousPlayerWorldPos;
-    private bool hasPreviousPlayerPos;
-    private PlayerController exitingPlayer;
-    private float exitingPlayerSide;
+    private bool hasBaseMatProps;
+    private float baseRipple;
+    private float baseCurvature;
+    private Color baseInnerGlow;
+    private float baseBrightness = 1f;
 
-    private static bool isRenderingAnyPortal;
-
-    private static readonly int PortalTexId = Shader.PropertyToID("_PortalTex");
-    private static readonly int HasPortalTexId = Shader.PropertyToID("_HasPortalTex");
-    private static readonly int OpenProgressId = Shader.PropertyToID("_OpenProgress");
-    private static readonly Quaternion HalfTurn = Quaternion.Euler(0f, 180f, 0f);
-
-    private void Reset()
-    {
-        SetupDefaultQuadPortal();
-    }
+    private void Reset() => SetupDefaultQuadPortal();
 
     private void Awake()
     {
-        EnsureDefaultSetup();
+        EnsureSetup();
         if (portalRenderer != null && portalRenderer.transform.localScale.sqrMagnitude > 0.001f)
-            defaultRendererScale = portalRenderer.transform.localScale;
+            defaultScale = portalRenderer.transform.localScale;
     }
 
     private void Start()
     {
         if (!Application.isPlaying) return;
 
-        RegisterPortalInRegistry();
-        ItemSocket.OnAnySocketPlaced += HandleAnySocketPlaced;
-
-        cachedPlayer = FindFirstObjectByType<PlayerController>();
-        if (cachedPlayer != null)
-        {
-            previousPlayerWorldPos = cachedPlayer.transform.position;
-            hasPreviousPlayerPos = true;
-        }
+        Register();
+        ItemSocket.OnAnySocketPlaced += OnSocketPlaced;
 
         bool savedOpen = SaveManager.IsPortalOpenAnyScene(portalId) ||
                          (syncStateWithLinked && SaveManager.IsPortalOpenAnyScene(targetPortalId));
-        bool fulfilledOnLoad = HasSocketRequirements() && AreSocketRequirementsMet();
-        bool linkedAlreadyOpen = syncStateWithLinked && linkedPortal != null &&
-                                 (linkedPortal.CurrentState == PortalState.Open || linkedPortal.CurrentState == PortalState.Opening);
+        bool socketsMet = HasRequiredSockets() && AreSocketsMet();
+        bool linkedOpen = syncStateWithLinked && linkedPortal != null &&
+                          (linkedPortal.CurrentState == PortalState.Open || linkedPortal.CurrentState == PortalState.Opening);
 
-        bool shouldOpen = startOpen || savedOpen || fulfilledOnLoad || linkedAlreadyOpen;
-        SetOpenImmediate(shouldOpen, syncLinked: false, saveState: fulfilledOnLoad && !savedOpen);
+        SetOpenImmediate(startOpen || savedOpen || socketsMet || linkedOpen, syncLinked: false, saveState: socketsMet && !savedOpen);
     }
 
     private void OnEnable()
     {
-        if (!AllActivePortals.Contains(this))
-            AllActivePortals.Add(this);
+        if (!ActivePortals.Contains(this))
+            ActivePortals.Add(this);
 
-        RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
-        EnsureDefaultSetup();
-        RegisterPortalInRegistry();
+        RenderPipelineManager.beginCameraRendering += RenderPortal;
+        EnsureSetup();
+        Register();
+
+        if (Application.isPlaying && !isBrainHooked)
+        {
+            CinemachineCore.CameraUpdatedEvent.AddListener(OnBrainUpdated);
+            isBrainHooked = true;
+        }
 
         if (!Application.isPlaying)
         {
             currentProgress = editorPreviewProgress;
-            if (portalRenderer != null)
-                portalRenderer.enabled = true;
-            UpdateVisualProperties();
+            if (portalRenderer != null) portalRenderer.enabled = true;
+            RefreshVisuals();
         }
     }
 
     private void OnDisable()
     {
-        AllActivePortals.Remove(this);
-        RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
-        UnregisterPortalFromRegistry();
-        SetScenePinned(false);
-        ClearExitingPlayerState();
-        ReleaseRenderResources();
+        if (split.active && (split.entry == this || split.exit == this))
+            CompleteSplit(Camera.main);
+
+        ActivePortals.Remove(this);
+        RenderPipelineManager.beginCameraRendering -= RenderPortal;
+        Unregister();
+        PinTargetScene(false);
+        ReleaseCamera();
+
+        if (ActivePortals.Count == 0 && isBrainHooked)
+        {
+            CinemachineCore.CameraUpdatedEvent.RemoveListener(OnBrainUpdated);
+            if (trackedPlayer != null)
+                trackedPlayer.CameraModeController?.SetNearPortalClip(false, Camera.main);
+
+            TravellerVisual.Dispose();
+            isBrainHooked = false;
+            isNearAnyPortal = false;
+            trackedPlayer = null;
+            hasPrevPlayerPos = false;
+            lastSteppedFrame = -1;
+        }
     }
 
     private void OnDestroy()
     {
-        AllActivePortals.Remove(this);
-        ItemSocket.OnAnySocketPlaced -= HandleAnySocketPlaced;
-        UnregisterPortalFromRegistry();
-        SetScenePinned(false);
-        ClearExitingPlayerState();
-        ReleaseRenderResources();
+        ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
+        ReleaseCamera();
 
-        if (runtimeMaterial != null)
+        if (runtimeMat != null)
         {
-            if (Application.isPlaying)
-                Destroy(runtimeMaterial);
-            else
-                DestroyImmediate(runtimeMaterial);
-            runtimeMaterial = null;
+            if (Application.isPlaying) Destroy(runtimeMat);
+            else DestroyImmediate(runtimeMat);
+            runtimeMat = null;
         }
     }
 
@@ -185,10 +226,9 @@ public class PortalGateway : MonoBehaviour
         if (!Application.isPlaying)
         {
             currentProgress = editorPreviewProgress;
-            if (portalRenderer != null)
-                portalRenderer.enabled = true;
+            if (portalRenderer != null) portalRenderer.enabled = true;
         }
-        UpdateVisualProperties();
+        RefreshVisuals();
     }
 
     private void Update()
@@ -201,7 +241,7 @@ public class PortalGateway : MonoBehaviour
         }
 
         if (linkedPortal == null && !string.IsNullOrEmpty(targetPortalId))
-            TryResolveLinkedPortalById();
+            TryLink();
 
         if (debugToggleKey != Key.None && Keyboard.current != null && Keyboard.current[debugToggleKey].wasPressedThisFrame)
             Toggle();
@@ -209,127 +249,29 @@ public class PortalGateway : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!Application.isPlaying) return;
-
-        if (cachedPlayer == null)
-            cachedPlayer = FindFirstObjectByType<PlayerController>();
-
-        if (cachedPlayer != null)
-        {
-            Vector3 currentPlayerPos = cachedPlayer.transform.position;
-            if (hasPreviousPlayerPos && CurrentState == PortalState.Open && linkedPortal != null)
-                CheckSegmentCrossing(cachedPlayer, previousPlayerWorldPos, currentPlayerPos);
-
-            previousPlayerWorldPos = cachedPlayer.transform.position;
-            hasPreviousPlayerPos = true;
-        }
-
-        if (exitingPlayer != null)
-            UpdateExitingCameraPassThrough();
+        if (Application.isPlaying)
+            StepPortals();
     }
 
-    private void RegisterPortalInRegistry()
-    {
-        if (!string.IsNullOrEmpty(portalId))
-            ActivePortalsById[portalId] = this;
-
-        TryResolveLinkedPortalById();
-
-        foreach (var kvp in ActivePortalsById)
-        {
-            var other = kvp.Value;
-            if (other != null && other != this && !string.IsNullOrEmpty(portalId) && other.targetPortalId == portalId)
-            {
-                other.linkedPortal = this;
-                if (linkedPortal == null && !string.IsNullOrEmpty(targetPortalId) && targetPortalId == other.portalId)
-                    linkedPortal = other;
-            }
-        }
-    }
-
-    private void UnregisterPortalFromRegistry()
-    {
-        if (!string.IsNullOrEmpty(portalId) && ActivePortalsById.TryGetValue(portalId, out var existing) && existing == this)
-            ActivePortalsById.Remove(portalId);
-
-        if (linkedPortal != null && linkedPortal.linkedPortal == this)
-            linkedPortal.linkedPortal = null;
-    }
-
-    private void TryResolveLinkedPortalById()
-    {
-        if (string.IsNullOrEmpty(targetPortalId)) return;
-        if (ActivePortalsById.TryGetValue(targetPortalId, out var target) && target != null && target != this)
-        {
-            linkedPortal = target;
-            if (target.linkedPortal == null && !string.IsNullOrEmpty(target.targetPortalId) && target.targetPortalId == portalId)
-                target.linkedPortal = this;
-        }
-    }
-
-    private void SetScenePinned(bool pinned)
-    {
-        if (!Application.isPlaying || string.IsNullOrEmpty(targetSceneName)) return;
-        if (isScenePinned == pinned) return;
-
-        if (SceneStreamer.Instance != null)
-        {
-            if (pinned)
-                SceneStreamer.Instance.PinScene(targetSceneName);
-            else
-                SceneStreamer.Instance.UnpinScene(targetSceneName);
-            isScenePinned = pinned;
-        }
-    }
-
-    private void PersistPortalState(bool open)
-    {
-        if (!Application.isPlaying) return;
-
-        if (!string.IsNullOrEmpty(portalId))
-            SaveManager.SetPortalOpenState(portalId, open, gameObject.scene.name);
-
-        if (syncStateWithLinked && !string.IsNullOrEmpty(targetPortalId))
-        {
-            string targetScene = !string.IsNullOrEmpty(targetSceneName) ? targetSceneName : gameObject.scene.name;
-            SaveManager.SetPortalOpenState(targetPortalId, open, targetScene);
-        }
-    }
-
-    /// <summary>
-    /// 포탈 개방 연출을 시작합니다.
-    /// </summary>
     public void Open() => SetOpen(true, syncStateWithLinked);
-
-    /// <summary>
-    /// 포탈 소멸(닫힘) 연출을 시작합니다.
-    /// </summary>
     public void Close() => SetOpen(false, syncStateWithLinked);
 
-    /// <summary>
-    /// 포탈 개폐 상태를 토글합니다.
-    /// </summary>
     public void Toggle()
     {
-        if (CurrentState == PortalState.Open || CurrentState == PortalState.Opening)
-            Close();
-        else
-            Open();
+        if (CurrentState == PortalState.Open || CurrentState == PortalState.Opening) Close();
+        else Open();
     }
 
-    /// <summary>
-    /// 애니메이션 없이 즉시 포탈의 개폐 상태를 설정합니다.
-    /// </summary>
     public void SetOpenImmediate(bool open, bool syncLinked = true, bool saveState = true)
     {
-        if (transitionCoroutine != null)
+        if (transitionRoutine != null)
         {
-            StopCoroutine(transitionCoroutine);
-            transitionCoroutine = null;
+            StopCoroutine(transitionRoutine);
+            transitionRoutine = null;
         }
 
-        SetScenePinned(open);
-        TryResolveLinkedPortalById();
+        PinTargetScene(open);
+        TryLink();
 
         CurrentState = open ? PortalState.Open : PortalState.Closed;
         currentProgress = open ? 1f : 0f;
@@ -338,13 +280,13 @@ public class PortalGateway : MonoBehaviour
         {
             portalRenderer.enabled = open;
             if (animateTransformScale)
-                portalRenderer.transform.localScale = open ? defaultRendererScale : Vector3.zero;
+                portalRenderer.transform.localScale = open ? defaultScale : Vector3.zero;
         }
 
         if (saveState)
-            PersistPortalState(open);
+            SaveOpenState(open);
 
-        UpdateVisualProperties();
+        RefreshVisuals();
 
         if (syncLinked && linkedPortal != null && linkedPortal.IsOpen != open)
             linkedPortal.SetOpenImmediate(open, syncLinked: false, saveState: saveState);
@@ -357,30 +299,27 @@ public class PortalGateway : MonoBehaviour
             startOpen = open;
             editorPreviewProgress = open ? 1f : 0f;
             currentProgress = editorPreviewProgress;
-            if (portalRenderer != null)
-                portalRenderer.enabled = true;
-            UpdateVisualProperties();
+            if (portalRenderer != null) portalRenderer.enabled = true;
+            RefreshVisuals();
             return;
         }
 
         if (open && (CurrentState == PortalState.Open || CurrentState == PortalState.Opening)) return;
         if (!open && (CurrentState == PortalState.Closed || CurrentState == PortalState.Closing)) return;
 
-        if (open)
-            SetScenePinned(true);
+        if (open) PinTargetScene(true);
+        SaveOpenState(open);
 
-        PersistPortalState(open);
+        if (transitionRoutine != null)
+            StopCoroutine(transitionRoutine);
 
-        if (transitionCoroutine != null)
-            StopCoroutine(transitionCoroutine);
-
-        transitionCoroutine = StartCoroutine(TransitionRoutine(open));
+        transitionRoutine = StartCoroutine(AnimateOpenRoutine(open));
 
         if (syncLinked && linkedPortal != null)
             linkedPortal.SetOpen(open, syncLinked: false);
     }
 
-    private IEnumerator TransitionRoutine(bool opening)
+    private IEnumerator AnimateOpenRoutine(bool opening)
     {
         CurrentState = opening ? PortalState.Opening : PortalState.Closing;
 
@@ -417,18 +356,18 @@ public class PortalGateway : MonoBehaviour
             }
 
             if (animateTransformScale && portalRenderer != null)
-                portalRenderer.transform.localScale = defaultRendererScale * currentProgress;
+                portalRenderer.transform.localScale = defaultScale * currentProgress;
 
-            UpdateVisualProperties();
+            RefreshVisuals();
             yield return null;
         }
 
-        TryResolveLinkedPortalById();
+        TryLink();
         if (opening && syncStateWithLinked && linkedPortal != null && !linkedPortal.IsOpen)
             linkedPortal.SetOpenImmediate(true, syncLinked: false, saveState: false);
 
         if (!opening)
-            SetScenePinned(false);
+            PinTargetScene(false);
 
         currentProgress = targetVal;
         CurrentState = opening ? PortalState.Open : PortalState.Closed;
@@ -437,207 +376,580 @@ public class PortalGateway : MonoBehaviour
         {
             portalRenderer.enabled = opening;
             if (animateTransformScale)
-                portalRenderer.transform.localScale = opening ? defaultRendererScale : Vector3.zero;
+                portalRenderer.transform.localScale = opening ? defaultScale : Vector3.zero;
         }
 
-        UpdateVisualProperties();
-        transitionCoroutine = null;
+        RefreshVisuals();
+        transitionRoutine = null;
 
-        if (opening)
-            onPortalOpened?.Invoke();
-        else
-            onPortalClosed?.Invoke();
+        if (opening) onPortalOpened?.Invoke();
+        else onPortalClosed?.Invoke();
     }
 
-    private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
+    private void RenderPortal(ScriptableRenderContext context, Camera cam)
     {
-        if (isRenderingAnyPortal) return;
+        if (isRenderingPortal) return;
         if (currentProgress <= 0.001f || linkedPortal == null || portalRenderer == null || !portalRenderer.enabled) return;
         if (cam.cameraType == CameraType.Preview || cam.cameraType == CameraType.Reflection || cam == portalCamera) return;
         if (cam != Camera.main && cam.cameraType != CameraType.Game && cam.cameraType != CameraType.SceneView) return;
 
-        if (Application.isPlaying && exitingPlayer != null && cam == Camera.main && IsCameraBehindExitPlane(cam.transform))
+        Transform inT = transform;
+        Transform outT = linkedPortal.transform;
+        Vector3 localCamPos = inT.InverseTransformPoint(cam.transform.position);
+        float planeDist = Mathf.Abs(localCamPos.z);
+        bool isSplitEntry = Application.isPlaying && split.active && split.entry == this && cam == Camera.main;
+        float viewSide = isSplitEntry ? split.entrySide : (localCamPos.z >= 0f ? 1f : -1f);
+
+        float sqrDist = (cam.transform.position - inT.position).sqrMagnitude;
+        if (!isSplitEntry)
         {
-            UpdateVisualProperties(suppressSurface: true);
-            return;
+            if (sqrDist > maxRenderDistance * maxRenderDistance) return;
+            GeometryUtility.CalculateFrustumPlanes(cam, FrustumPlanes);
+            if (!GeometryUtility.TestPlanesAABB(FrustumPlanes, portalRenderer.bounds)) return;
         }
 
-        float sqrDist = (cam.transform.position - transform.position).sqrMagnitude;
-        if (sqrDist > maxRenderDistance * maxRenderDistance) return;
+        EnsureCamera(cam);
+        if (portalCamera == null || renderTex == null) return;
 
-        GeometryUtility.CalculateFrustumPlanes(cam, CachedFrustumPlanes);
-        if (!GeometryUtility.TestPlanesAABB(CachedFrustumPlanes, portalRenderer.bounds)) return;
+        Vector3 mappedCamPos = outT.TransformPoint(MapLocal(localCamPos, mirrorForwardDirection));
+        Quaternion mappedCamRot = GetRotationDelta(this, linkedPortal, mirrorForwardDirection) * cam.transform.rotation;
 
-        EnsurePortalCamera(cam);
-        if (portalCamera == null || renderTexture2D == null) return;
+        if (cameraData != null)
+            cameraData.renderShadows = isSplitEntry || sqrDist < 225f;
 
-        Transform inTransform = transform;
-        Transform outTransform = linkedPortal.transform;
-
-        Vector3 localCamPos = inTransform.InverseTransformPoint(cam.transform.position);
-        Quaternion localCamRot = Quaternion.Inverse(inTransform.rotation) * cam.transform.rotation;
-
-        if (mirrorForwardDirection)
-        {
-            localCamPos = HalfTurn * localCamPos;
-            localCamRot = HalfTurn * localCamRot;
-        }
-
-        Vector3 mappedCamPos = outTransform.TransformPoint(localCamPos);
-        Quaternion mappedCamRot = outTransform.rotation * localCamRot;
-
-        portalCamera.nearClipPlane = cam.nearClipPlane;
+        portalCamera.nearClipPlane = PortalCamNearClip;
         portalCamera.farClipPlane = cam.farClipPlane;
         portalCamera.cullingMask = cullingMask;
-        portalCamera.targetTexture = renderTexture2D;
+        portalCamera.targetTexture = renderTex;
         portalCamera.transform.SetPositionAndRotation(mappedCamPos, mappedCamRot);
         portalCamera.fieldOfView = cam.fieldOfView;
         portalCamera.aspect = cam.aspect;
-        portalCamera.projectionMatrix = cam.projectionMatrix;
+        portalCamera.ResetProjectionMatrix();
 
-        if (useObliqueClip)
+        if (useObliqueClip && localCamPos.z * viewSide > 0.04f)
         {
-            float distToOutPlane = Vector3.Distance(mappedCamPos, outTransform.position);
-            if (distToOutPlane > 0.25f)
-            {
-                Vector3 normal = mirrorForwardDirection ? outTransform.forward : -outTransform.forward;
-                float side = Mathf.Sign(Vector3.Dot(normal, outTransform.position - mappedCamPos));
-                Vector3 camSpacePos = portalCamera.worldToCameraMatrix.MultiplyPoint(outTransform.position);
-                Vector3 camSpaceNormal = portalCamera.worldToCameraMatrix.MultiplyVector(normal) * side;
-                float camSpaceDist = -Vector3.Dot(camSpacePos, camSpaceNormal) + clipPlaneOffset;
+            // 출구 포탈 뒷벽이 비치지 않도록 클립 평면을 출구 포탈 약간 앞(-offset)으로 유지 (전 거리 연속 투영 행렬)
+            Vector3 clipNormalWorld = (mirrorForwardDirection ? viewSide : -viewSide) * outT.forward;
+            Vector3 camSpacePos = portalCamera.worldToCameraMatrix.MultiplyPoint(outT.position);
+            Vector3 camSpaceNormal = portalCamera.worldToCameraMatrix.MultiplyVector(clipNormalWorld);
+            float offset = Mathf.Max(0.02f, clipPlaneOffset);
+            float camSpaceDist = -Vector3.Dot(camSpacePos, camSpaceNormal) - offset;
 
-                if (Mathf.Abs(camSpaceDist) > 0.15f)
+            if (camSpaceDist < -PortalCamNearClip * 2f)
+            {
+                Vector4 clipPlane = new Vector4(camSpaceNormal.x, camSpaceNormal.y, camSpaceNormal.z, camSpaceDist);
+                portalCamera.projectionMatrix = portalCamera.CalculateObliqueMatrix(clipPlane);
+            }
+        }
+
+        HiddenRenderers.Clear();
+        for (int i = 0; i < ActivePortals.Count; i++)
+        {
+            var p = ActivePortals[i];
+            if (p != null && p.portalRenderer != null && p.portalRenderer.enabled)
+            {
+                p.portalRenderer.enabled = false;
+                HiddenRenderers.Add(p.portalRenderer);
+            }
+        }
+
+        isRenderingPortal = true;
+        try
+        {
+            RenderPipeline.SubmitRenderRequest(portalCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = renderTex });
+        }
+        finally
+        {
+            for (int i = 0; i < HiddenRenderers.Count; i++)
+            {
+                if (HiddenRenderers[i] != null)
+                    HiddenRenderers[i].enabled = true;
+            }
+            HiddenRenderers.Clear();
+            isRenderingPortal = false;
+        }
+
+        SetProximityFlatten(isSplitEntry ? 1f - Mathf.InverseLerp(0f, ProximityFadeRange, planeDist) : 0f);
+        RefreshVisuals();
+    }
+
+    private static void StepPortals()
+    {
+        if (lastSteppedFrame == Time.frameCount) return;
+        lastSteppedFrame = Time.frameCount;
+
+        if (trackedPlayer == null)
+        {
+            trackedPlayer = FindFirstObjectByType<PlayerController>();
+            hasPrevPlayerPos = false;
+            if (trackedPlayer == null) return;
+        }
+
+        Vector3 currPos = trackedPlayer.transform.position;
+        if (!hasPrevPlayerPos)
+        {
+            prevPlayerPos = currPos;
+            hasPrevPlayerPos = true;
+            TravellerVisual.Sync(trackedPlayer, null, 1f, ActivePortals);
+            return;
+        }
+
+        if (split.active)
+        {
+            if (split.entry == null || split.exit == null || !split.entry.IsOpen || !split.exit.IsOpen)
+            {
+                CompleteSplit(Camera.main);
+            }
+            else if (TryDetectDirectionalCross(split.exit, prevPlayerPos, currPos, split.exitSide, out Vector3 exitCurrLocal))
+            {
+                CancelSplit(exitCurrLocal);
+            }
+            else
+            {
+                for (int i = 0; i < ActivePortals.Count; i++)
                 {
-                    Vector4 clipPlane = new Vector4(camSpaceNormal.x, camSpaceNormal.y, camSpaceNormal.z, camSpaceDist);
-                    portalCamera.projectionMatrix = portalCamera.CalculateObliqueMatrix(clipPlane);
+                    var p = ActivePortals[i];
+                    if (p == null || p == split.exit || !p.IsOpen || p.linkedPortal == null) continue;
+                    if (Time.time - p.lastTeleportTime < p.teleportCooldown) continue;
+
+                    if (TryDetectCross(p, prevPlayerPos, currPos, out float side, out Vector3 currLocal))
+                    {
+                        CompleteSplit(Camera.main);
+                        BeginCross(p, trackedPlayer, side, currLocal);
+                        break;
+                    }
+                }
+            }
+
+            if (split.active)
+                UpdateSplitGhost();
+        }
+        else
+        {
+            for (int i = 0; i < ActivePortals.Count; i++)
+            {
+                var p = ActivePortals[i];
+                if (p == null || !p.IsOpen || p.linkedPortal == null) continue;
+                if (Time.time - p.lastTeleportTime < p.teleportCooldown) continue;
+
+                if (TryDetectCross(p, prevPlayerPos, currPos, out float side, out Vector3 currLocal))
+                {
+                    BeginCross(p, trackedPlayer, side, currLocal);
+                    break;
                 }
             }
         }
 
-        HiddenRenderersBuffer.Clear();
-        for (int i = 0; i < AllActivePortals.Count; i++)
-        {
-            var p = AllActivePortals[i];
-            if (p != null && p.portalRenderer != null && p.portalRenderer.enabled)
-            {
-                p.portalRenderer.enabled = false;
-                HiddenRenderersBuffer.Add(p.portalRenderer);
-            }
-        }
-
-        isRenderingAnyPortal = true;
-        try
-        {
-            RenderPipeline.SubmitRenderRequest(portalCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = renderTexture2D });
-        }
-        finally
-        {
-            for (int i = 0; i < HiddenRenderersBuffer.Count; i++)
-            {
-                if (HiddenRenderersBuffer[i] != null)
-                    HiddenRenderersBuffer[i].enabled = true;
-            }
-            HiddenRenderersBuffer.Clear();
-            isRenderingAnyPortal = false;
-        }
-
-        UpdateVisualProperties(suppressSurface: false);
+        prevPlayerPos = trackedPlayer.transform.position;
+        TravellerVisual.Sync(trackedPlayer, split.active ? split.exit : null, split.exitSide, ActivePortals);
     }
 
-    private void EnsurePortalCamera(Camera sourceCam)
+    private static bool TryDetectCross(PortalGateway portal, Vector3 prevWorld, Vector3 currWorld, out float entrySide, out Vector3 currLocal)
     {
-        RenderTextureFormat format = sourceCam.allowHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
-        int width = Mathf.Max(16, Mathf.RoundToInt(sourceCam.pixelWidth * renderTextureScale));
-        int height = Mathf.Max(16, Mathf.RoundToInt(sourceCam.pixelHeight * renderTextureScale));
+        Vector3 prevLocal = portal.transform.InverseTransformPoint(prevWorld);
+        currLocal = portal.transform.InverseTransformPoint(currWorld);
+        entrySide = Mathf.Abs(prevLocal.z) > 0.0001f ? Mathf.Sign(prevLocal.z) : 1f;
 
-        if (renderTexture2D == null || renderTexture2D.width != width || renderTexture2D.height != height)
+        bool crossed = (prevLocal.z < 0f && currLocal.z >= 0f) || (prevLocal.z > 0f && currLocal.z <= 0f);
+        if (!crossed) return false;
+
+        return IsWithinAperture(portal, prevLocal, currLocal);
+    }
+
+    private static bool TryDetectDirectionalCross(PortalGateway portal, Vector3 prevWorld, Vector3 currWorld, float fromSide, out Vector3 currLocal)
+    {
+        Vector3 prevLocal = portal.transform.InverseTransformPoint(prevWorld);
+        currLocal = portal.transform.InverseTransformPoint(currWorld);
+
+        if (prevLocal.z * fromSide <= 0f || currLocal.z * fromSide > 0f)
+            return false;
+
+        return IsWithinAperture(portal, prevLocal, currLocal);
+    }
+
+    private static bool IsWithinAperture(PortalGateway portal, Vector3 prevLocal, Vector3 currLocal)
+    {
+        float dz = currLocal.z - prevLocal.z;
+        if (Mathf.Abs(dz) < 0.00001f) return false;
+
+        Vector3 hit = Vector3.Lerp(prevLocal, currLocal, Mathf.Clamp01(-prevLocal.z / dz));
+        float halfW = Mathf.Max(0.4f, portal.defaultScale.x * 0.55f);
+        float halfH = Mathf.Max(0.6f, portal.defaultScale.y * 0.65f);
+        return Mathf.Abs(hit.x) <= halfW && Mathf.Abs(hit.y) <= halfH;
+    }
+
+    private static void BeginCross(PortalGateway entry, PlayerController player, float entrySide, Vector3 currLocal)
+    {
+        PortalGateway exit = entry.linkedPortal;
+        if (player == null || exit == null) return;
+
+        bool mirror = entry.mirrorForwardDirection;
+        float exitSide = mirror ? entrySide : -entrySide;
+
+        Vector3 outLocal = MapLocal(currLocal, mirror);
+        if (outLocal.z * exitSide < MinPlayerClearance)
+            outLocal.z = exitSide * MinPlayerClearance;
+
+        Vector3 targetPos = exit.transform.TransformPoint(outLocal);
+        Quaternion rotDelta = GetRotationDelta(entry, exit, mirror);
+        Quaternion targetRot = rotDelta * player.transform.rotation;
+
+        entry.lastTeleportTime = Time.time;
+        exit.lastTeleportTime = Time.time;
+
+        Transform camT = player.CameraTransform;
+        var camMode = player.CameraModeController;
+        bool shouldSplit = camT != null && camMode != null &&
+                           entry.transform.InverseTransformPoint(camT.position).z * entrySide > 0f;
+
+        string entryScene = entry.gameObject.scene.name;
+        string exitScene = exit.gameObject.scene.name;
+        bool crossScene = entryScene != exitScene;
+
+        if (shouldSplit)
         {
-            if (renderTexture2D != null)
+            if (crossScene)
             {
-                if (portalCamera != null) portalCamera.targetTexture = null;
-                renderTexture2D.Release();
-                DestroyImmediate(renderTexture2D);
+                SceneStreamer.Instance?.PinScene(entryScene);
+                SceneStreamer.Instance?.PinScene(exitScene);
             }
 
-            renderTexture2D = new RenderTexture(width, height, 24, format)
+            player.Warp(targetPos, targetRot);
+            player.SetCameraBasisOffset(rotDelta);
+
+            Transform realTarget = camMode.RealTarget != null ? camMode.RealTarget : player.transform;
+            Vector3 ghostPos = entry.transform.TransformPoint(MapLocal(exit.transform.InverseTransformPoint(realTarget.position), mirror));
+            Quaternion ghostRot = GetRotationDelta(exit, entry, mirror) * realTarget.rotation;
+
+            camMode.BeginSplit(ghostPos, ghostRot);
+
+            split = new SplitSession
             {
-                name = $"PortalRT_{gameObject.GetInstanceID()}",
-                hideFlags = HideFlags.DontSave
+                active = true,
+                entry = entry,
+                exit = exit,
+                player = player,
+                entrySide = entrySide,
+                exitSide = exitSide,
+                mirror = mirror,
+                lastGhostWorld = ghostPos,
+                funnelPull = 0f,
+                pinnedEntryScene = crossScene ? entryScene : null,
+                pinnedExitScene = crossScene ? exitScene : null
             };
-            renderTexture2D.Create();
+        }
+        else
+        {
+            Vector3 camOutLocal = camT != null ? MapLocal(entry.transform.InverseTransformPoint(camT.position), mirror) : outLocal;
+            float minZ = Mathf.Max(FrontCameraClearance, exit.exitClearance);
+            if (camOutLocal.z * exitSide < minZ)
+                camOutLocal.z = exitSide * minZ;
+
+            Vector3 targetCamPos = exit.transform.TransformPoint(camOutLocal);
+            Quaternion targetCamRot = camT != null ? rotDelta * camT.rotation : targetRot;
+            player.Teleport(targetPos, targetRot, targetCamPos, targetCamRot);
         }
 
-        if (portalCamera == null)
+        SceneStreamer.Instance?.RefreshZonesForPosition(targetPos);
+
+        if (entry.teleportSound != null && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFXAt(entry.teleportSound, targetPos);
+
+        entry.onPlayerTeleported?.Invoke();
+    }
+
+    private static void CancelSplit(Vector3 exitCurrLocal)
+    {
+        PortalGateway entry = split.entry;
+        PortalGateway exit = split.exit;
+        PlayerController player = split.player;
+
+        Vector3 returnLocal = MapLocal(exitCurrLocal, split.mirror);
+        if (returnLocal.z * split.entrySide < MinPlayerClearance)
+            returnLocal.z = split.entrySide * MinPlayerClearance;
+
+        Vector3 returnPos = entry.transform.TransformPoint(returnLocal);
+        Quaternion returnRot = GetRotationDelta(exit, entry, split.mirror) * player.transform.rotation;
+
+        entry.lastTeleportTime = Time.time;
+        exit.lastTeleportTime = Time.time;
+
+        player.ClearCameraBasisOffset();
+        player.Warp(returnPos, returnRot);
+        player.CameraModeController?.EndSplit(Camera.main);
+
+        entry.SetProximityFlatten(0f);
+        CleanupSplit();
+        SceneStreamer.Instance?.RefreshZonesForPosition(returnPos);
+    }
+
+    private static void UpdateSplitGhost()
+    {
+        var camMode = split.player != null ? split.player.CameraModeController : null;
+        if (camMode == null) return;
+
+        PortalGateway entry = split.entry;
+        PortalGateway exit = split.exit;
+        Transform realTarget = camMode.RealTarget != null ? camMode.RealTarget : split.player.transform;
+
+        Vector3 ghostLocal = MapLocal(exit.transform.InverseTransformPoint(realTarget.position), split.mirror);
+        Quaternion ghostRot = GetRotationDelta(exit, entry, split.mirror) * realTarget.rotation;
+
+        Transform camT = split.player.CameraTransform;
+        if (camT != null)
         {
-            GameObject camObj = new GameObject($"PortalCam_{name}")
+            Vector3 camLocal = entry.transform.InverseTransformPoint(camT.position);
+            float innerW = Mathf.Max(0.35f, entry.defaultScale.x * 0.4f);
+            float innerH = Mathf.Max(0.5f, entry.defaultScale.y * 0.42f);
+
+            float dz = camLocal.z - ghostLocal.z;
+            float tPlane = Mathf.Abs(dz) > 0.0001f ? Mathf.Clamp01(camLocal.z / dz) : 0f;
+            float hitX = Mathf.Lerp(camLocal.x, ghostLocal.x, tPlane);
+            float hitY = Mathf.Lerp(camLocal.y, ghostLocal.y, tPlane);
+
+            if (Mathf.Abs(hitX) > innerW || Mathf.Abs(hitY) > innerH)
             {
-                hideFlags = HideFlags.HideAndDontSave
-            };
-            camObj.transform.SetParent(transform, false);
-            portalCamera = camObj.AddComponent<Camera>();
-            portalCamera.enabled = false;
-            portalCamera.cameraType = CameraType.Reflection;
-            cameraData = camObj.AddComponent<UniversalAdditionalCameraData>();
-            cameraData.renderShadows = false;
-            cameraData.requiresColorOption = CameraOverrideOption.UsePipelineSettings;
-            cameraData.requiresDepthOption = CameraOverrideOption.Off;
+                split.funnelPull = Mathf.Clamp01(split.funnelPull + Time.deltaTime * 3.5f);
+                Vector3 clampedAperture = new Vector3(
+                    Mathf.Clamp(hitX, -innerW * 0.8f, innerW * 0.8f),
+                    Mathf.Clamp(hitY, -innerH * 0.8f, innerH * 0.8f),
+                    -split.entrySide * 0.15f
+                );
+                Vector3 orbitLocal = entry.transform.InverseTransformVector(camT.position - split.lastGhostWorld);
+                ghostLocal = Vector3.Lerp(ghostLocal, clampedAperture - orbitLocal, split.funnelPull);
+            }
+            else
+            {
+                split.funnelPull = Mathf.MoveTowards(split.funnelPull, 0f, Time.deltaTime * 4f);
+            }
+        }
+
+        Vector3 ghostWorld = entry.transform.TransformPoint(ghostLocal);
+        split.lastGhostWorld = ghostWorld;
+        camMode.UpdateGhost(ghostWorld, ghostRot);
+    }
+
+    private static void OnBrainUpdated(CinemachineBrain brain)
+    {
+        if (brain == null) return;
+        Camera outCam = brain.OutputCamera;
+        if (outCam == null || outCam != Camera.main) return;
+
+        if (trackedPlayer == null)
+            trackedPlayer = FindFirstObjectByType<PlayerController>();
+
+        Transform camT = outCam.transform;
+
+        if (split.active)
+        {
+            Vector3 camLocal = split.entry.transform.InverseTransformPoint(camT.position);
+            if (camLocal.z * split.entrySide <= SplitCrossDist)
+                CompleteSplit(outCam);
+
+            UpdateNearPortalClipState(outCam, camT.position);
+            return;
+        }
+
+        if (trackedPlayer != null)
+            GuardPortalCameraPlane(camT, trackedPlayer);
+
+        UpdateNearPortalClipState(outCam, camT.position);
+    }
+
+    private static void GuardPortalCameraPlane(Transform camT, PlayerController player)
+    {
+        var camMode = player.CameraModeController;
+        Transform targetT = (camMode != null && camMode.RealTarget != null) ? camMode.RealTarget : player.transform;
+        Vector3 targetWorld = targetT.position;
+
+        for (int i = 0; i < ActivePortals.Count; i++)
+        {
+            var p = ActivePortals[i];
+            if (p == null || !p.IsOpen || p.linkedPortal == null) continue;
+            if ((targetWorld - p.transform.position).sqrMagnitude > 81f) continue;
+
+            Vector3 targetLocal = p.transform.InverseTransformPoint(targetWorld);
+            Vector3 camLocal = p.transform.InverseTransformPoint(camT.position);
+            float side = targetLocal.z >= 0f ? 1f : -1f;
+            float targetSignedZ = targetLocal.z * side;
+            float camSignedZ = camLocal.z * side;
+
+            float halfW = p.defaultScale.x * 0.52f;
+            float halfH = p.defaultScale.y * 0.52f;
+
+            if (targetSignedZ > FrontCameraClearance + 0.02f && camSignedZ < FrontCameraClearance)
+            {
+                float planeZ = side * FrontCameraClearance;
+                float dz = camLocal.z - targetLocal.z;
+                if (Mathf.Abs(dz) < 0.0001f) continue;
+
+                float tHit = (planeZ - targetLocal.z) / dz;
+                Vector3 hitLocal = Vector3.Lerp(targetLocal, camLocal, tHit);
+
+                float weightX = 1f - Mathf.InverseLerp(halfW, halfW + 0.30f, Mathf.Abs(hitLocal.x));
+                float weightY = 1f - Mathf.InverseLerp(halfH, halfH + 0.30f, Mathf.Abs(hitLocal.y));
+                float weight = weightX * weightY;
+                if (weight <= 0.001f) continue;
+
+                Vector3 clampedLocal = Vector3.Lerp(camLocal, hitLocal, weight);
+                if (Mathf.Abs(clampedLocal.x) < halfW && Mathf.Abs(clampedLocal.y) < halfH && clampedLocal.z * side < FrontCameraClearance)
+                    clampedLocal.z = planeZ;
+
+                camT.position = p.transform.TransformPoint(clampedLocal);
+            }
+            else if (Mathf.Abs(camLocal.z) < 0.03f && Mathf.Abs(camLocal.x) < halfW && Mathf.Abs(camLocal.y) < halfH)
+            {
+                float camSide = Mathf.Abs(camLocal.z) > 0.0001f ? Mathf.Sign(camLocal.z) : side;
+                camLocal.z = camSide * 0.03f;
+                camT.position = p.transform.TransformPoint(camLocal);
+            }
         }
     }
 
-    private void ReleaseRenderResources()
+    private static void UpdateNearPortalClipState(Camera outCam, Vector3 camWorldPos)
     {
-        if (portalCamera != null)
+        if (trackedPlayer == null || trackedPlayer.CameraModeController == null) return;
+
+        float threshold = isNearAnyPortal ? 1.05f : 0.85f;
+        bool near = false;
+
+        for (int i = 0; i < ActivePortals.Count; i++)
         {
-            portalCamera.targetTexture = null;
-            if (Application.isPlaying)
-                Destroy(portalCamera.gameObject);
-            else
-                DestroyImmediate(portalCamera.gameObject);
-            portalCamera = null;
+            var p = ActivePortals[i];
+            if (p == null || !p.IsOpen) continue;
+
+            Vector3 local = p.transform.InverseTransformPoint(camWorldPos);
+            if (Mathf.Abs(local.z) < threshold &&
+                Mathf.Abs(local.x) < p.defaultScale.x * 0.75f + 0.5f &&
+                Mathf.Abs(local.y) < p.defaultScale.y * 0.75f + 0.5f)
+            {
+                near = true;
+                break;
+            }
         }
 
-        if (renderTexture2D != null)
+        if (near != isNearAnyPortal)
         {
-            renderTexture2D.Release();
-            if (Application.isPlaying)
-                Destroy(renderTexture2D);
-            else
-                DestroyImmediate(renderTexture2D);
-            renderTexture2D = null;
+            isNearAnyPortal = near;
+            trackedPlayer.CameraModeController.SetNearPortalClip(near, outCam);
+        }
+        else if (near || split.active)
+        {
+            outCam.nearClipPlane = PortalCamNearClip;
         }
     }
 
-    /// <summary>
-    /// 포탈의 런타임 상태 프로퍼티(_PortalTex, _HasPortalTex, _OpenProgress)와 라이트 강도를 갱신합니다.
-    /// </summary>
-    public void UpdateVisualProperties(bool suppressSurface = false)
+    private static void CompleteSplit(Camera mainCam)
     {
-        float effectiveProgress = Application.isPlaying ? currentProgress : editorPreviewProgress;
+        if (!split.active) return;
+
+        PortalGateway entry = split.entry;
+        PortalGateway exit = split.exit;
+        PlayerController player = split.player;
+        var camMode = player != null ? player.CameraModeController : null;
+        Transform camT = mainCam != null ? mainCam.transform : (player != null ? player.CameraTransform : null);
+
+        if (camT != null && entry != null && exit != null)
+        {
+            Vector3 inLocal = entry.transform.InverseTransformPoint(camT.position);
+            float maxW = Mathf.Max(0.35f, entry.defaultScale.x * 0.45f);
+            float maxH = Mathf.Max(0.5f, entry.defaultScale.y * 0.48f);
+            inLocal.x = Mathf.Clamp(inLocal.x, -maxW, maxW);
+            inLocal.y = Mathf.Clamp(inLocal.y, -maxH, maxH);
+
+            Vector3 outLocal = MapLocal(inLocal, split.mirror);
+            float minOutZ = Mathf.Max(FrontCameraClearance, exit.exitClearance);
+            if (outLocal.z * split.exitSide < minOutZ)
+                outLocal.z = split.exitSide * minOutZ;
+
+            Vector3 targetCamPos = exit.transform.TransformPoint(outLocal);
+            Quaternion targetCamRot = GetRotationDelta(entry, exit, split.mirror) * camT.rotation;
+
+            if (camMode != null)
+            {
+                isNearAnyPortal = true;
+                camMode.SetNearPortalClip(true, mainCam);
+                camMode.EndSplit(mainCam);
+
+                float yaw = targetCamRot.eulerAngles.y;
+                float pitch = targetCamRot.eulerAngles.x;
+                if (pitch > 180f) pitch -= 360f;
+                camMode.ForceCameraPose(targetCamPos, targetCamRot, yaw, pitch, cutDamping: false);
+            }
+
+            camT.SetPositionAndRotation(targetCamPos, targetCamRot);
+        }
+        else
+        {
+            camMode?.EndSplit(mainCam);
+        }
+
+        if (player != null)
+            player.ClearCameraBasisOffset();
+
+        if (entry != null)
+            entry.SetProximityFlatten(0f);
+
+        CleanupSplit();
+    }
+
+    private static void CleanupSplit()
+    {
+        if (!string.IsNullOrEmpty(split.pinnedEntryScene))
+            SceneStreamer.Instance?.UnpinScene(split.pinnedEntryScene);
+        if (!string.IsNullOrEmpty(split.pinnedExitScene))
+            SceneStreamer.Instance?.UnpinScene(split.pinnedExitScene);
+
+        split = default;
+    }
+
+    public static Vector3 MapLocal(Vector3 localPos, bool mirror) => mirror ? HalfTurn * localPos : localPos;
+
+    public static Quaternion GetRotationDelta(PortalGateway from, PortalGateway to, bool mirror)
+    {
+        Quaternion turn = mirror ? HalfTurn : Quaternion.identity;
+        return to.transform.rotation * turn * Quaternion.Inverse(from.transform.rotation);
+    }
+
+    public void RefreshVisuals()
+    {
+        float progress = Application.isPlaying ? currentProgress : editorPreviewProgress;
 
         if (portalLight != null)
         {
-            portalLight.enabled = effectiveProgress > 0.01f;
-            portalLight.intensity = effectiveProgress * maxLightIntensity;
+            portalLight.enabled = progress > 0.01f;
+            portalLight.intensity = progress * maxLightIntensity;
         }
 
         if (portalRenderer == null) return;
 
-        Material targetMat = EnsurePortalMaterial();
-        if (targetMat == null) return;
+        Material mat = EnsureMaterial();
+        if (mat == null) return;
 
-        bool hasValidTex = linkedPortal != null && renderTexture2D != null;
-        if (hasValidTex)
-            targetMat.SetTexture(PortalTexId, renderTexture2D);
+        bool hasTex = linkedPortal != null && renderTex != null;
+        if (hasTex)
+            mat.SetTexture(PortalTexId, renderTex);
 
-        targetMat.SetFloat(HasPortalTexId, hasValidTex ? 1f : 0f);
-        targetMat.SetFloat(OpenProgressId, suppressSurface ? 0f : effectiveProgress);
+        mat.SetFloat(HasPortalTexId, hasTex ? 1f : 0f);
+        mat.SetFloat(OpenProgressId, progress);
     }
 
-    private Material EnsurePortalMaterial()
+    private void SetProximityFlatten(float t)
+    {
+        if (runtimeMat == null || !hasBaseMatProps) return;
+
+        t = Mathf.Clamp01(t);
+        if (runtimeMat.HasProperty(RippleStrengthId))
+            runtimeMat.SetFloat(RippleStrengthId, Mathf.Lerp(baseRipple, 0f, t));
+        if (runtimeMat.HasProperty(LensCurvatureId))
+            runtimeMat.SetFloat(LensCurvatureId, Mathf.Lerp(baseCurvature, 0.01f, t));
+    }
+
+    private Material EnsureMaterial()
     {
         if (portalRenderer == null) return null;
 
-        Shader shader = Shader.Find("Shader Graphs/PortalGateway") ?? Shader.Find("Custom/PortalGateway");
+        Shader shader = Shader.Find("Shader Graphs/PortalGateway");
         if (shader == null) return portalRenderer.sharedMaterial;
 
         if (!Application.isPlaying)
@@ -655,146 +967,145 @@ public class PortalGateway : MonoBehaviour
             return shared;
         }
 
-        if (runtimeMaterial == null)
+        if (runtimeMat == null)
         {
             Material source = portalRenderer.sharedMaterial;
-            if (source != null && source.shader == shader)
-                runtimeMaterial = new Material(source);
-            else
-                runtimeMaterial = new Material(shader);
+            runtimeMat = (source != null && source.shader == shader) ? new Material(source) : new Material(shader);
+            runtimeMat.name = $"PortalGateway_RuntimeMat_{gameObject.GetInstanceID()}";
+            runtimeMat.hideFlags = HideFlags.DontSave;
+            runtimeMat.renderQueue = 2030;
+            portalRenderer.sharedMaterial = runtimeMat;
 
-            runtimeMaterial.name = $"PortalGateway_RuntimeMat_{gameObject.GetInstanceID()}";
-            runtimeMaterial.hideFlags = HideFlags.DontSave;
-            runtimeMaterial.renderQueue = 2030;
-            portalRenderer.sharedMaterial = runtimeMaterial;
+            if (runtimeMat.HasProperty(RippleStrengthId)) baseRipple = runtimeMat.GetFloat(RippleStrengthId);
+            if (runtimeMat.HasProperty(LensCurvatureId)) baseCurvature = runtimeMat.GetFloat(LensCurvatureId);
+            if (runtimeMat.HasProperty(InnerGlowColorId)) baseInnerGlow = runtimeMat.GetColor(InnerGlowColorId);
+            if (runtimeMat.HasProperty(TargetBrightnessId)) baseBrightness = runtimeMat.GetFloat(TargetBrightnessId);
+            hasBaseMatProps = true;
         }
 
-        return runtimeMaterial;
+        return runtimeMat;
     }
 
-    /// <summary>
-    /// 이전 프레임과 현재 프레임 위치를 선분 보간하여 포탈 중심면 통과 여부와 잔여 이동량을 계산합니다.
-    /// </summary>
-    private void CheckSegmentCrossing(PlayerController player, Vector3 prevWorldPos, Vector3 currWorldPos)
+    private void EnsureCamera(Camera sourceCam)
     {
-        if (Time.time - lastTeleportTime < teleportCooldown) return;
+        RenderTextureFormat format = sourceCam.allowHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
+        int width = Mathf.Max(16, Mathf.RoundToInt(sourceCam.pixelWidth * renderTextureScale));
+        int height = Mathf.Max(16, Mathf.RoundToInt(sourceCam.pixelHeight * renderTextureScale));
 
-        Transform inT = transform;
-        Vector3 prevLocal = inT.InverseTransformPoint(prevWorldPos);
-        Vector3 currLocal = inT.InverseTransformPoint(currWorldPos);
-        float zDelta = currLocal.z - prevLocal.z;
-
-        bool crossesPlane = (prevLocal.z < 0f && currLocal.z >= 0f) ||
-                            (prevLocal.z > 0f && currLocal.z <= 0f);
-        if (!crossesPlane || Mathf.Abs(zDelta) < 0.00001f) return;
-
-        float crossingT = Mathf.Clamp01(-prevLocal.z / zDelta);
-        Vector3 pointOnPlane = Vector3.Lerp(prevLocal, currLocal, crossingT);
-
-        float halfWidth = Mathf.Max(0.4f, defaultRendererScale.x * 0.55f);
-        float halfHeight = Mathf.Max(0.6f, defaultRendererScale.y * 0.65f);
-        if (Mathf.Abs(pointOnPlane.x) > halfWidth || Mathf.Abs(pointOnPlane.y) > halfHeight)
-            return;
-
-        ExecuteTeleport(player, prevLocal, currLocal);
-    }
-
-    private void ExecuteTeleport(PlayerController player, Vector3 prevLocal, Vector3 currLocal)
-    {
-        if (player == null || linkedPortal == null) return;
-
-        float entrySide = Mathf.Abs(prevLocal.z) > 0.0001f ? Mathf.Sign(prevLocal.z) : 1f;
-        lastTeleportTime = Time.time;
-        ClearExitingPlayerState();
-
-        Transform inT = transform;
-        Transform outT = linkedPortal.transform;
-
-        Vector3 mappedLocalPos = currLocal;
-        Quaternion localRot = Quaternion.Inverse(inT.rotation) * player.transform.rotation;
-
-        Transform camT = player.CameraTransform != null ? player.CameraTransform : (Camera.main != null ? Camera.main.transform : player.transform);
-        Vector3 localCamPos = inT.InverseTransformPoint(camT.position);
-        Quaternion localCamRot = Quaternion.Inverse(inT.rotation) * camT.rotation;
-
-        if (mirrorForwardDirection)
+        if (renderTex == null || renderTex.width != width || renderTex.height != height)
         {
-            mappedLocalPos = HalfTurn * mappedLocalPos;
-            localRot = HalfTurn * localRot;
-            localCamPos = HalfTurn * localCamPos;
-            localCamRot = HalfTurn * localCamRot;
+            if (renderTex != null)
+            {
+                if (portalCamera != null) portalCamera.targetTexture = null;
+                renderTex.Release();
+                DestroyImmediate(renderTex);
+            }
+
+            renderTex = new RenderTexture(width, height, 24, format)
+            {
+                name = $"PortalRT_{gameObject.GetInstanceID()}",
+                hideFlags = HideFlags.DontSave
+            };
+            renderTex.Create();
         }
 
-        float exitSide = mirrorForwardDirection ? entrySide : -entrySide;
-        if (Mathf.Abs(mappedLocalPos.z) < exitClearance)
-            mappedLocalPos.z = exitSide * exitClearance;
-
-        Vector3 targetPos = outT.TransformPoint(mappedLocalPos);
-        Quaternion targetRot = outT.rotation * localRot;
-        Vector3 targetCamPos = outT.TransformPoint(localCamPos);
-        Quaternion targetCamRot = outT.rotation * localCamRot;
-
-        linkedPortal.RegisterIncomingTeleport(player, exitSide);
-        player.Teleport(targetPos, targetRot, targetCamPos, targetCamRot);
-        previousPlayerWorldPos = targetPos;
-        SceneStreamer.Instance?.RefreshZonesForPosition(targetPos);
-
-        if (teleportSound != null && AudioManager.Instance != null)
-            AudioManager.Instance.PlaySFXAt(teleportSound, targetPos);
-
-        onPlayerTeleported?.Invoke();
-    }
-
-    /// <summary>
-    /// 반대편 포탈에서 플레이어가 도착했을 때 쿨타임 및 3인칭 카메라 후면 통과 상태를 등록합니다.
-    /// </summary>
-    public void RegisterIncomingTeleport(PlayerController player = null, float exitSide = 1f)
-    {
-        lastTeleportTime = Time.time;
-        exitingPlayer = player;
-        exitingPlayerSide = exitSide;
-
-        if (player != null)
+        if (portalCamera == null)
         {
-            previousPlayerWorldPos = player.transform.position;
-            hasPreviousPlayerPos = true;
-            player.CameraModeController?.SetDeoccluderEnabled(false);
+            var camObj = new GameObject($"PortalCam_{name}") { hideFlags = HideFlags.HideAndDontSave };
+            camObj.transform.SetParent(transform, false);
+            portalCamera = camObj.AddComponent<Camera>();
+            portalCamera.enabled = false;
+            portalCamera.cameraType = CameraType.Reflection;
+            cameraData = camObj.AddComponent<UniversalAdditionalCameraData>();
+            cameraData.renderShadows = false;
+            cameraData.requiresColorOption = CameraOverrideOption.UsePipelineSettings;
+            cameraData.requiresDepthOption = CameraOverrideOption.Off;
         }
     }
 
-    private bool IsCameraBehindExitPlane(Transform camTransform)
+    private void ReleaseCamera()
     {
-        if (exitingPlayer == null || camTransform == null)
-            return false;
-
-        float playerLocalZ = transform.InverseTransformPoint(exitingPlayer.transform.position).z;
-        float camLocalZ = transform.InverseTransformPoint(camTransform.position).z;
-
-        return (playerLocalZ * exitingPlayerSide >= -0.1f) && (camLocalZ * exitingPlayerSide < 0.05f);
-    }
-
-    private void UpdateExitingCameraPassThrough()
-    {
-        if (exitingPlayer == null) return;
-
-        Transform camT = exitingPlayer.CameraTransform != null ? exitingPlayer.CameraTransform : (Camera.main != null ? Camera.main.transform : null);
-        if (camT == null || !IsCameraBehindExitPlane(camT))
+        if (portalCamera != null)
         {
-            ClearExitingPlayerState();
-            UpdateVisualProperties(suppressSurface: false);
+            portalCamera.targetTexture = null;
+            if (Application.isPlaying) Destroy(portalCamera.gameObject);
+            else DestroyImmediate(portalCamera.gameObject);
+            portalCamera = null;
         }
-    }
 
-    private void ClearExitingPlayerState()
-    {
-        if (exitingPlayer != null)
+        if (renderTex != null)
         {
-            exitingPlayer.CameraModeController?.SetDeoccluderEnabled(true);
-            exitingPlayer = null;
+            renderTex.Release();
+            if (Application.isPlaying) Destroy(renderTex);
+            else DestroyImmediate(renderTex);
+            renderTex = null;
         }
     }
 
-    private bool HasSocketRequirements()
+    private void Register()
+    {
+        if (!string.IsNullOrEmpty(portalId))
+            PortalsById[portalId] = this;
+
+        TryLink();
+
+        foreach (var kvp in PortalsById)
+        {
+            var other = kvp.Value;
+            if (other != null && other != this && !string.IsNullOrEmpty(portalId) && other.targetPortalId == portalId)
+            {
+                other.linkedPortal = this;
+                if (linkedPortal == null && !string.IsNullOrEmpty(targetPortalId) && targetPortalId == other.portalId)
+                    linkedPortal = other;
+            }
+        }
+    }
+
+    private void Unregister()
+    {
+        if (!string.IsNullOrEmpty(portalId) && PortalsById.TryGetValue(portalId, out var existing) && existing == this)
+            PortalsById.Remove(portalId);
+
+        if (linkedPortal != null && linkedPortal.linkedPortal == this)
+            linkedPortal.linkedPortal = null;
+    }
+
+    private void TryLink()
+    {
+        if (string.IsNullOrEmpty(targetPortalId)) return;
+        if (PortalsById.TryGetValue(targetPortalId, out var target) && target != null && target != this)
+        {
+            linkedPortal = target;
+            if (target.linkedPortal == null && !string.IsNullOrEmpty(target.targetPortalId) && target.targetPortalId == portalId)
+                target.linkedPortal = this;
+        }
+    }
+
+    private void PinTargetScene(bool pinned)
+    {
+        if (!Application.isPlaying || string.IsNullOrEmpty(targetSceneName) || isScenePinned == pinned) return;
+        if (SceneStreamer.Instance == null) return;
+
+        if (pinned) SceneStreamer.Instance.PinScene(targetSceneName);
+        else SceneStreamer.Instance.UnpinScene(targetSceneName);
+        isScenePinned = pinned;
+    }
+
+    private void SaveOpenState(bool open)
+    {
+        if (!Application.isPlaying) return;
+
+        if (!string.IsNullOrEmpty(portalId))
+            SaveManager.SetPortalOpenState(portalId, open, gameObject.scene.name);
+
+        if (syncStateWithLinked && !string.IsNullOrEmpty(targetPortalId))
+        {
+            string sceneName = !string.IsNullOrEmpty(targetSceneName) ? targetSceneName : gameObject.scene.name;
+            SaveManager.SetPortalOpenState(targetPortalId, open, sceneName);
+        }
+    }
+
+    private bool HasRequiredSockets()
     {
         if (requiredSocketIds == null) return false;
         for (int i = 0; i < requiredSocketIds.Count; i++)
@@ -805,7 +1116,7 @@ public class PortalGateway : MonoBehaviour
         return false;
     }
 
-    private bool AreSocketRequirementsMet()
+    private bool AreSocketsMet()
     {
         if (requiredSocketIds == null) return true;
         for (int i = 0; i < requiredSocketIds.Count; i++)
@@ -817,20 +1128,20 @@ public class PortalGateway : MonoBehaviour
         return true;
     }
 
-    private void HandleAnySocketPlaced(ItemSocket socket, ItemData item)
+    private void OnSocketPlaced(ItemSocket socket, ItemData item)
     {
-        if (HasSocketRequirements() && AreSocketRequirementsMet())
-            StartCoroutine(DelayedOpenRoutine());
+        if (HasRequiredSockets() && AreSocketsMet())
+            StartCoroutine(OpenDelayedRoutine());
     }
 
-    private IEnumerator DelayedOpenRoutine()
+    private IEnumerator OpenDelayedRoutine()
     {
         if (socketActivationDelay > 0f)
             yield return new WaitForSeconds(socketActivationDelay);
         Open();
     }
 
-    private void EnsureDefaultSetup()
+    private void EnsureSetup()
     {
         if (portalRenderer == null)
             portalRenderer = GetComponentInChildren<Renderer>();
@@ -838,52 +1149,49 @@ public class PortalGateway : MonoBehaviour
         if (portalRenderer == null)
             SetupDefaultQuadPortal();
         else
-            UpdateVisualProperties();
+            RefreshVisuals();
     }
 
-    /// <summary>
-    /// 기본 평면(Quad) 포탈 렌더러 구성을 생성하거나 복구합니다.
-    /// </summary>
     [ContextMenu("포탈 기본 세팅 생성 (Quad)")]
     public void SetupDefaultQuadPortal()
     {
         Vector3 visualScale = new Vector3(2.2f, 3.0f, 1f);
-        Transform existingSurface = transform.Find("PortalSurface");
-        if (existingSurface != null && portalRenderer == null)
-            portalRenderer = existingSurface.GetComponent<Renderer>();
+        Transform existing = transform.Find("PortalSurface");
+        if (existing != null && portalRenderer == null)
+            portalRenderer = existing.GetComponent<Renderer>();
 
-        GameObject tempPrimitive = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        Mesh targetMesh = tempPrimitive.GetComponent<MeshFilter>().sharedMesh;
+        GameObject tempQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        Mesh quadMesh = tempQuad.GetComponent<MeshFilter>().sharedMesh;
 
         if (portalRenderer == null)
         {
-            tempPrimitive.name = "PortalSurface";
-            tempPrimitive.transform.SetParent(transform, false);
-            tempPrimitive.transform.localPosition = Vector3.zero;
-            tempPrimitive.transform.localRotation = Quaternion.identity;
-            tempPrimitive.transform.localScale = visualScale;
+            tempQuad.name = "PortalSurface";
+            tempQuad.transform.SetParent(transform, false);
+            tempQuad.transform.localPosition = Vector3.zero;
+            tempQuad.transform.localRotation = Quaternion.identity;
+            tempQuad.transform.localScale = visualScale;
 
-            if (tempPrimitive.TryGetComponent<Collider>(out var col))
+            if (tempQuad.TryGetComponent<Collider>(out var col))
             {
                 if (Application.isPlaying) Destroy(col);
                 else DestroyImmediate(col);
             }
 
-            portalRenderer = tempPrimitive.GetComponent<Renderer>();
+            portalRenderer = tempQuad.GetComponent<Renderer>();
         }
         else
         {
             if (portalRenderer.TryGetComponent<MeshFilter>(out var mf))
-                mf.sharedMesh = targetMesh;
+                mf.sharedMesh = quadMesh;
 
             portalRenderer.transform.localScale = visualScale;
 
-            if (Application.isPlaying) Destroy(tempPrimitive);
-            else DestroyImmediate(tempPrimitive);
+            if (Application.isPlaying) Destroy(tempQuad);
+            else DestroyImmediate(tempQuad);
         }
 
-        defaultRendererScale = visualScale;
-        UpdateVisualProperties();
+        defaultScale = visualScale;
+        RefreshVisuals();
     }
 
     private void OnDrawGizmos()

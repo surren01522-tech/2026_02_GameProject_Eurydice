@@ -13,7 +13,7 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.3f;
 
     public static bool IsLoading { get; private set; }
-
+    
     public static void Load(string sceneName, bool savePlayer = true)
     {
         if (IsLoading) return;
@@ -34,15 +34,17 @@ public class SceneLoader : MonoBehaviour
             if (prefab != null)
             {
                 var instance = Instantiate(prefab);
-                loader = instance.GetComponent<SceneLoader>() ?? instance.AddComponent<SceneLoader>();
-                if (loader.canvasGroup == null) loader.canvasGroup = instance.GetComponentInChildren<CanvasGroup>();
-                if (loader.progressBar == null) loader.progressBar = instance.GetComponentInChildren<Slider>();
-                break;
+                loader = instance.GetComponent<SceneLoader>();
+                if (loader != null)
+                {
+                    if (loader.canvasGroup == null) loader.canvasGroup = instance.GetComponentInChildren<CanvasGroup>();
+                    if (loader.progressBar == null) loader.progressBar = instance.GetComponentInChildren<Slider>();
+                    break;
+                }
             }
         }
 
-        if (loader == null)
-            loader = new GameObject(nameof(SceneLoader)).AddComponent<SceneLoader>();
+        if (loader == null) return;
 
         DontDestroyOnLoad(loader.gameObject);
         loader.StartCoroutine(loader.LoadRoutine(sceneName));

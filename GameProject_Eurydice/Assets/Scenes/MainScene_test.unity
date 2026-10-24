@@ -136,9 +136,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.05
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!4 &117731800 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5071542213701493291, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
@@ -161,9 +166,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.05
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1 &312593887
 GameObject:
   m_ObjectHideFlags: 0
@@ -493,9 +503,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.01
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1 &419713240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3450581652466230357, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
@@ -1194,9 +1209,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.01
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1 &1105007962
 GameObject:
   m_ObjectHideFlags: 0
@@ -1596,9 +1616,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.05
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1 &1688633865
 GameObject:
   m_ObjectHideFlags: 0
@@ -1728,9 +1753,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.05
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1 &1753464304 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5923577291144618213, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
@@ -1748,9 +1778,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.01
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1 &1790032117
 GameObject:
   m_ObjectHideFlags: 0
@@ -2311,9 +2346,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
+  tweenProfile: {fileID: 0}
+  useCustomSettings: 0
   hoverScale: 1.01
   pressScale: 0.95
   duration: 0.15
+  hoverEase: 27
+  pressEase: 6
+  releaseEase: 27
 --- !u!1001 &2610690056437104639
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2544,6 +2584,10 @@ PrefabInstance:
       propertyPath: titleCamera
       value: 
       objectReference: {fileID: 312593890}
+    - target: {fileID: 5495155974397499342, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
+      propertyPath: bypassInEditor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5495155974397499342, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
       propertyPath: cinemachineBrain
       value: 

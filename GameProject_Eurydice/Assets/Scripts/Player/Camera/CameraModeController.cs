@@ -3,13 +3,38 @@ using Unity.Cinemachine;
 
 public class CameraModeController : MonoBehaviour
 {
+    private const float PortalNearClip = 0.01f;
+
     [Header("시네머신 카메라")]
     [SerializeField] private CinemachineCamera freeLookCamera;
     [SerializeField] private CinemachineCamera strafeCamera;
 
+    private Transform ghostTarget;
+    private Transform realTarget;
+    private float savedFreeNearClip = 0.3f;
+    private float savedStrafeNearClip = 0.3f;
+    private bool hasSavedNearClip;
+    private bool isSplit;
+    private bool isNearPortal;
+
+    public CinemachineCamera ActiveCamera =>
+        (freeLookCamera != null && freeLookCamera.Priority.Value >= (strafeCamera != null ? strafeCamera.Priority.Value : 0))
+            ? freeLookCamera
+            : strafeCamera;
+
+    public Transform RealTarget => isSplit ? realTarget : (ActiveCamera != null ? ActiveCamera.Target.TrackingTarget : null);
+    public bool IsSplit => isSplit;
+
     private void Awake()
     {
         FindCameras();
+        CacheDefaultNearClip();
+    }
+
+    private void OnDestroy()
+    {
+        if (ghostTarget != null)
+            Destroy(ghostTarget.gameObject);
     }
 
     private void FindCameras()
@@ -33,17 +58,19 @@ public class CameraModeController : MonoBehaviour
             strafeCamera = cameras[1];
     }
 
-    public CinemachineCamera ActiveCamera => (freeLookCamera != null && freeLookCamera.Priority.Value >= (strafeCamera != null ? strafeCamera.Priority.Value : 0)) ? freeLookCamera : strafeCamera;
+    private void CacheDefaultNearClip()
+    {
+        if (hasSavedNearClip) return;
+        if (freeLookCamera != null) savedFreeNearClip = freeLookCamera.Lens.NearClipPlane;
+        if (strafeCamera != null) savedStrafeNearClip = strafeCamera.Lens.NearClipPlane;
+        hasSavedNearClip = freeLookCamera != null || strafeCamera != null;
+    }
 
     public void SetCameraMode(ControlMode mode)
     {
         bool isFreeLook = mode == ControlMode.FreeLook;
-
-        if (freeLookCamera != null)
-            freeLookCamera.Priority.Value = isFreeLook ? 10 : 0;
-
-        if (strafeCamera != null)
-            strafeCamera.Priority.Value = isFreeLook ? 0 : 10;
+        if (freeLookCamera != null) freeLookCamera.Priority.Value = isFreeLook ? 10 : 0;
+        if (strafeCamera != null) strafeCamera.Priority.Value = isFreeLook ? 0 : 10;
     }
 
     public void WarpCameras(Transform target, Vector3 delta)
@@ -55,58 +82,118 @@ public class CameraModeController : MonoBehaviour
 
     public void SetCameraOrientation(float yaw, float pitch)
     {
-        ApplyOrientationToCamera(freeLookCamera, yaw, pitch);
-        ApplyOrientationToCamera(strafeCamera, yaw, pitch);
+        ApplyOrientation(freeLookCamera, yaw, pitch);
+        ApplyOrientation(strafeCamera, yaw, pitch);
     }
 
-    /// <summary>
-    /// 댐핑 스윙 없이 시네머신 카메라의 월드 위치와 회전을 즉시 강제 동기화합니다.
-    /// </summary>
-    public void ForceCameraPose(Vector3 worldPos, Quaternion worldRot, float yaw, float pitch)
+    public void ForceCameraPose(Vector3 worldPos, Quaternion worldRot, float yaw, float pitch, bool cutDamping = true)
     {
-        ForcePoseOnCamera(freeLookCamera, worldPos, worldRot, yaw, pitch);
-        ForcePoseOnCamera(strafeCamera, worldPos, worldRot, yaw, pitch);
+        ForcePose(freeLookCamera, worldPos, worldRot, yaw, pitch, cutDamping);
+        ForcePose(strafeCamera, worldPos, worldRot, yaw, pitch, cutDamping);
     }
 
-    /// <summary>
-    /// 포탈 통과 직후 카메라가 벽 뒤에 위치할 때 장애물 충돌 줌인(Deoccluder)을 일시 제어합니다.
-    /// </summary>
-    public void SetDeoccluderEnabled(bool enabled)
+    public void SetNearPortalClip(bool nearPortal, Camera outputCam = null)
     {
-        SetDeoccluderOnCamera(freeLookCamera, enabled);
-        SetDeoccluderOnCamera(strafeCamera, enabled);
+        CacheDefaultNearClip();
+        isNearPortal = nearPortal;
+        RefreshLensNearClip(outputCam);
     }
 
-    private void SetDeoccluderOnCamera(CinemachineCamera vcam, bool enabled)
+    public void BeginSplit(Vector3 ghostPos, Quaternion ghostRot)
+    {
+        CacheDefaultNearClip();
+        EnsureGhostTarget();
+
+        if (!isSplit)
+        {
+            var active = ActiveCamera;
+            realTarget = active != null ? active.Target.TrackingTarget : transform;
+            isSplit = true;
+        }
+
+        ghostTarget.SetPositionAndRotation(ghostPos, ghostRot);
+        ConfigureVcamTarget(freeLookCamera, ghostTarget, deoccluderEnabled: false);
+        ConfigureVcamTarget(strafeCamera, ghostTarget, deoccluderEnabled: false);
+        RefreshLensNearClip(Camera.main);
+    }
+
+    public void UpdateGhost(Vector3 ghostPos, Quaternion ghostRot)
+    {
+        if (ghostTarget != null)
+            ghostTarget.SetPositionAndRotation(ghostPos, ghostRot);
+    }
+
+    public void EndSplit(Camera outputCam = null)
+    {
+        if (!isSplit) return;
+        isSplit = false;
+
+        ConfigureVcamTarget(freeLookCamera, realTarget, deoccluderEnabled: true);
+        ConfigureVcamTarget(strafeCamera, realTarget, deoccluderEnabled: true);
+        RefreshLensNearClip(outputCam);
+    }
+
+    private void RefreshLensNearClip(Camera outputCam)
+    {
+        bool useShortClip = isSplit || isNearPortal;
+        SetLensNearClip(freeLookCamera, useShortClip ? PortalNearClip : savedFreeNearClip);
+        SetLensNearClip(strafeCamera, useShortClip ? PortalNearClip : savedStrafeNearClip);
+
+        if (outputCam != null)
+        {
+            float defaultClip = ActiveCamera == strafeCamera ? savedStrafeNearClip : savedFreeNearClip;
+            outputCam.nearClipPlane = useShortClip ? PortalNearClip : defaultClip;
+        }
+    }
+
+    private void EnsureGhostTarget()
+    {
+        if (ghostTarget != null) return;
+        var go = new GameObject("PortalGhostTarget") { hideFlags = HideFlags.HideAndDontSave };
+        DontDestroyOnLoad(go);
+        ghostTarget = go.transform;
+    }
+
+    private static void ConfigureVcamTarget(CinemachineCamera vcam, Transform trackingTarget, bool deoccluderEnabled)
     {
         if (vcam == null) return;
+        vcam.Target.TrackingTarget = trackingTarget;
+
         if (vcam.TryGetComponent<CinemachineDeoccluder>(out var deoccluder))
-            deoccluder.enabled = enabled;
+            deoccluder.enabled = deoccluderEnabled;
     }
 
-    private void ForcePoseOnCamera(CinemachineCamera vcam, Vector3 worldPos, Quaternion worldRot, float yaw, float pitch)
+    private static void SetLensNearClip(CinemachineCamera vcam, float nearClip)
     {
         if (vcam == null) return;
+        var lens = vcam.Lens;
+        lens.NearClipPlane = nearClip;
+        vcam.Lens = lens;
+    }
+
+    private static void ForcePose(CinemachineCamera vcam, Vector3 worldPos, Quaternion worldRot, float yaw, float pitch, bool cutDamping)
+    {
+        if (vcam == null) return;
+
+        vcam.ForceCameraPosition(worldPos, worldRot);
 
         float wrappedYaw = Mathf.DeltaAngle(0f, yaw);
-        var orbital = vcam.GetComponent<CinemachineOrbitalFollow>();
-        if (orbital != null)
+        if (vcam.TryGetComponent<CinemachineOrbitalFollow>(out var orbital))
         {
             orbital.HorizontalAxis.Value = wrappedYaw;
             orbital.VerticalAxis.Value = Mathf.Clamp(pitch, orbital.VerticalAxis.Range.x, orbital.VerticalAxis.Range.y);
         }
 
-        vcam.ForceCameraPosition(worldPos, worldRot);
-        vcam.PreviousStateIsValid = false;
+        if (cutDamping)
+            vcam.PreviousStateIsValid = false;
     }
 
-    private void ApplyOrientationToCamera(CinemachineCamera vcam, float yaw, float pitch)
+    private static void ApplyOrientation(CinemachineCamera vcam, float yaw, float pitch)
     {
         if (vcam == null) return;
 
         float wrappedYaw = Mathf.DeltaAngle(0f, yaw);
-        var orbital = vcam.GetComponent<CinemachineOrbitalFollow>();
-        if (orbital != null)
+        if (vcam.TryGetComponent<CinemachineOrbitalFollow>(out var orbital))
         {
             orbital.HorizontalAxis.Value = wrappedYaw;
             orbital.VerticalAxis.Value = Mathf.Clamp(pitch, orbital.VerticalAxis.Range.x, orbital.VerticalAxis.Range.y);

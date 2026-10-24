@@ -37,22 +37,33 @@ public class PlayerController : MonoBehaviour
     private InputSystem_Actions inputActions;
     private Vector3 moveVelocity;
     private float verticalVelocity;
+    private Quaternion cameraBasisOffset = Quaternion.identity;
+    private PlayerState currentState = PlayerState.Normal;
+    private CameraZoom cameraZoom;
 
     public InputSystem_Actions InputActions => inputActions;
     public Transform CameraTransform => cameraTransform;
     public CameraModeController CameraModeController => cameraModeController;
 
-    /// <summary>
-    /// 플레이어 및 추적 카메라를 목표 위치/회전으로 댐핑 스윙 없이 즉시 순간이동시킵니다.
-    /// </summary>
-    public void Teleport(Vector3 targetPosition, Quaternion targetRotation, Vector3 targetCameraPosition, Quaternion targetCameraRotation)
+    private Quaternion EffectiveCameraRotation => cameraTransform != null ? cameraBasisOffset * cameraTransform.rotation : transform.rotation;
+
+    public void SetCameraBasisOffset(Quaternion offset) => cameraBasisOffset = offset;
+    public void ClearCameraBasisOffset() => cameraBasisOffset = Quaternion.identity;
+
+    public void Warp(Vector3 targetPosition, Quaternion targetRotation)
     {
         Quaternion rotDelta = Quaternion.Euler(0f, targetRotation.eulerAngles.y - transform.eulerAngles.y, 0f);
-
         if (controller != null) controller.enabled = false;
-        transform.position = targetPosition;
-        transform.rotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
+        transform.SetPositionAndRotation(targetPosition, Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f));
         moveVelocity = rotDelta * moveVelocity;
+        Physics.SyncTransforms();
+        if (controller != null) controller.enabled = true;
+    }
+
+    public void Teleport(Vector3 targetPosition, Quaternion targetRotation, Vector3 targetCameraPosition, Quaternion targetCameraRotation)
+    {
+        cameraBasisOffset = Quaternion.identity;
+        Warp(targetPosition, targetRotation);
 
         float camYaw = targetCameraRotation.eulerAngles.y;
         float camPitch = targetCameraRotation.eulerAngles.x;
@@ -61,13 +72,7 @@ public class PlayerController : MonoBehaviour
         cameraModeController?.ForceCameraPose(targetCameraPosition, targetCameraRotation, camYaw, camPitch);
         if (cameraTransform != null)
             cameraTransform.SetPositionAndRotation(targetCameraPosition, targetCameraRotation);
-
-        if (controller != null) controller.enabled = true;
     }
-
-    private PlayerState currentState = PlayerState.Normal;
-
-    private CameraZoom cameraZoom;
 
     private void Awake()
     {
@@ -118,14 +123,10 @@ public class PlayerController : MonoBehaviour
             cameraModeController?.SetCameraOrientation(savedPlayer.cameraYaw, savedPlayer.cameraPitch);
 
             if (cameraTransform != null)
-            {
                 cameraTransform.rotation = Quaternion.Euler(savedPlayer.cameraPitch, savedPlayer.cameraYaw, 0f);
-            }
 
             if (cameraZoom != null && savedPlayer.cameraZoom > 0f)
-            {
                 cameraZoom.SetDistance(savedPlayer.cameraZoom, immediate: true);
-            }
         }
         else
         {
@@ -136,8 +137,9 @@ public class PlayerController : MonoBehaviour
     public void SavePlayerTransform()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        float camYaw = cameraTransform != null ? cameraTransform.eulerAngles.y : transform.eulerAngles.y;
-        float camPitch = cameraTransform != null ? cameraTransform.eulerAngles.x : 0f;
+        Quaternion camRot = EffectiveCameraRotation;
+        float camYaw = camRot.eulerAngles.y;
+        float camPitch = camRot.eulerAngles.x;
         float zoomDist = cameraZoom != null ? cameraZoom.CurrentDistance : 5f;
 
         SaveManager.SavePlayerTransform(
@@ -195,12 +197,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (!SceneStreamer.IsReady || SceneLoader.IsLoading) return;
+        if (!SceneStreamer.IsReady || SceneLoader.IsLoading || ScreenFader.IsFading) return;
 
         if (inputActions != null && inputActions.Player.ToggleView.WasPressedThisFrame())
-        {
             SetControlMode(controlMode == ControlMode.FreeLook ? ControlMode.Strafe : ControlMode.FreeLook);
-        }
 
         if (Keyboard.current != null)
         {
@@ -228,13 +228,14 @@ public class PlayerController : MonoBehaviour
 
         bool isRunning = inputActions.Player.Sprint.IsPressed();
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
+        Quaternion basisRot = EffectiveCameraRotation;
 
         if (controlMode == ControlMode.FreeLook)
         {
-            Vector3 cameraForward = cameraTransform.forward;
-            Vector3 cameraRight = cameraTransform.right;
-            cameraForward.y = 0;
-            cameraRight.y = 0;
+            Vector3 cameraForward = basisRot * Vector3.forward;
+            Vector3 cameraRight = basisRot * Vector3.right;
+            cameraForward.y = 0f;
+            cameraRight.y = 0f;
             cameraForward.Normalize();
             cameraRight.Normalize();
 
@@ -249,9 +250,9 @@ public class PlayerController : MonoBehaviour
             }
         }
         else // Strafe 모드
-        {                                 
-            Vector3 camForward = cameraTransform.forward;
-            camForward.y = 0;
+        {
+            Vector3 camForward = basisRot * Vector3.forward;
+            camForward.y = 0f;
             if (camForward.sqrMagnitude > 0.001f)
                 transform.rotation = Quaternion.LookRotation(camForward);
 
@@ -277,9 +278,7 @@ public class PlayerController : MonoBehaviour
         if (controller == null || !controller.enabled) return;
 
         if (inputActions.Player.Jump.WasPressedThisFrame() && controller.isGrounded)
-        {
             verticalVelocity = Mathf.Sqrt(jumpPower * -2f * gravity);
-        }
     }
 
     private void ApplyGravity()
@@ -287,13 +286,9 @@ public class PlayerController : MonoBehaviour
         if (controller == null || !controller.enabled) return;
 
         if (controller.isGrounded && verticalVelocity < 0f)
-        {
             verticalVelocity = -2f;
-        }
         else
-        {
             verticalVelocity += gravity * Time.deltaTime;
-        }
 
         Vector3 finalMovement = moveVelocity + Vector3.up * verticalVelocity;
         controller.Move(finalMovement * Time.deltaTime);
@@ -310,9 +305,7 @@ public class PlayerController : MonoBehaviour
         currentState = newState;
 
         if (currentState != PlayerState.Normal && animator != null)
-        {
             animator.SetFloat("speed", 0);
-        }
 
         Debug.Log("현재 상태 : " + currentState);
     }

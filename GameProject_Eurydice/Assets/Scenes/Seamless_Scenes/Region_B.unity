@@ -670,7 +670,8 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2030
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -698,12 +699,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _EdgePower: 3
-    - _HasPortalTex: 1
+    - _HasPortalTex: 0
     - _LensCurvature: 0.55
     - _NoiseScale: 4
     - _NoiseStrength: 0.14
     - _OpenProgress: 1
-    - _QueueControl: -1
+    - _QueueControl: 1
     - _QueueOffset: 0
     - _RimWidth: 0.07
     - _RippleSpeed: 2
@@ -999,7 +1000,7 @@ MonoBehaviour:
   linkedPortal: {fileID: 0}
   startOpen: 0
   syncStateWithLinked: 0
-  mirrorForwardDirection: 1
+  mirrorForwardDirection: 0
   portalRenderer: {fileID: 164717253}
   openDuration: 1.2
   closeDuration: 0.6
