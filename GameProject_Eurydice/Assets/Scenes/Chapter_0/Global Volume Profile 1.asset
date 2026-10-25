@@ -594,7 +594,7 @@ MonoBehaviour:
     m_Value: 3.4
   density:
     m_OverrideState: 1
-    m_Value: 0.046
+    m_Value: 0.035
   attenuationDistance:
     m_OverrideState: 1
     m_Value: 128
@@ -612,7 +612,7 @@ MonoBehaviour:
     m_Value: 0.53
   scattering:
     m_OverrideState: 1
-    m_Value: 0.803
+    m_Value: 0.572
   tint:
     m_OverrideState: 1
     m_Value: {r: 0.6509804, g: 0.98848104, b: 1, a: 1}
