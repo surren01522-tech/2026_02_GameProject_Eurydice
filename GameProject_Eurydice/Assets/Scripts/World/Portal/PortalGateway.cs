@@ -382,7 +382,15 @@ public class PortalGateway : MonoBehaviour
             }
         }
 
-        RenderPipeline.SubmitRenderRequest(portalCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = renderTex });
+        PortalManager.HideAllPortalRenderers();
+        try
+        {
+            RenderPipeline.SubmitRenderRequest(portalCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = renderTex });
+        }
+        finally
+        {
+            PortalManager.RestorePortalRenderers();
+        }
 
         SetProximityFlatten(isSplitEntry ? 1f - Mathf.InverseLerp(0f, ProximityFadeRange, planeDist) : 0f);
         RefreshVisuals();

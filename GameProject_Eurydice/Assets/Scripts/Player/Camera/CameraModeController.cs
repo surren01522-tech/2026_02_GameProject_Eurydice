@@ -112,8 +112,8 @@ public class CameraModeController : MonoBehaviour
         }
 
         ghostTarget.SetPositionAndRotation(ghostPos, ghostRot);
-        ConfigureVcamTarget(freeLookCamera, ghostTarget, deoccluderEnabled: false);
-        ConfigureVcamTarget(strafeCamera, ghostTarget, deoccluderEnabled: false);
+        ConfigureVcamTarget(freeLookCamera, ghostTarget);
+        ConfigureVcamTarget(strafeCamera, ghostTarget);
         RefreshLensNearClip(Camera.main);
     }
 
@@ -128,8 +128,8 @@ public class CameraModeController : MonoBehaviour
         if (!isSplit) return;
         isSplit = false;
 
-        ConfigureVcamTarget(freeLookCamera, realTarget, deoccluderEnabled: true);
-        ConfigureVcamTarget(strafeCamera, realTarget, deoccluderEnabled: true);
+        ConfigureVcamTarget(freeLookCamera, realTarget);
+        ConfigureVcamTarget(strafeCamera, realTarget);
         RefreshLensNearClip(outputCam);
     }
 
@@ -154,13 +154,10 @@ public class CameraModeController : MonoBehaviour
         ghostTarget = go.transform;
     }
 
-    private static void ConfigureVcamTarget(CinemachineCamera vcam, Transform trackingTarget, bool deoccluderEnabled)
+    private static void ConfigureVcamTarget(CinemachineCamera vcam, Transform trackingTarget)
     {
         if (vcam == null) return;
         vcam.Target.TrackingTarget = trackingTarget;
-
-        if (vcam.TryGetComponent<CinemachineDeoccluder>(out var deoccluder))
-            deoccluder.enabled = deoccluderEnabled;
     }
 
     private static void SetLensNearClip(CinemachineCamera vcam, float nearClip)

@@ -22,17 +22,23 @@ public static class PortalManager
     public static IReadOnlyList<PortalGateway> ActivePortals => ActivePortalsList;
     public static PlayerController TrackedPlayer => trackedPlayer;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Init()
+    {
+        ActivePortalsList.Clear();
+        PortalsById.Clear();
+        UnhookPipeline();
+        HookPipeline();
+    }
+
     public static void Register(PortalGateway portal)
     {
         if (portal == null) return;
 
         if (!ActivePortalsList.Contains(portal))
-        {
-            if (ActivePortalsList.Count == 0)
-                HookPipeline();
-
             ActivePortalsList.Add(portal);
-        }
+
+        HookPipeline();
 
         if (!string.IsNullOrEmpty(portal.PortalId))
             PortalsById[portal.PortalId] = portal;
@@ -182,7 +188,7 @@ public static class PortalManager
             isRenderingAnyPortal = true;
             try
             {
-                RenderSinglePortal(context, cam, p, isSplitEntry);
+                p.RenderPortalView(cam, isSplitEntry);
             }
             finally
             {
@@ -191,7 +197,7 @@ public static class PortalManager
         }
     }
 
-    private static void RenderSinglePortal(ScriptableRenderContext context, Camera mainCam, PortalGateway portal, bool isSplitEntry)
+    public static void HideAllPortalRenderers()
     {
         HiddenRenderers.Clear();
         for (int i = 0; i < ActivePortalsList.Count; i++)
@@ -203,20 +209,16 @@ public static class PortalManager
                 HiddenRenderers.Add(p.PortalRenderer);
             }
         }
+    }
 
-        try
+    public static void RestorePortalRenderers()
+    {
+        for (int i = 0; i < HiddenRenderers.Count; i++)
         {
-            portal.RenderPortalView(mainCam, isSplitEntry);
+            if (HiddenRenderers[i] != null)
+                HiddenRenderers[i].enabled = true;
         }
-        finally
-        {
-            for (int i = 0; i < HiddenRenderers.Count; i++)
-            {
-                if (HiddenRenderers[i] != null)
-                    HiddenRenderers[i].enabled = true;
-            }
-            HiddenRenderers.Clear();
-        }
+        HiddenRenderers.Clear();
     }
 
     private static void BeginCross(PortalGateway entry, PlayerController player, float entrySide, Vector3 currLocal)
