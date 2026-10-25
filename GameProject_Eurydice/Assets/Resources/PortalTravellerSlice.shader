@@ -46,7 +46,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
 
             ZWrite On
             ZTest LEqual
-            Cull Off
+            Cull Back
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -92,7 +92,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
                 return output;
             }
 
-            half4 ForwardFrag(Varyings input, bool isFrontFace : SV_IsFrontFace) : SV_Target
+            half4 ForwardFrag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
                 ClipPortalPlane(input.positionWS);
@@ -101,7 +101,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
                 half3 albedo = texSample.rgb * _BaseColor.rgb;
 
                 float3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
-                float3 normalWS = isFrontFace ? SafeNormalize(input.normalWS) : -SafeNormalize(input.normalWS);
+                float3 normalWS = SafeNormalize(input.normalWS);
 
                 float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
                 Light mainLight = GetMainLight(shadowCoord);
@@ -110,7 +110,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
 
                 half3 halfDir = SafeNormalize(mainLight.direction + viewDirWS);
                 half specPow = exp2(4.0 + _Smoothness * 6.0);
-                half spec = isFrontFace ? (pow(saturate(dot(normalWS, halfDir)), specPow) * _Smoothness * 0.25) : 0.0;
+                half spec = pow(saturate(dot(normalWS, halfDir)), specPow) * _Smoothness * 0.25;
 
                 half3 litColor = albedo * (ambient + mainLight.color * (ndotl * mainLight.shadowAttenuation)) + mainLight.color * (spec * mainLight.shadowAttenuation);
 
@@ -138,7 +138,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
             ZWrite On
             ZTest LEqual
             ColorMask 0
-            Cull Off
+            Cull Back
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -202,7 +202,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
 
             ZWrite On
             ColorMask R
-            Cull Off
+            Cull Back
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -248,7 +248,7 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
             Tags { "LightMode" = "DepthNormals" }
 
             ZWrite On
-            Cull Off
+            Cull Back
 
             HLSLPROGRAM
             #pragma target 3.5
@@ -282,13 +282,11 @@ Shader "Hidden/Eurydice/PortalTravellerSlice"
                 return output;
             }
 
-            half4 DepthNormalsFrag(Varyings input, bool isFrontFace : SV_IsFrontFace) : SV_TARGET
+            half4 DepthNormalsFrag(Varyings input) : SV_TARGET
             {
                 UNITY_SETUP_INSTANCE_ID(input);
                 ClipPortalPlane(input.positionWS);
-                float3 normalWS = isFrontFace
-                    ? SafeNormalize(input.normalWS)
-                    : SafeNormalize(_PortalSliceNormal.w > 0.5 ? -_PortalSliceNormal.xyz : -input.normalWS);
+                float3 normalWS = SafeNormalize(input.normalWS);
                 return half4(normalWS, 0.0);
             }
             ENDHLSL

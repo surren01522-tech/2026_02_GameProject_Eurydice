@@ -797,12 +797,6 @@ public class PortalGateway : MonoBehaviour
 
                 camT.position = p.transform.TransformPoint(clampedLocal);
             }
-            else if (Mathf.Abs(camLocal.z) < 0.03f && Mathf.Abs(camLocal.x) < halfW && Mathf.Abs(camLocal.y) < halfH)
-            {
-                float camSide = Mathf.Abs(camLocal.z) > 0.0001f ? Mathf.Sign(camLocal.z) : side;
-                camLocal.z = camSide * 0.03f;
-                camT.position = p.transform.TransformPoint(camLocal);
-            }
         }
     }
 
@@ -874,7 +868,7 @@ public class PortalGateway : MonoBehaviour
                 float yaw = targetCamRot.eulerAngles.y;
                 float pitch = targetCamRot.eulerAngles.x;
                 if (pitch > 180f) pitch -= 360f;
-                camMode.ForceCameraPose(targetCamPos, targetCamRot, yaw, pitch, cutDamping: false);
+                camMode.ForceCameraPose(targetCamPos, targetCamRot, yaw, pitch, cutDamping: true);
             }
 
             camT.SetPositionAndRotation(targetCamPos, targetCamRot);
