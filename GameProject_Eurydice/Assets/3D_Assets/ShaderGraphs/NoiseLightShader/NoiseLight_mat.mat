@@ -111,11 +111,11 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Lerp: 0.5
+    - _Lerp: 0.57
     - _Metallic: 0
     - _Mode: 0
-    - _Multiply1: 7.68
-    - _Multiply2: 0.71
+    - _Multiply1: 3.4
+    - _Multiply2: 1.22
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -137,8 +137,8 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     - _intensity: 1
-    - _intensity1: 1
-    - _intensity2: 0.888
+    - _intensity1: 0.942
+    - _intensity2: 0.903
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -147,8 +147,8 @@ Material:
     - _Specular: {r: 0, g: 0, b: 0, a: 0}
     - _Speed1: {r: 0.03, g: 0.03, b: 0, a: 0}
     - _Speed2: {r: -0.03, g: -0.03, b: 0, a: 0}
-    - _UV1: {r: 6, g: 6, b: 0, a: 0}
-    - _UV2: {r: 5, g: 5, b: 0, a: 0}
+    - _UV1: {r: 4, g: 4, b: 0, a: 0}
+    - _UV2: {r: 6, g: 6, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1243703888811802562
