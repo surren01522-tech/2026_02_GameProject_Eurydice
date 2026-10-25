@@ -41,7 +41,7 @@ public class UIWindowManager : MonoBehaviour
         if (settingUI == null) settingUI = FindFirstObjectByType<SettingUIManager>(FindObjectsInactive.Include);
         if (buttonContainer == null && mapButton != null) buttonContainer = mapButton.transform.parent.gameObject;
 
-        inputActions = new InputSystem_Actions();
+        inputActions = GameStateManager.Actions;
     }
 
     private void OnEnable()
@@ -63,12 +63,7 @@ public class UIWindowManager : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        if (inputActions != null)
-        {
-            inputActions.Disable();
-            inputActions.Dispose();
-            inputActions = null;
-        }
+        inputActions = null;
     }
 
     private void Start()

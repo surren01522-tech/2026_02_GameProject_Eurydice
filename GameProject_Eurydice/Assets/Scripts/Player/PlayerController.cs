@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-        inputActions = new InputSystem_Actions();
+        inputActions = GameStateManager.Actions;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -179,12 +179,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (inputActions != null)
-        {
-            inputActions.Disable();
-            inputActions.Dispose();
-            inputActions = null;
-        }
+        inputActions?.Player.Disable();
+        inputActions = null;
     }
 
     private void SyncBindings() => SettingManager.Instance?.ApplyBindings(inputActions.asset);
