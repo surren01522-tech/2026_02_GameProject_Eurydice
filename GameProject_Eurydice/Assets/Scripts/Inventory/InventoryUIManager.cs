@@ -10,7 +10,7 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField] private Transform SlotContainer;
     [SerializeField] private int initSlotSize = 5;
 
-    private readonly List<InventorySlotObject> slotUIList = new List<InventorySlotObject>();
+    private readonly List<InventorySlotUI> slotUIList = new List<InventorySlotUI>();
     private ItemSocket currentTargetSocket;
     private Action<ItemData> onItemSelectedCallback;
 
@@ -51,7 +51,7 @@ public class InventoryUIManager : MonoBehaviour
     private void InitializeSlots()
     {
         if (SlotContainer == null || slotUIList.Count > 0) return;
-        foreach (var slot in SlotContainer.GetComponentsInChildren<InventorySlotObject>(true))
+        foreach (var slot in SlotContainer.GetComponentsInChildren<InventorySlotUI>(true))
         {
             slot.SetClickCallback(OnSlotClicked);
             slotUIList.Add(slot);
@@ -132,7 +132,7 @@ public class InventoryUIManager : MonoBehaviour
         while (slotUIList.Count < targetCount && SlotPrefab != null)
         {
             GameObject slotObj = Instantiate(SlotPrefab, SlotContainer);
-            if (slotObj.TryGetComponent<InventorySlotObject>(out var slotUI))
+            if (slotObj.TryGetComponent<InventorySlotUI>(out var slotUI))
             {
                 slotUI.SetClickCallback(OnSlotClicked);
                 slotUIList.Add(slotUI);

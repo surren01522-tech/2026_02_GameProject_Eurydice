@@ -9,7 +9,7 @@ public enum TriggerUIMode
 }
 
 [RequireComponent(typeof(Collider))]
-public class TextObject : MonoBehaviour
+public class TextTrigger : MonoBehaviour
 {
     [Header("UI 모드")]
     [SerializeField] private TriggerUIMode mode = TriggerUIMode.WorldText;
