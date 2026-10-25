@@ -23,9 +23,6 @@ public class GameStateManager : MonoBehaviour
 
     public static bool IsGamePlaying => CurrentInputMode == InputMode.GamePlay;
 
-    private static InputSystem_Actions inputActions;
-    public static InputSystem_Actions Actions => inputActions ??= new InputSystem_Actions();
-
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Init()
     {
@@ -54,16 +51,6 @@ public class GameStateManager : MonoBehaviour
     private void Awake()
     {
         ResetState();
-    }
-
-    private void OnDestroy()
-    {
-        if (inputActions != null)
-        {
-            inputActions.Disable();
-            inputActions.Dispose();
-            inputActions = null;
-        }
     }
 
     public static void SetMainMenuActive(bool active)
