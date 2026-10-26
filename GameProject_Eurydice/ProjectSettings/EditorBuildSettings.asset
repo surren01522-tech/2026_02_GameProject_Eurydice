@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Chapter_0.unity
+    guid: b1a36d351bb49e04fb4e59e79c30a19c
+  - enabled: 1
     path: Assets/Scenes/MainScene_test.unity
     guid: fe915b190258392458404702deca5ec2
   - enabled: 0
@@ -23,9 +26,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GodRay_test_night.unity
     guid: 676e4339acfce22458058b1409412693
-  - enabled: 1
-    path: Assets/Scenes/Chapter_0.unity
-    guid: b1a36d351bb49e04fb4e59e79c30a19c
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: c1b14114868871148bd70efd982e5022, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

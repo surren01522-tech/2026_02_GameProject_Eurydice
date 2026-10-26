@@ -314,17 +314,75 @@ public static class SaveManager
         }
     }
 
-    public static PlayerSaveData GetPlayerTransform(string sceneName = null)
+    public static string GetActiveLight(string sceneName = null)
     {
         var sceneData = GetSceneData(sceneName);
-        return sceneData.player;
+        return sceneData?.activeLightName;
+    }
+
+    public static void SaveActiveLight(string lightName, string sceneName = null)
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        var sceneData = GetSceneData(sceneName);
+        if (sceneData.activeLightName != lightName)
+        {
+            sceneData.activeLightName = lightName;
+            SaveGame(gameData);
+        }
+    }
+
+    public static string GetLastActiveScene()
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        return gameData.lastActiveScene;
+    }
+
+    public static void SaveActiveScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName)) return;
+        var gameData = currentSaveData ?? LoadGame();
+        if (gameData.lastActiveScene != sceneName)
+        {
+            gameData.lastActiveScene = sceneName;
+            SaveGame(gameData);
+        }
+    }
+
+    public static PlayerSaveData GetPlayerTransform(string sceneName = null)
+    {
+        var gameData = currentSaveData ?? LoadGame();
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            if (!string.IsNullOrEmpty(gameData.lastActiveScene))
+                sceneName = gameData.lastActiveScene;
+            else
+                sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        }
+
+        var sceneData = gameData.scenes.Find(s => s.sceneName == sceneName);
+        if (sceneData?.player != null) return sceneData.player;
+
+        if (gameData.scenes != null)
+        {
+            for (int i = 0; i < gameData.scenes.Count; i++)
+            {
+                if (gameData.scenes[i]?.player != null)
+                    return gameData.scenes[i].player;
+            }
+        }
+        return null;
     }
 
     public static void SavePlayerTransform(Vector3 position, float yRotation, string sceneName = null, int controlMode = 1, float cameraYaw = 0f, float cameraPitch = 0f, float cameraZoom = 5f)
     {
         var gameData = currentSaveData ?? LoadGame();
         if (string.IsNullOrEmpty(sceneName))
-            sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        {
+            if (!string.IsNullOrEmpty(gameData.lastActiveScene))
+                sceneName = gameData.lastActiveScene;
+            else
+                sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        }
 
         gameData.lastActiveScene = sceneName;
         var sceneData = GetSceneData(sceneName);

@@ -30,6 +30,7 @@ public static class PortalCameraController
     public static bool IsSplitActive => split.active;
     public static PortalGateway SplitExit => split.exit;
     public static float SplitExitSide => split.exitSide;
+    public static float SplitEntrySide => split.entrySide;
     public static PortalGateway SplitEntry => split.entry;
 
     public static void HookBrain()
@@ -169,6 +170,7 @@ public static class PortalCameraController
         if (entry != null)
             entry.SetProximityFlatten(0f);
 
+        PortalGateway.SwitchZoneEnvironment(entry, exit);
         CleanupSplit();
     }
 

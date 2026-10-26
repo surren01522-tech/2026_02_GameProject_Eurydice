@@ -59,6 +59,7 @@ public static class PortalManager
         {
             UnhookPipeline();
             PortalCameraController.UnhookBrain();
+            SceneEnvironmentManager.SetProximityBlend(null, 0f);
             if (trackedPlayer != null)
                 trackedPlayer.CameraModeController?.SetNearPortalClip(false, Camera.main);
 
@@ -165,18 +166,41 @@ public static class PortalManager
     private static void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
     {
         if (isRenderingAnyPortal) return;
-        if (cam.cameraType == CameraType.Preview || cam.cameraType == CameraType.Reflection) return;
-        if (cam != Camera.main && cam.cameraType != CameraType.Game && cam.cameraType != CameraType.SceneView) return;
+
+        bool isSceneCam = cam.cameraType == CameraType.SceneView;
+        bool isMainGameCam = !isSceneCam && cam == Camera.main && cam.targetTexture == null;
+        if (!isMainGameCam && !isSceneCam) return;
+
+        bool updateProximity = Application.isPlaying && isMainGameCam;
+        float bestRawT = 0f;
+        string bestDestScene = null;
 
         GeometryUtility.CalculateFrustumPlanes(cam, FrustumPlanes);
 
         for (int i = 0; i < ActivePortalsList.Count; i++)
         {
             var p = ActivePortalsList[i];
-            if (p == null || !p.IsOpen || p.LinkedPortal == null || p.PortalRenderer == null || !p.PortalRenderer.enabled) continue;
+            if (p == null) continue;
+
+            if (!p.IsOpen || p.LinkedPortal == null || p.PortalRenderer == null || !p.PortalRenderer.enabled)
+            {
+                if (updateProximity) p.SetProximityFlatten(0f);
+                continue;
+            }
+
             if (cam == p.PortalCamera) continue;
 
-            bool isSplitEntry = Application.isPlaying && PortalCameraController.IsSplitActive && PortalCameraController.SplitEntry == p && cam == Camera.main;
+            bool isSplitEntry = updateProximity && PortalCameraController.IsSplitActive && PortalCameraController.SplitEntry == p;
+            if (updateProximity)
+            {
+                float rawT = p.EvaluateCameraProximity(cam.transform, isSplitEntry);
+                p.SetProximityFlatten(Mathf.SmoothStep(0f, 1f, rawT));
+                if (rawT > bestRawT)
+                {
+                    bestRawT = rawT;
+                    bestDestScene = p.DestinationSceneName;
+                }
+            }
 
             if (!isSplitEntry)
             {
@@ -193,6 +217,19 @@ public static class PortalManager
             finally
             {
                 isRenderingAnyPortal = false;
+            }
+        }
+
+        if (updateProximity)
+        {
+            if (bestRawT > 0.0001f && !string.IsNullOrEmpty(bestDestScene))
+            {
+                float s = Mathf.SmoothStep(0f, 1f, bestRawT);
+                SceneEnvironmentManager.SetProximityBlend(bestDestScene, s * s);
+            }
+            else
+            {
+                SceneEnvironmentManager.SetProximityBlend(null, 0f);
             }
         }
     }
@@ -259,6 +296,7 @@ public static class PortalManager
             Vector3 targetCamPos = exit.transform.TransformPoint(camOutLocal);
             Quaternion targetCamRot = camT != null ? rotDelta * camT.rotation : targetRot;
             player.Teleport(targetPos, targetRot, targetCamPos, targetCamRot);
+            PortalGateway.SwitchZoneEnvironment(entry, exit);
         }
 
         SceneStreamer.Instance?.RefreshZonesForPosition(targetPos);

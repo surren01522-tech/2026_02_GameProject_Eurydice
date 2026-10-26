@@ -122,7 +122,8 @@ void EvaluatePortalShapeAndLens_float(
     ClipAlpha = visible ? 1.0 : 0.0;
 
     float sphereZ = sqrt(saturate(1.0 - dot(lensPlane, lensPlane)));
-    float3 virtualSphereNormalOS = normalize(float3(lensPlane * max(0.01, LensCurvature), sphereZ));
+    float curvature = max(0.0, LensCurvature);
+    float3 virtualSphereNormalOS = normalize(float3(lensPlane * curvature, max(0.001, sphereZ)));
 
     float3 normal = (mode == 5)
         ? SafeNormalize(NormalWS)
@@ -133,14 +134,15 @@ void EvaluatePortalShapeAndLens_float(
 
     Fresnel = pow(1.0 - saturate(dot(normal, viewToCamera)), max(1.0, EdgePower));
     RimMask = 1.0 - smoothstep(0.0, max(0.001, RimWidth), max(0.0, delta));
-    LensEdge = 1.0 - saturate(max(0.0, delta) / max(RimWidth * 3.0, 0.001));
+    float curvatureWeight = saturate(curvature * 10.0);
+    LensEdge = (1.0 - saturate(max(0.0, delta) / max(RimWidth * 3.0, 0.001))) * curvatureWeight;
 
     float2 rippleOffset = float2(
         sin(UV.y * 16.0 + time * 1.6) + cos(UV.x * 12.0 - time * 1.2),
         cos(UV.x * 16.0 - time * 1.4) + sin(UV.y * 12.0 + time * 1.8)
     ) * RippleStrength * (0.3 + 1.5 * transitionBoost);
 
-    float2 lensBendOffset = lensPlane * (1.0 - sphereZ) * LensCurvature * 0.06;
+    float2 lensBendOffset = lensPlane * (1.0 - sphereZ) * curvature * 0.06;
     PortalUV = clamp(ScreenPos.xy + rippleOffset - lensBendOffset, 0.001, 0.999);
 }
 
@@ -208,7 +210,7 @@ void ComposePortalColor_float(
     }
 #endif
 
-    float3 color = portalColor * lerp(1.04, 0.88, LensEdge);
+    float3 color = portalColor * lerp(1.0, 0.88, LensEdge);
     color += InnerGlowColor.rgb * (Fresnel * 0.45 + LensEdge * 0.25);
     color = lerp(color, RimColor.rgb, RimMask * RimMask);
     FinalColor = color;

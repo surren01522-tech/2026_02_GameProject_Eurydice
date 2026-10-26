@@ -106,7 +106,8 @@ public class PlayerController : MonoBehaviour
 
     private void RestorePlayerTransform()
     {
-        var savedPlayer = SaveManager.GetPlayerTransform();
+        string currentScene = gameObject.scene.IsValid() ? gameObject.scene.name : UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        var savedPlayer = SaveManager.GetPlayerTransform(currentScene);
 
         if (savedPlayer != null)
         {
@@ -136,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
     public void SavePlayerTransform()
     {
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string sceneName = gameObject.scene.IsValid() ? gameObject.scene.name : UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         Quaternion camRot = EffectiveCameraRotation;
         float camYaw = camRot.eulerAngles.y;
         float camPitch = camRot.eulerAngles.x;

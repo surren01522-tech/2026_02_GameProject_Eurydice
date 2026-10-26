@@ -19,7 +19,8 @@ public enum PortalState
 public class PortalGateway : MonoBehaviour
 {
     private const float PortalCamNearClip = 0.01f;
-    private const float ProximityFadeRange = 0.65f;
+    private const float ProximityStartDist = 1.5f;
+    private const float ProximityFullDist = 0.05f;
     private static readonly Quaternion HalfTurn = Quaternion.Euler(0f, 180f, 0f);
 
     private static readonly int PortalTexId = Shader.PropertyToID("_PortalTex");
@@ -39,6 +40,7 @@ public class PortalGateway : MonoBehaviour
     [SerializeField] private bool syncStateWithLinked = true;
     [SerializeField] private bool mirrorForwardDirection = true;
     [SerializeField] private Renderer portalRenderer;
+    [SerializeField] private Shader portalShader;
 
     [FoldGroup("개폐 연출 설정")]
     [SerializeField] private float openDuration = 1.2f;
@@ -66,6 +68,7 @@ public class PortalGateway : MonoBehaviour
     [Range(0.25f, 1f)]
     [SerializeField] private float renderTextureScale = 0.85f;
     [SerializeField] private float maxRenderDistance = 60f;
+    [SerializeField] private float shadowRenderDistance = 50f;
     [SerializeField] private LayerMask cullingMask = ~0;
     [SerializeField] private bool useObliqueClip = true;
     [SerializeField] private float clipPlaneOffset = 0.02f;
@@ -78,6 +81,7 @@ public class PortalGateway : MonoBehaviour
     public PortalState CurrentState { get; private set; } = PortalState.Closed;
     public bool IsOpen => CurrentState == PortalState.Open;
     public PortalGateway LinkedPortal => linkedPortal;
+    public string DestinationSceneName => linkedPortal != null ? linkedPortal.gameObject.scene.name : targetSceneName;
     public Vector3 ApertureSize => defaultScale;
     public bool MirrorForward => mirrorForwardDirection;
     public Renderer PortalRenderer => portalRenderer;
@@ -102,6 +106,7 @@ public class PortalGateway : MonoBehaviour
     private float baseCurvature;
     private Color baseInnerGlow;
     private float baseBrightness = 1f;
+    private float lastFlattenT = -1f;
 
     public void SetLastTeleportTime(float time) => lastTeleportTime = time;
     public void SetLinkedPortal(PortalGateway target) => linkedPortal = target;
@@ -123,12 +128,21 @@ public class PortalGateway : MonoBehaviour
             defaultScale = portalRenderer.transform.localScale;
     }
 
+    public static void SwitchZoneEnvironment(PortalGateway from, PortalGateway to)
+    {
+        if (from == null || to == null) return;
+        SceneEnvironmentManager.SwitchEnvironment(from.gameObject.scene.name, to.gameObject.scene.name);
+    }
+
     private void Start()
     {
         if (!Application.isPlaying) return;
 
         PortalManager.Register(this);
         ItemSocket.OnAnySocketPlaced += OnSocketPlaced;
+
+        if (string.IsNullOrEmpty(SceneEnvironmentManager.ActiveSceneName))
+            SceneEnvironmentManager.InitializeCurrentScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
         bool savedOpen = SaveManager.IsPortalOpenAnyScene(portalId) ||
                          (syncStateWithLinked && SaveManager.IsPortalOpenAnyScene(targetPortalId));
@@ -179,6 +193,9 @@ public class PortalGateway : MonoBehaviour
     {
         if (portalRenderer == null)
             portalRenderer = GetComponentInChildren<Renderer>();
+
+        if (portalShader == null)
+            portalShader = Shader.Find("Shader Graphs/PortalGateway");
 
         if (!Application.isPlaying)
         {
@@ -345,8 +362,7 @@ public class PortalGateway : MonoBehaviour
         Transform inT = transform;
         Transform outT = linkedPortal.transform;
         Vector3 localCamPos = inT.InverseTransformPoint(cam.transform.position);
-        float planeDist = Mathf.Abs(localCamPos.z);
-        float viewSide = isSplitEntry ? PortalCameraController.SplitExitSide : (localCamPos.z >= 0f ? 1f : -1f);
+        float viewSide = isSplitEntry ? PortalCameraController.SplitEntrySide : (localCamPos.z >= 0f ? 1f : -1f);
         float sqrDist = (cam.transform.position - inT.position).sqrMagnitude;
 
         EnsureCamera(cam);
@@ -356,7 +372,7 @@ public class PortalGateway : MonoBehaviour
         Quaternion mappedCamRot = GetRotationDelta(this, linkedPortal, mirrorForwardDirection) * cam.transform.rotation;
 
         if (cameraData != null)
-            cameraData.renderShadows = isSplitEntry || sqrDist < 225f;
+            cameraData.renderShadows = isSplitEntry || sqrDist < shadowRenderDistance * shadowRenderDistance;
 
         portalCamera.nearClipPlane = PortalCamNearClip;
         portalCamera.farClipPlane = cam.farClipPlane;
@@ -385,15 +401,50 @@ public class PortalGateway : MonoBehaviour
         PortalManager.HideAllPortalRenderers();
         try
         {
-            RenderPipeline.SubmitRenderRequest(portalCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = renderTex });
+            using (SceneEnvironmentManager.EnterPortalRenderScope(DestinationSceneName, out _))
+            {
+                RenderPipeline.SubmitRenderRequest(portalCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = renderTex });
+            }
         }
         finally
         {
             PortalManager.RestorePortalRenderers();
         }
 
-        SetProximityFlatten(isSplitEntry ? 1f - Mathf.InverseLerp(0f, ProximityFadeRange, planeDist) : 0f);
         RefreshVisuals();
+    }
+
+    public float EvaluateCameraProximity(Transform camTransform, bool isSplitEntry)
+    {
+        if (camTransform == null || currentProgress <= 0.001f) return 0f;
+
+        Vector3 localCam = transform.InverseTransformPoint(camTransform.position);
+        float dz = Mathf.Abs(localCam.z);
+
+        if (isSplitEntry)
+            return 1f - Mathf.InverseLerp(ProximityFullDist, ProximityStartDist, dz);
+
+        float halfW = defaultScale.x * 0.5f;
+        float halfH = defaultScale.y * 0.5f;
+        float dx = Mathf.Max(0f, Mathf.Abs(localCam.x) - halfW);
+        float dy = Mathf.Max(0f, Mathf.Abs(localCam.y) - halfH);
+        float apertureDist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+        if (apertureDist >= ProximityStartDist) return 0f;
+
+        float rawT = 1f - Mathf.InverseLerp(ProximityFullDist, ProximityStartDist, apertureDist);
+        Vector3 closestApertureWorld = transform.TransformPoint(new Vector3(
+            Mathf.Clamp(localCam.x, -halfW, halfW),
+            Mathf.Clamp(localCam.y, -halfH, halfH),
+            0f));
+        Vector3 toPortal = closestApertureWorld - camTransform.position;
+        float distSq = toPortal.sqrMagnitude;
+        if (distSq > 0.0001f)
+        {
+            float facing = Vector3.Dot(camTransform.forward, toPortal / Mathf.Sqrt(distSq));
+            rawT *= Mathf.Clamp01(facing * 2f + 0.2f);
+        }
+
+        return rawT;
     }
 
     public void RefreshVisuals()
@@ -424,10 +475,17 @@ public class PortalGateway : MonoBehaviour
         if (runtimeMat == null || !hasBaseMatProps) return;
 
         t = Mathf.Clamp01(t);
+        if (Mathf.Abs(t - lastFlattenT) < 0.0005f) return;
+        lastFlattenT = t;
+
         if (runtimeMat.HasProperty(RippleStrengthId))
             runtimeMat.SetFloat(RippleStrengthId, Mathf.Lerp(baseRipple, 0f, t));
         if (runtimeMat.HasProperty(LensCurvatureId))
-            runtimeMat.SetFloat(LensCurvatureId, Mathf.Lerp(baseCurvature, 0.01f, t));
+            runtimeMat.SetFloat(LensCurvatureId, Mathf.Lerp(baseCurvature, 0f, t));
+        if (runtimeMat.HasProperty(InnerGlowColorId))
+            runtimeMat.SetColor(InnerGlowColorId, Color.Lerp(baseInnerGlow, Color.clear, t));
+        if (runtimeMat.HasProperty(TargetBrightnessId))
+            runtimeMat.SetFloat(TargetBrightnessId, Mathf.Lerp(baseBrightness, 1f, t));
     }
 
     public void PlayTeleportAudioAndEvent(Vector3 targetPos)
@@ -442,7 +500,11 @@ public class PortalGateway : MonoBehaviour
     {
         if (portalRenderer == null) return null;
 
-        Shader shader = Shader.Find("Shader Graphs/PortalGateway");
+        Shader shader = portalShader;
+        if (shader == null && portalRenderer.sharedMaterial != null)
+            shader = portalRenderer.sharedMaterial.shader;
+        if (shader == null)
+            shader = Shader.Find("Shader Graphs/PortalGateway");
         if (shader == null) return portalRenderer.sharedMaterial;
 
         if (!Application.isPlaying)
@@ -472,7 +534,16 @@ public class PortalGateway : MonoBehaviour
             if (runtimeMat.HasProperty(RippleStrengthId)) baseRipple = runtimeMat.GetFloat(RippleStrengthId);
             if (runtimeMat.HasProperty(LensCurvatureId)) baseCurvature = runtimeMat.GetFloat(LensCurvatureId);
             if (runtimeMat.HasProperty(InnerGlowColorId)) baseInnerGlow = runtimeMat.GetColor(InnerGlowColorId);
-            if (runtimeMat.HasProperty(TargetBrightnessId)) baseBrightness = runtimeMat.GetFloat(TargetBrightnessId);
+            if (runtimeMat.HasProperty(TargetBrightnessId))
+            {
+                baseBrightness = runtimeMat.GetFloat(TargetBrightnessId);
+                if (Mathf.Approximately(baseBrightness, 1.05f))
+                {
+                    baseBrightness = 1f;
+                    runtimeMat.SetFloat(TargetBrightnessId, 1f);
+                }
+            }
+            lastFlattenT = -1f;
             hasBaseMatProps = true;
         }
 
@@ -481,7 +552,6 @@ public class PortalGateway : MonoBehaviour
 
     private void EnsureCamera(Camera sourceCam)
     {
-        RenderTextureFormat format = sourceCam.allowHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
         int width = Mathf.Max(16, Mathf.RoundToInt(sourceCam.pixelWidth * renderTextureScale));
         int height = Mathf.Max(16, Mathf.RoundToInt(sourceCam.pixelHeight * renderTextureScale));
 
@@ -491,10 +561,11 @@ public class PortalGateway : MonoBehaviour
             {
                 if (portalCamera != null) portalCamera.targetTexture = null;
                 renderTex.Release();
-                DestroyImmediate(renderTex);
+                if (Application.isPlaying) Destroy(renderTex);
+                else DestroyImmediate(renderTex);
             }
 
-            renderTex = new RenderTexture(width, height, 24, format)
+            renderTex = new RenderTexture(width, height, 32, RenderTextureFormat.DefaultHDR)
             {
                 name = $"PortalRT_{gameObject.GetInstanceID()}",
                 hideFlags = HideFlags.DontSave
@@ -508,11 +579,16 @@ public class PortalGateway : MonoBehaviour
             camObj.transform.SetParent(transform, false);
             portalCamera = camObj.AddComponent<Camera>();
             portalCamera.enabled = false;
-            portalCamera.cameraType = CameraType.Reflection;
+            portalCamera.cameraType = CameraType.Game;
+            portalCamera.allowHDR = true;
+            portalCamera.allowMSAA = false;
             cameraData = camObj.AddComponent<UniversalAdditionalCameraData>();
             cameraData.renderShadows = false;
+            cameraData.renderPostProcessing = false;
+            cameraData.antialiasing = AntialiasingMode.None;
             cameraData.requiresColorOption = CameraOverrideOption.UsePipelineSettings;
-            cameraData.requiresDepthOption = CameraOverrideOption.Off;
+            cameraData.requiresDepthOption = CameraOverrideOption.UsePipelineSettings;
+            VolumetricFogRendererFeature.RegisterFogCamera(portalCamera);
         }
     }
 
@@ -520,6 +596,7 @@ public class PortalGateway : MonoBehaviour
     {
         if (portalCamera != null)
         {
+            VolumetricFogRendererFeature.UnregisterFogCamera(portalCamera);
             portalCamera.targetTexture = null;
             if (Application.isPlaying) Destroy(portalCamera.gameObject);
             else DestroyImmediate(portalCamera.gameObject);

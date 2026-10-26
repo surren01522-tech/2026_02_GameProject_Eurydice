@@ -64,6 +64,13 @@ public class SceneStreamer : MonoBehaviour
         }
 
         yield return UpdateStream(immediateUnload: true);
+
+        string savedScene = SaveManager.GetLastActiveScene();
+        if (!string.IsNullOrEmpty(savedScene) && IsSceneLoaded(savedScene))
+            SceneEnvironmentManager.SwitchEnvironment(SceneManager.GetActiveScene().name, savedScene, saveScene: false);
+        else
+            SceneEnvironmentManager.InitializeCurrentScene(SceneManager.GetActiveScene().name);
+
         Physics.SyncTransforms();
         yield return new WaitForFixedUpdate();
         yield return null;

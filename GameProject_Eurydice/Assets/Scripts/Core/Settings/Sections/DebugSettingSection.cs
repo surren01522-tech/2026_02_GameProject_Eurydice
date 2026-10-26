@@ -53,7 +53,20 @@ public class DebugSettingSection : SettingSection
 
     private void ReloadCurrentScene()
     {
-        SceneLoader.Load(SceneManager.GetActiveScene().name, savePlayer: false);
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            for (int s = 0; s < SceneManager.sceneCount; s++)
+            {
+                string sName = SceneManager.GetSceneAt(s).name;
+                if (Application.CanStreamedLevelBeLoaded(sName))
+                {
+                    sceneName = sName;
+                    break;
+                }
+            }
+        }
+        SceneLoader.Load(sceneName, savePlayer: false);
     }
 
     private void OnDeleteSaveDataClicked()

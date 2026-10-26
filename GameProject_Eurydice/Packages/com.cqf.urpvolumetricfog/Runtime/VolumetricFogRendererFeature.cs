@@ -9,6 +9,18 @@ using UnityEngine.Rendering.Universal;
 [DisallowMultipleRendererFeature("Volumetric Fog")]
 public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 {
+	private static readonly System.Collections.Generic.HashSet<int> ForcedFogCameraIds = new();
+
+	public static void RegisterFogCamera(Camera cam)
+	{
+		if (cam != null) ForcedFogCameraIds.Add(cam.GetInstanceID());
+	}
+
+	public static void UnregisterFogCamera(Camera cam)
+	{
+		if (cam != null) ForcedFogCameraIds.Remove(cam.GetInstanceID());
+	}
+
 	#region Private Attributes
 
 	[HideInInspector]
@@ -42,7 +54,9 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 	/// <param name="renderingData"></param>
 	public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 	{
-		bool isPostProcessEnabled = renderingData.postProcessingEnabled && renderingData.cameraData.postProcessEnabled;
+		Camera cam = renderingData.cameraData.camera;
+		bool isForcedCamera = cam != null && ForcedFogCameraIds.Contains(cam.GetInstanceID());
+		bool isPostProcessEnabled = renderingData.postProcessingEnabled && (renderingData.cameraData.postProcessEnabled || isForcedCamera);
 		bool shouldAddVolumetricFogRenderPass = isPostProcessEnabled && ShouldAddVolumetricFogRenderPass(renderingData.cameraData.cameraType);
 		
 		if (shouldAddVolumetricFogRenderPass)
