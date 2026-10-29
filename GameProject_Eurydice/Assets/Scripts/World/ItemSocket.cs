@@ -44,7 +44,7 @@ public class ItemSocket : MonoBehaviour, IInteractable
     public ItemData PlacedItem => placedItem;
     public int PlacedAmount => placedAmount;
     public bool IsPlaced => isPlaced && placedItem != null;
-    public bool IsCorrect => IsPlaced && placedItem == requiredItem && placedAmount >= requiredAmount;
+    public bool IsCorrect => IsPlaced && requiredItem != null && (placedItem == requiredItem || (placedItem != null && placedItem.id == requiredItem.id)) && placedAmount >= requiredAmount;
     public ItemData RequiredItem => requiredItem;
     public int RequiredAmount => requiredAmount;
 
@@ -93,20 +93,48 @@ public class ItemSocket : MonoBehaviour, IInteractable
         if (placedVisual != null)
             defaultVisualScale = placedVisual.transform.localScale;
 
+        RestoreFromSave();
+
+        if (parentPuzzle == null)
+            parentPuzzle = GetComponentInParent<PuzzleBase>();
+
+        if (parentPuzzle != null)
+            requirePuzzleMode = true;
+
+        if (string.IsNullOrEmpty(uniqueId)) Debug.LogWarning($"{gameObject.name} | 소켓의 Unique Id가 설정되지 않았습니다.");
+    }
+
+    private void Start()
+    {
+        RestoreFromSave();
+    }
+
+    private void RestoreFromSave()
+    {
         var data = SaveManager.GetSocketData(uniqueId, gameObject.scene.name);
         if (data != null && data.isPlaced && !string.IsNullOrEmpty(data.placedItemId))
         {
-            placedItem = InventoryManager.Instance != null
-                ? InventoryManager.Instance.GetItemData(data.placedItemId)
-                : Resources.Load<ItemData>($"Items/{data.placedItemId}");
+            if (InventoryManager.Instance != null)
+                placedItem = InventoryManager.Instance.GetItemData(data.placedItemId);
+
+            if (placedItem == null && requiredItem != null && requiredItem.id == data.placedItemId)
+                placedItem = requiredItem;
+
+            if (placedItem == null)
+            {
+                var allItems = Resources.LoadAll<ItemData>("Items");
+                for (int i = 0; i < allItems.Length; i++)
+                {
+                    if (allItems[i] != null && allItems[i].id == data.placedItemId)
+                    {
+                        placedItem = allItems[i];
+                        break;
+                    }
+                }
+            }
+
             placedAmount = data.placedAmount > 0 ? data.placedAmount : requiredAmount;
             isPlaced = placedItem != null;
-        }
-        else
-        {
-            isPlaced = false;
-            placedItem = null;
-            placedAmount = 0;
         }
 
         if (placedVisual != null)
@@ -117,14 +145,6 @@ public class ItemSocket : MonoBehaviour, IInteractable
             Collider col = GetComponent<Collider>();
             if (col != null) col.enabled = false;
         }
-
-        if (parentPuzzle == null)
-            parentPuzzle = GetComponentInParent<PuzzleBase>();
-
-        if (parentPuzzle != null)
-            requirePuzzleMode = true;
-
-        if (string.IsNullOrEmpty(uniqueId)) Debug.LogWarning($"{gameObject.name} | 소켓의 Unique Id가 설정되지 않았습니다.");
     }
 
     public void Interact(PlayerController player)

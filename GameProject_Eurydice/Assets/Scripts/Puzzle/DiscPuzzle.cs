@@ -81,13 +81,16 @@ public class DiscPuzzle : PuzzleBase
         cam = Camera.main;
         BindSocketEvents();
         RestoreSavedState();
-        UpdatePieceSocketBindings();
     }
 
     private void RestoreSavedState()
     {
         var savedData = SaveManager.GetPuzzleState(uniqueId, gameObject.scene.name);
-        if (savedData == null) return;
+        if (savedData == null)
+        {
+            UpdatePieceSocketBindings();
+            return;
+        }
 
         if (savedData.isCompleted)
         {
@@ -95,8 +98,13 @@ public class DiscPuzzle : PuzzleBase
             for (int i = 0; i < pieces.Count; i++)
             {
                 if (pieces[i] != null)
+                {
                     pieces[i].SetAngle(pieces[i].targetAngle, defaultRotationAxis);
+                    if (pieces[i].pieceTransform != null)
+                        pieces[i].pieceTransform.gameObject.SetActive(true);
+                }
             }
+            UpdatePieceSocketBindings();
             return;
         }
 
@@ -108,6 +116,8 @@ public class DiscPuzzle : PuzzleBase
                     pieces[i].SetAngle(savedData.pieceAngles[i], defaultRotationAxis);
             }
         }
+
+        UpdatePieceSocketBindings();
     }
 
     private void SaveCurrentPuzzleState(bool completed)
@@ -175,11 +185,18 @@ public class DiscPuzzle : PuzzleBase
         for (int i = 0; i < pieces.Count; i++)
         {
             var p = pieces[i];
-            if (p == null || p.boundSocket == null) continue;
+            if (p == null) continue;
 
-            bool slotted = p.boundSocket.IsCorrect;
-            if (p.hideUntilSocketPlaced && p.pieceTransform != null)
-                p.pieceTransform.gameObject.SetActive(slotted);
+            if (p.boundSocket != null)
+            {
+                bool slotted = IsCompleted || p.boundSocket.IsCorrect;
+                if (p.hideUntilSocketPlaced && p.pieceTransform != null)
+                    p.pieceTransform.gameObject.SetActive(slotted);
+            }
+            else if (IsCompleted && p.hideUntilSocketPlaced && p.pieceTransform != null)
+            {
+                p.pieceTransform.gameObject.SetActive(true);
+            }
         }
     }
 
