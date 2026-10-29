@@ -65,6 +65,7 @@ public class DiscPuzzle : PuzzleBase
     {
         base.Awake();
         InitializePieces();
+        UpdatePieceSocketBindings();
     }
 
     private void OnValidate()
@@ -80,6 +81,7 @@ public class DiscPuzzle : PuzzleBase
         cam = Camera.main;
         BindSocketEvents();
         RestoreSavedState();
+        UpdatePieceSocketBindings();
     }
 
     private void RestoreSavedState()
@@ -119,16 +121,40 @@ public class DiscPuzzle : PuzzleBase
 
     private void BindSocketEvents()
     {
-        if (sockets == null) return;
-        for (int i = 0; i < sockets.Count; i++)
-            if (sockets[i] != null) sockets[i].OnPlaced += HandleSocketInstalled;
+        if (sockets != null)
+        {
+            for (int i = 0; i < sockets.Count; i++)
+                if (sockets[i] != null) sockets[i].OnPlaced += HandleSocketInstalled;
+        }
+
+        if (pieces != null)
+        {
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                var s = pieces[i]?.boundSocket;
+                if (s != null && (sockets == null || !sockets.Contains(s)))
+                    s.OnPlaced += HandleSocketInstalled;
+            }
+        }
     }
 
     private void UnbindSocketEvents()
     {
-        if (sockets == null) return;
-        for (int i = 0; i < sockets.Count; i++)
-            if (sockets[i] != null) sockets[i].OnPlaced -= HandleSocketInstalled;
+        if (sockets != null)
+        {
+            for (int i = 0; i < sockets.Count; i++)
+                if (sockets[i] != null) sockets[i].OnPlaced -= HandleSocketInstalled;
+        }
+
+        if (pieces != null)
+        {
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                var s = pieces[i]?.boundSocket;
+                if (s != null && (sockets == null || !sockets.Contains(s)))
+                    s.OnPlaced -= HandleSocketInstalled;
+            }
+        }
     }
 
     private void OnDestroy()
@@ -137,7 +163,33 @@ public class DiscPuzzle : PuzzleBase
         UnbindSocketEvents();
     }
 
-    private void HandleSocketInstalled(ItemSocket socket) => CheckSolution();
+    private void HandleSocketInstalled(ItemSocket socket)
+    {
+        UpdatePieceSocketBindings();
+        CheckSolution();
+    }
+
+    public void UpdatePieceSocketBindings()
+    {
+        if (pieces == null) return;
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            var p = pieces[i];
+            if (p == null || p.boundSocket == null) continue;
+
+            bool slotted = p.boundSocket.IsCorrect;
+            if (p.hideUntilSocketPlaced && p.pieceTransform != null)
+                p.pieceTransform.gameObject.SetActive(slotted);
+        }
+    }
+
+    private bool IsBoundSocket(ItemSocket socket)
+    {
+        if (pieces == null || socket == null) return false;
+        for (int i = 0; i < pieces.Count; i++)
+            if (pieces[i]?.boundSocket == socket) return true;
+        return false;
+    }
 
     private void InitializePieces()
     {
@@ -192,27 +244,14 @@ public class DiscPuzzle : PuzzleBase
                 for (int i = 0; i < hitCount; i++)
                 {
                     ItemSocket hitSocket = hitBuffer[i].collider.GetComponentInParent<ItemSocket>();
-                    if (hitSocket != null && sockets != null && sockets.Contains(hitSocket))
+                    if (hitSocket != null && (sockets == null || sockets.Contains(hitSocket) || IsBoundSocket(hitSocket)))
                     {
                         if (hitSocket.CanInteract)
                         {
                             hitSocket.Interact(null);
-                        }
-                        return;
-                    }
-                }
-
-                if (!CanRotatePieces)
-                {
-                    for (int i = 0; i < hitCount; i++)
-                    {
-                        if (FindPieceIndexByCollider(hitBuffer[i].collider) >= 0)
-                        {
-                            InteractionFeedbackUIManager.Instance?.Show("필요한 장치를 먼저 끼워야 합니다.");
                             return;
                         }
                     }
-                    return;
                 }
 
                 for (int i = 0; i < hitCount; i++)
@@ -221,6 +260,24 @@ public class DiscPuzzle : PuzzleBase
                     if (pieceIdx >= 0 && pieces[pieceIdx] != null)
                     {
                         DiscPiece clickedPiece = pieces[pieceIdx];
+
+                        if (!clickedPiece.IsSlotted)
+                        {
+                            if (clickedPiece.boundSocket != null && clickedPiece.boundSocket.CanInteract)
+                            {
+                                clickedPiece.boundSocket.Interact(null);
+                                return;
+                            }
+                            InteractionFeedbackUIManager.Instance?.Show("필요한 부품을 먼저 끼워야 합니다.");
+                            return;
+                        }
+
+                        if (!CanRotatePieces)
+                        {
+                            InteractionFeedbackUIManager.Instance?.Show("필요한 장치를 먼저 끼워야 합니다.");
+                            return;
+                        }
+
                         if (!clickedPiece.canRotate) return;
 
                         StopAllPieceSnaps();
@@ -336,6 +393,7 @@ public class DiscPuzzle : PuzzleBase
             if (pieces[i] == null) continue;
             if (pieces[i].clickCollider == col) return i;
             if (pieces[i].pieceTransform != null && col.transform.IsChildOf(pieces[i].pieceTransform)) return i;
+            if (pieces[i].boundSocket != null && col.transform.IsChildOf(pieces[i].boundSocket.transform)) return i;
         }
 
         return -1;
@@ -351,7 +409,7 @@ public class DiscPuzzle : PuzzleBase
     {
         if (pieces == null || pieces.Count == 0) return false;
         for (int i = 0; i < pieces.Count; i++)
-            if (pieces[i] == null || !pieces[i].CheckIsCorrect(defaultTolerance)) return false;
+            if (pieces[i] == null || !pieces[i].IsSlotted || !pieces[i].CheckIsCorrect(defaultTolerance)) return false;
         return true;
     }
 

@@ -46,9 +46,17 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (hits[i].gameObject == gameObject) continue;
 
-            var interactable = hits[i].GetComponentInParent<IInteractable>();
-            if (interactable == null || !interactable.CanInteract) continue;
-            if (interactable is UnityEngine.Object u && u == null) continue;
+            var interactables = hits[i].GetComponentsInParent<IInteractable>();
+            IInteractable interactable = null;
+            for (int j = 0; j < interactables.Length; j++)
+            {
+                if (interactables[j] != null && interactables[j].CanInteract && !(interactables[j] is UnityEngine.Object u && u == null))
+                {
+                    interactable = interactables[j];
+                    break;
+                }
+            }
+            if (interactable == null) continue;
 
             Vector3 dir = hits[i].transform.position - transform.position;
             dir.y = 0;

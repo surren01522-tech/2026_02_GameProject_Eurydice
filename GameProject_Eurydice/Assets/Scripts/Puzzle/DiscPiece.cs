@@ -50,10 +50,15 @@ public class DiscPiece
     public bool invertRotation = false;
     public Collider clickCollider;
 
+    [FoldGroup("소켓 연동 (선택)", defaultExpanded: false)]
+    public ItemSocket boundSocket;
+    public bool hideUntilSocketPlaced = false;
+
     [NonSerialized] public float currentAngle;
     [NonSerialized] public Tween snapTween;
 
     public Transform TargetTransform => pieceTransform;
+    public bool IsSlotted => boundSocket == null || boundSocket.IsCorrect;
 
     /// <summary>
     /// 목표 각도와의 오차 범위를 비교하여 올바른 위치에 도달했는지 확인합니다.
@@ -65,6 +70,9 @@ public class DiscPiece
     {
         if (pieceTransform != null && clickCollider == null)
             clickCollider = pieceTransform.GetComponentInChildren<Collider>();
+
+        if (boundSocket != null && hideUntilSocketPlaced && pieceTransform != null)
+            pieceTransform.gameObject.SetActive(boundSocket.IsCorrect);
 
         DiscStartAngleMode resolvedMode = (startMode == DiscStartAngleMode.UseGlobalDefault) ? globalMode : startMode;
         float tol = overrideSettings ? customTolerance : defaultTol;
