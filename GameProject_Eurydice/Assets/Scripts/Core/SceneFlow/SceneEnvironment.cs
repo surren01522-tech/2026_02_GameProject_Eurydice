@@ -97,30 +97,49 @@ public class SceneEnvironment : MonoBehaviour
         if (!probeInitialized)
             RebuildCachedProbe();
 
-        RenderSettings.skybox = skyboxMaterial;
-        RenderSettings.subtractiveShadowColor = subtractiveShadowColor;
+        if (RenderSettings.skybox != skyboxMaterial)
+            RenderSettings.skybox = skyboxMaterial;
+        if (RenderSettings.subtractiveShadowColor != subtractiveShadowColor)
+            RenderSettings.subtractiveShadowColor = subtractiveShadowColor;
 
-        RenderSettings.fog = fogEnabled;
-        RenderSettings.fogMode = fogMode;
-        RenderSettings.fogColor = fogColor;
-        RenderSettings.fogDensity = fogDensity;
-        RenderSettings.fogStartDistance = fogStartDistance;
-        RenderSettings.fogEndDistance = fogEndDistance;
+        if (RenderSettings.fog != fogEnabled)
+            RenderSettings.fog = fogEnabled;
+        if (RenderSettings.fogMode != fogMode)
+            RenderSettings.fogMode = fogMode;
+        if (RenderSettings.fogColor != fogColor)
+            RenderSettings.fogColor = fogColor;
+        if (!Mathf.Approximately(RenderSettings.fogDensity, fogDensity))
+            RenderSettings.fogDensity = fogDensity;
+        if (!Mathf.Approximately(RenderSettings.fogStartDistance, fogStartDistance))
+            RenderSettings.fogStartDistance = fogStartDistance;
+        if (!Mathf.Approximately(RenderSettings.fogEndDistance, fogEndDistance))
+            RenderSettings.fogEndDistance = fogEndDistance;
 
-        // Skybox 환경광은 런타임 DynamicGI 재계산 스파이크를 피하기 위해 직렬화된 SH 계수를 Custom 모드로 즉시 주입
         bool useCustomProbe = (ambientMode == AmbientMode.Skybox || ambientMode == AmbientMode.Custom) && probeInitialized;
-        RenderSettings.ambientMode = useCustomProbe ? AmbientMode.Custom : ambientMode;
-        RenderSettings.ambientSkyColor = ambientSkyColor;
-        RenderSettings.ambientEquatorColor = ambientEquatorColor;
-        RenderSettings.ambientGroundColor = ambientGroundColor;
-        RenderSettings.ambientIntensity = ambientIntensity;
-        if (useCustomProbe)
+        AmbientMode targetAmbientMode = useCustomProbe ? AmbientMode.Custom : ambientMode;
+        if (RenderSettings.ambientMode != targetAmbientMode)
+            RenderSettings.ambientMode = targetAmbientMode;
+
+        if (RenderSettings.ambientSkyColor != ambientSkyColor)
+            RenderSettings.ambientSkyColor = ambientSkyColor;
+        if (RenderSettings.ambientEquatorColor != ambientEquatorColor)
+            RenderSettings.ambientEquatorColor = ambientEquatorColor;
+        if (RenderSettings.ambientGroundColor != ambientGroundColor)
+            RenderSettings.ambientGroundColor = ambientGroundColor;
+        if (!Mathf.Approximately(RenderSettings.ambientIntensity, ambientIntensity))
+            RenderSettings.ambientIntensity = ambientIntensity;
+
+        if (useCustomProbe && !RenderSettings.ambientProbe.Equals(cachedProbe))
             RenderSettings.ambientProbe = cachedProbe;
 
-        RenderSettings.defaultReflectionMode = defaultReflectionMode;
-        RenderSettings.customReflectionTexture = customReflectionTexture;
-        RenderSettings.reflectionIntensity = reflectionIntensity;
-        RenderSettings.reflectionBounces = reflectionBounces;
+        if (RenderSettings.defaultReflectionMode != defaultReflectionMode)
+            RenderSettings.defaultReflectionMode = defaultReflectionMode;
+        if (RenderSettings.customReflectionTexture != customReflectionTexture)
+            RenderSettings.customReflectionTexture = customReflectionTexture;
+        if (!Mathf.Approximately(RenderSettings.reflectionIntensity, reflectionIntensity))
+            RenderSettings.reflectionIntensity = reflectionIntensity;
+        if (RenderSettings.reflectionBounces != reflectionBounces)
+            RenderSettings.reflectionBounces = reflectionBounces;
     }
 
     public void ApplyLights(bool sceneActive)
@@ -150,7 +169,8 @@ public class SceneEnvironment : MonoBehaviour
 
             if (!sceneActive)
             {
-                binding.light.enabled = false;
+                if (binding.light.enabled)
+                    binding.light.enabled = false;
                 continue;
             }
 
@@ -172,12 +192,14 @@ public class SceneEnvironment : MonoBehaviour
                 shouldEnable = binding.light.gameObject.activeSelf;
             }
 
-            binding.light.enabled = shouldEnable;
+            if (binding.light.enabled != shouldEnable)
+                binding.light.enabled = shouldEnable;
+
             if (shouldEnable && activeSun == null)
                 activeSun = binding.light;
         }
 
-        if (sceneActive)
+        if (sceneActive && RenderSettings.sun != activeSun)
             RenderSettings.sun = activeSun;
     }
 
@@ -190,18 +212,9 @@ public class SceneEnvironment : MonoBehaviour
             var b = volumes[i];
             if (b.volume == null) continue;
 
-            float targetPriority = isPrimaryZone ? b.originalPriority : b.originalPriority + InactivePriorityOffset;
-            if (!Mathf.Approximately(b.volume.priority, targetPriority))
-            {
-                b.volume.priority = targetPriority;
-                if (b.volume.isActiveAndEnabled)
-                {
-                    VolumeManager.instance.Unregister(b.volume);
-                    VolumeManager.instance.Register(b.volume);
-                }
-            }
-
-            b.volume.weight = isPrimaryZone ? b.originalWeight : 0f;
+            float targetWeight = isPrimaryZone ? b.originalWeight : 0f;
+            if (!Mathf.Approximately(b.volume.weight, targetWeight))
+                b.volume.weight = targetWeight;
         }
     }
 

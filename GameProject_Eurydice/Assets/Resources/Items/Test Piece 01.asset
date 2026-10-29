@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 661e4d6c110e7c344835f2ed817bc70d, type: 3}
   m_Name: Test Piece 01
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  id: 3
-  itemName: Third Item
+  id: 100
+  itemName: Piece 1
   icon: {fileID: 0}
-  description: Third Item Desc
+  description: Piece 1
   maxStack: 99

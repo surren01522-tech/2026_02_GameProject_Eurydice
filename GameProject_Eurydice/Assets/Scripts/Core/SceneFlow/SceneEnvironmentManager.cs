@@ -63,29 +63,29 @@ public static class SceneEnvironmentManager
 
         public void Restore()
         {
-            RenderSettings.skybox = skybox;
-            RenderSettings.sun = sun;
-            RenderSettings.subtractiveShadowColor = subtractiveShadowColor;
+            if (RenderSettings.skybox != skybox) RenderSettings.skybox = skybox;
+            if (RenderSettings.sun != sun) RenderSettings.sun = sun;
+            if (RenderSettings.subtractiveShadowColor != subtractiveShadowColor) RenderSettings.subtractiveShadowColor = subtractiveShadowColor;
 
-            RenderSettings.ambientMode = ambientMode;
-            RenderSettings.ambientSkyColor = ambientSkyColor;
-            RenderSettings.ambientEquatorColor = ambientEquatorColor;
-            RenderSettings.ambientGroundColor = ambientGroundColor;
-            RenderSettings.ambientIntensity = ambientIntensity;
-            if (ambientMode == AmbientMode.Custom)
+            if (RenderSettings.ambientMode != ambientMode) RenderSettings.ambientMode = ambientMode;
+            if (RenderSettings.ambientSkyColor != ambientSkyColor) RenderSettings.ambientSkyColor = ambientSkyColor;
+            if (RenderSettings.ambientEquatorColor != ambientEquatorColor) RenderSettings.ambientEquatorColor = ambientEquatorColor;
+            if (RenderSettings.ambientGroundColor != ambientGroundColor) RenderSettings.ambientGroundColor = ambientGroundColor;
+            if (!Mathf.Approximately(RenderSettings.ambientIntensity, ambientIntensity)) RenderSettings.ambientIntensity = ambientIntensity;
+            if (ambientMode == AmbientMode.Custom && !RenderSettings.ambientProbe.Equals(ambientProbe))
                 RenderSettings.ambientProbe = ambientProbe;
 
-            RenderSettings.defaultReflectionMode = defaultReflectionMode;
-            RenderSettings.customReflectionTexture = customReflectionTexture;
-            RenderSettings.reflectionIntensity = reflectionIntensity;
-            RenderSettings.reflectionBounces = reflectionBounces;
+            if (RenderSettings.defaultReflectionMode != defaultReflectionMode) RenderSettings.defaultReflectionMode = defaultReflectionMode;
+            if (RenderSettings.customReflectionTexture != customReflectionTexture) RenderSettings.customReflectionTexture = customReflectionTexture;
+            if (!Mathf.Approximately(RenderSettings.reflectionIntensity, reflectionIntensity)) RenderSettings.reflectionIntensity = reflectionIntensity;
+            if (RenderSettings.reflectionBounces != reflectionBounces) RenderSettings.reflectionBounces = reflectionBounces;
 
-            RenderSettings.fog = fog;
-            RenderSettings.fogMode = fogMode;
-            RenderSettings.fogColor = fogColor;
-            RenderSettings.fogDensity = fogDensity;
-            RenderSettings.fogStartDistance = fogStartDistance;
-            RenderSettings.fogEndDistance = fogEndDistance;
+            if (RenderSettings.fog != fog) RenderSettings.fog = fog;
+            if (RenderSettings.fogMode != fogMode) RenderSettings.fogMode = fogMode;
+            if (RenderSettings.fogColor != fogColor) RenderSettings.fogColor = fogColor;
+            if (!Mathf.Approximately(RenderSettings.fogDensity, fogDensity)) RenderSettings.fogDensity = fogDensity;
+            if (!Mathf.Approximately(RenderSettings.fogStartDistance, fogStartDistance)) RenderSettings.fogStartDistance = fogStartDistance;
+            if (!Mathf.Approximately(RenderSettings.fogEndDistance, fogEndDistance)) RenderSettings.fogEndDistance = fogEndDistance;
         }
     }
 
