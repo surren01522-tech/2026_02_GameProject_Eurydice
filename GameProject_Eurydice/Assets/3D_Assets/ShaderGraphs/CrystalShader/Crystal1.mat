@@ -57,6 +57,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: ab4a9a9c2ed68544abf18bd232f0cce6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NomalTex:
+        m_Texture: {fileID: 2800000, guid: ab4a9a9c2ed68544abf18bd232f0cce6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _RoughnessTex:
         m_Texture: {fileID: 2800000, guid: a6314a3e9f68e494a9e7bd96a909b700, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -75,23 +79,26 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaPower: 0.079
+    - _AlphaPower: 0.067
     - _Depth: 5.1
     - _DepthPower: 1
-    - _EmissonPower: 7
+    - _EmissonPower: 8
+    - _Float: 0.01
     - _FresnelDepth: 1.5
     - _FresnelPower: 2.06
     - _GalaxySpeed: 0.05
     - _NoiseScale: 100
+    - _NomalPower: 0.19
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _StarsNoiseSpeed: 0.002
+    - _StarsNoiseSpeed: 0.001
     m_Colors:
     - _Color1: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorNoiseColor: {r: 0.2980392, g: 0.3830169, b: 0.9921569, a: 1}
     - _GalaxyUV: {r: 2, g: 4, b: 0, a: 0}
     - _MainColor1: {r: 0.34901965, g: 0.4139264, b: 1, a: 1}
     - _MainColor2: {r: 0.122641385, g: 0.30784434, b: 1, a: 1}
-    - _MainColor3: {r: 1.0000001, g: 1.0000001, b: 1.0000001, a: 1}
+    - _MainColor3: {r: 0.7914813, g: 0.63395226, b: 1.3350786, a: 1}
     - _NoiseSize: {r: 10, g: 10, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
