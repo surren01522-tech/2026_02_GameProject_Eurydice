@@ -50,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0ab4bb1eca84ef74c9db64fdf29cdc63, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4a4e88fe1b163b143a1b6b052e97b79b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Nomal:
@@ -91,6 +91,7 @@ Material:
     - _GalaxyUV: {r: 2, g: 4, b: 0, a: 0}
     - _MainColor1: {r: 0.34901965, g: 0.4139264, b: 1, a: 1}
     - _MainColor2: {r: 0.122641385, g: 0.30784434, b: 1, a: 1}
+    - _MainColor3: {r: 1.0000001, g: 1.0000001, b: 1.0000001, a: 1}
     - _NoiseSize: {r: 10, g: 10, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
