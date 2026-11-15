@@ -306,7 +306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalScale.z
@@ -314,7 +314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.841
+      value: 14.9307
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalPosition.y
@@ -330,7 +330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalRotation.y
@@ -338,7 +338,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: -0.00000037252897
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -354,8 +354,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_ConstrainProportionsScale
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a55fcb9f90564bc41bae5fcbaa3a0de2, type: 2}
     - target: {fileID: 919132149155446097, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
       propertyPath: m_Name
       value: crystal2

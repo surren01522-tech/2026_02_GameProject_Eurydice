@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1308419412678413309
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Crystal2
+  m_Shader: {fileID: -6465566751694194690, guid: a481e7098821c7344bdbf279120318eb, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 2800000, guid: 6b01f45afe88028428f9f1c8ad9796f1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissonTex:
+        m_Texture: {fileID: 2800000, guid: 70fafeaecfa40514c8712e519230754a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GalaxyTex1:
+        m_Texture: {fileID: 2800000, guid: 129b83cbfce9977429eefc27529d67e6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 6b01f45afe88028428f9f1c8ad9796f1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Nomal:
+        m_Texture: {fileID: 2800000, guid: ab4a9a9c2ed68544abf18bd232f0cce6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NomalTex:
+        m_Texture: {fileID: 2800000, guid: 92be7fc7d97f27b4d82d00312f6b75ac, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RoughnessTex:
+        m_Texture: {fileID: 2800000, guid: 412cfc883e447754da99647fff321f52, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaPower: 0
+    - _Depth: 5.1
+    - _DepthPower: 1
+    - _EmissonPower: 11.74
+    - _Float: 0.01
+    - _FresnelDepth: 2.55
+    - _FresnelPower: 0.37
+    - _GalaxySpeed: 0.05
+    - _NoiseScale: 100
+    - _NomalPower: 0.05
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _StarsNoiseSpeed: 0.001
+    m_Colors:
+    - _Color1: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorNoiseColor: {r: 3.776172, g: 3.776172, b: 3.776172, a: 1}
+    - _GalaxyUV: {r: 3, g: 0.5, b: 0, a: 0}
+    - _MainColor1: {r: 0.9026441, g: 0.62114465, b: 4.2370944, a: 1}
+    - _MainColor2: {r: 0, g: 3.4415903, b: 1.5243484, a: 1}
+    - _MainColor3: {r: 0.5607225, g: 0.47088325, b: 0.98833734, a: 1}
+    - _NoiseSize: {r: 10, g: 10, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

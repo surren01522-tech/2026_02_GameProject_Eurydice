@@ -110,11 +110,11 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FresnelPower: 1
+    - _FresnelPower: 1.41
     - _GlossMapScale: 1
     - _Glossiness: 0.4472136
     - _GlossyReflections: 1
-    - _GlowSpread: 1
+    - _GlowSpread: 0.99
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
