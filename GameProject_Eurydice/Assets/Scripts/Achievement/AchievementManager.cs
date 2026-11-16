@@ -112,8 +112,8 @@ public class AchievementManager : MonoBehaviour
 
             if (achievementLookup.ContainsKey(key))
             {
-                Debug.LogWarning($"[AchievementManager] Duplicate ID '{key}' found in '{data.name}'. Fallback to asset name.");
-                key = $"{data.name}_{data.GetInstanceID()}";
+                Debug.LogError($"[AchievementManager] Duplicate ID '{key}' found in '{data.name}'.");
+                continue;
             }
 
             achievementLookup[key] = data;
@@ -127,30 +127,37 @@ public class AchievementManager : MonoBehaviour
         }
     }
 
+    private void RecordCountedAchievement(HashSet<string> set, string id, AchievementType countType, ref int counter)
+    {
+        if (string.IsNullOrEmpty(id) || !set.Add(id)) return;
+        counter = set.Count;
+        UpdateGroupProgress(countType, counter);
+    }
+
+    private void UnlockMatching(AchievementType type, Func<AchievementData, bool> match)
+    {
+        if (!achievementGroups.TryGetValue(type, out var list)) return;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (match(list[i]))
+                Unlock(list[i].Id);
+        }
+    }
+
+    private static bool MatchesItem(string targetId, ItemData item)
+    {
+        return item != null && (IsTargetMatch(targetId, item.id) || IsTargetMatch(targetId, item.name) || IsTargetMatch(targetId, item.itemName));
+    }
+
     /// <summary>
     /// 퍼즐 클리어 시 해당 퍼즐 전용 업적과 퍼즐 카운트 업적을 갱신합니다.
     /// </summary>
     public void ClearPuzzle(PuzzleBase puzzle)
     {
         if (puzzle == null) return;
-
         string puzzleId = !string.IsNullOrEmpty(puzzle.UniqueId) ? puzzle.UniqueId : puzzle.gameObject.name;
-        if (clearedPuzzleIds.Add(puzzleId))
-        {
-            clearedPuzzleCount = clearedPuzzleIds.Count;
-            UpdateGroupProgress(AchievementType.ClearPuzzleCount, clearedPuzzleCount);
-        }
-
-        if (achievementGroups.TryGetValue(AchievementType.ClearPuzzle, out var puzzleAchievements))
-        {
-            for (int i = 0; i < puzzleAchievements.Count; i++)
-            {
-                var data = puzzleAchievements[i];
-                if (IsTargetMatch(data.TargetId, puzzle.UniqueId) || IsTargetMatch(data.TargetId, puzzle.gameObject.name))
-                    Unlock(data.Id);
-            }
-        }
-
+        RecordCountedAchievement(clearedPuzzleIds, puzzleId, AchievementType.ClearPuzzleCount, ref clearedPuzzleCount);
+        UnlockMatching(AchievementType.ClearPuzzle, d => IsTargetMatch(d.TargetId, puzzle.UniqueId) || IsTargetMatch(d.TargetId, puzzle.gameObject.name));
         SaveProgress();
     }
 
@@ -160,23 +167,8 @@ public class AchievementManager : MonoBehaviour
     public void ClearPuzzle(string puzzleId)
     {
         if (string.IsNullOrEmpty(puzzleId)) return;
-
-        if (clearedPuzzleIds.Add(puzzleId))
-        {
-            clearedPuzzleCount = clearedPuzzleIds.Count;
-            UpdateGroupProgress(AchievementType.ClearPuzzleCount, clearedPuzzleCount);
-        }
-
-        if (achievementGroups.TryGetValue(AchievementType.ClearPuzzle, out var puzzleAchievements))
-        {
-            for (int i = 0; i < puzzleAchievements.Count; i++)
-            {
-                var data = puzzleAchievements[i];
-                if (IsTargetMatch(data.TargetId, puzzleId))
-                    Unlock(data.Id);
-            }
-        }
-
+        RecordCountedAchievement(clearedPuzzleIds, puzzleId, AchievementType.ClearPuzzleCount, ref clearedPuzzleCount);
+        UnlockMatching(AchievementType.ClearPuzzle, d => IsTargetMatch(d.TargetId, puzzleId));
         SaveProgress();
     }
 
@@ -186,17 +178,7 @@ public class AchievementManager : MonoBehaviour
     public void ClearChapter(string chapterId)
     {
         if (string.IsNullOrEmpty(chapterId)) return;
-
-        if (achievementGroups.TryGetValue(AchievementType.ClearChapter, out var chapterAchievements))
-        {
-            for (int i = 0; i < chapterAchievements.Count; i++)
-            {
-                var data = chapterAchievements[i];
-                if (IsTargetMatch(data.TargetId, chapterId))
-                    Unlock(data.Id);
-            }
-        }
-
+        UnlockMatching(AchievementType.ClearChapter, d => IsTargetMatch(d.TargetId, chapterId));
         SaveProgress();
     }
 
@@ -206,36 +188,9 @@ public class AchievementManager : MonoBehaviour
     public void CollectItem(ItemData item, int amount = 1, string objectUniqueId = null, string objectName = null)
     {
         if (amount <= 0) return;
-
         totalCollectedItemCount += amount;
         UpdateGroupProgress(AchievementType.CollectItemCount, totalCollectedItemCount);
-
-        if (achievementGroups.TryGetValue(AchievementType.CollectItem, out var itemAchievements))
-        {
-            for (int i = 0; i < itemAchievements.Count; i++)
-            {
-                var data = itemAchievements[i];
-                if (string.IsNullOrEmpty(data.TargetId)) continue;
-
-                bool matched = false;
-                if (item != null)
-                {
-                    matched = IsTargetMatch(data.TargetId, item.id) 
-                           || IsTargetMatch(data.TargetId, item.name) 
-                           || IsTargetMatch(data.TargetId, item.itemName);
-                }
-
-                if (!matched && !string.IsNullOrEmpty(objectUniqueId))
-                    matched = IsTargetMatch(data.TargetId, objectUniqueId);
-
-                if (!matched && !string.IsNullOrEmpty(objectName))
-                    matched = IsTargetMatch(data.TargetId, objectName);
-
-                if (matched)
-                    Unlock(data.Id);
-            }
-        }
-
+        UnlockMatching(AchievementType.CollectItem, d => MatchesItem(d.TargetId, item) || IsTargetMatch(d.TargetId, objectUniqueId) || IsTargetMatch(d.TargetId, objectName));
         SaveProgress();
     }
 
@@ -245,20 +200,9 @@ public class AchievementManager : MonoBehaviour
     public void CollectItem(string itemId, int amount = 1)
     {
         if (string.IsNullOrEmpty(itemId) || amount <= 0) return;
-
         totalCollectedItemCount += amount;
         UpdateGroupProgress(AchievementType.CollectItemCount, totalCollectedItemCount);
-
-        if (achievementGroups.TryGetValue(AchievementType.CollectItem, out var itemAchievements))
-        {
-            for (int i = 0; i < itemAchievements.Count; i++)
-            {
-                var data = itemAchievements[i];
-                if (IsTargetMatch(data.TargetId, itemId))
-                    Unlock(data.Id);
-            }
-        }
-
+        UnlockMatching(AchievementType.CollectItem, d => IsTargetMatch(d.TargetId, itemId));
         SaveProgress();
     }
 
@@ -268,45 +212,10 @@ public class AchievementManager : MonoBehaviour
     public void SocketItem(ItemSocket socket, ItemData item)
     {
         string socketId = socket != null ? (!string.IsNullOrEmpty(socket.UniqueId) ? socket.UniqueId : socket.gameObject.name) : null;
-        if (!string.IsNullOrEmpty(socketId) && clearedSocketIds.Add(socketId))
-        {
-            socketedCount = clearedSocketIds.Count;
-            UpdateGroupProgress(AchievementType.SocketItemCount, socketedCount);
-        }
-
-        if (achievementGroups.TryGetValue(AchievementType.SocketItem, out var socketAchievements))
-        {
-            for (int i = 0; i < socketAchievements.Count; i++)
-            {
-                var data = socketAchievements[i];
-                if (string.IsNullOrEmpty(data.TargetId)) continue;
-
-                bool matched = false;
-                if (socket != null)
-                {
-                    matched = IsTargetMatch(data.TargetId, socket.UniqueId)
-                           || IsTargetMatch(data.TargetId, socket.gameObject.name);
-
-                    if (!matched && socket.RequiredItem != null)
-                    {
-                        matched = IsTargetMatch(data.TargetId, socket.RequiredItem.id)
-                               || IsTargetMatch(data.TargetId, socket.RequiredItem.name)
-                               || IsTargetMatch(data.TargetId, socket.RequiredItem.itemName);
-                    }
-                }
-
-                if (!matched && item != null)
-                {
-                    matched = IsTargetMatch(data.TargetId, item.id)
-                           || IsTargetMatch(data.TargetId, item.name)
-                           || IsTargetMatch(data.TargetId, item.itemName);
-                }
-
-                if (matched)
-                    Unlock(data.Id);
-            }
-        }
-
+        RecordCountedAchievement(clearedSocketIds, socketId, AchievementType.SocketItemCount, ref socketedCount);
+        UnlockMatching(AchievementType.SocketItem, d =>
+            (socket != null && (IsTargetMatch(d.TargetId, socket.UniqueId) || IsTargetMatch(d.TargetId, socket.gameObject.name) || MatchesItem(d.TargetId, socket.RequiredItem))) ||
+            MatchesItem(d.TargetId, item));
         SaveProgress();
     }
 
@@ -316,24 +225,9 @@ public class AchievementManager : MonoBehaviour
     public void ClearSocketGroup(ItemSocketGroup group)
     {
         if (group == null) return;
-
         string groupId = !string.IsNullOrEmpty(group.UniqueId) ? group.UniqueId : group.gameObject.name;
-        if (clearedSocketGroupIds.Add(groupId))
-        {
-            clearedSocketGroupCount = clearedSocketGroupIds.Count;
-            UpdateGroupProgress(AchievementType.ClearSocketGroupCount, clearedSocketGroupCount);
-        }
-
-        if (achievementGroups.TryGetValue(AchievementType.ClearSocketGroup, out var groupAchievements))
-        {
-            for (int i = 0; i < groupAchievements.Count; i++)
-            {
-                var data = groupAchievements[i];
-                if (IsTargetMatch(data.TargetId, group.UniqueId) || IsTargetMatch(data.TargetId, group.gameObject.name))
-                    Unlock(data.Id);
-            }
-        }
-
+        RecordCountedAchievement(clearedSocketGroupIds, groupId, AchievementType.ClearSocketGroupCount, ref clearedSocketGroupCount);
+        UnlockMatching(AchievementType.ClearSocketGroup, d => IsTargetMatch(d.TargetId, group.UniqueId) || IsTargetMatch(d.TargetId, group.gameObject.name));
         SaveProgress();
     }
 
@@ -499,36 +393,16 @@ public class AchievementManager : MonoBehaviour
         totalPlayTime = saveData.totalPlayTime;
         totalCollectedItemCount = saveData.totalCollectedItemCount;
 
-        clearedPuzzleIds.Clear();
-        if (saveData.clearedPuzzleIds != null)
-        {
-            for (int i = 0; i < saveData.clearedPuzzleIds.Count; i++)
-                clearedPuzzleIds.Add(saveData.clearedPuzzleIds[i]);
-        }
+        LoadIdSet(clearedPuzzleIds, saveData.clearedPuzzleIds);
         clearedPuzzleCount = Mathf.Max(saveData.clearedPuzzleCount, clearedPuzzleIds.Count);
 
-        clearedSocketIds.Clear();
-        if (saveData.clearedSocketIds != null)
-        {
-            for (int i = 0; i < saveData.clearedSocketIds.Count; i++)
-                clearedSocketIds.Add(saveData.clearedSocketIds[i]);
-        }
+        LoadIdSet(clearedSocketIds, saveData.clearedSocketIds);
         socketedCount = Mathf.Max(saveData.socketedCount, clearedSocketIds.Count);
 
-        clearedSocketGroupIds.Clear();
-        if (saveData.clearedSocketGroupIds != null)
-        {
-            for (int i = 0; i < saveData.clearedSocketGroupIds.Count; i++)
-                clearedSocketGroupIds.Add(saveData.clearedSocketGroupIds[i]);
-        }
+        LoadIdSet(clearedSocketGroupIds, saveData.clearedSocketGroupIds);
         clearedSocketGroupCount = Mathf.Max(saveData.clearedSocketGroupCount, clearedSocketGroupIds.Count);
 
-        unlockedIds.Clear();
-        if (saveData.unlockedIds != null)
-        {
-            for (int i = 0; i < saveData.unlockedIds.Count; i++)
-                unlockedIds.Add(saveData.unlockedIds[i]);
-        }
+        LoadIdSet(unlockedIds, saveData.unlockedIds);
 
         progressMap.Clear();
         if (saveData.progresses != null)
@@ -540,5 +414,13 @@ public class AchievementManager : MonoBehaviour
                     progressMap[entry.id] = entry.current;
             }
         }
+    }
+
+    private static void LoadIdSet(HashSet<string> target, List<string> source)
+    {
+        target.Clear();
+        if (source == null) return;
+        for (int i = 0; i < source.Count; i++)
+            target.Add(source[i]);
     }
 }

@@ -1117,10 +1117,8 @@ MonoBehaviour:
   defaultRotationAxis: 2
   defaultStartMode: 1
   defaultTolerance: 3
-  useSnap: 1
-  snapAngle: 15
-  smoothSnapSpeed: 12
-  invertAllRotations: 1
+  stepAngle: 15
+  rotateSpeed: 12
   discLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1136,8 +1134,9 @@ MonoBehaviour:
       ratio: 1
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 728071393}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 845968899}
     startMode: 0
     startAngle: 0
@@ -1146,8 +1145,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 845968896}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 1527061918}
     startMode: 0
     startAngle: 0
@@ -1156,8 +1156,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 1527061915}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 587799577}
     startMode: 0
     startAngle: 0
@@ -1166,8 +1167,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 587799574}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   sockets:
   - {fileID: 1573643334}
   - {fileID: 2089884746}
@@ -1608,6 +1610,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -2167,6 +2172,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -2518,6 +2526,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -5820,6 +5831,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -6235,6 +6249,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -6322,6 +6339,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -6649,9 +6669,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PortalGateway
   portalId: Portal_Ch0-1
   targetPortalId: Portal_Ch0
-  targetSceneName: 
+  targetSceneName: Chapter_0
   linkedPortal: {fileID: 0}
   startOpen: 0
+  closeAfterPassThrough: 0
+  useDistancePin: 0
+  pinDistance: 30
+  unpinDistance: 42
+  requireCameraSight: 1
+  pinViewAngle: 80
+  sightUnpinDelay: 2
   syncStateWithLinked: 1
   mirrorForwardDirection: 1
   portalRenderer: {fileID: 2071951832}
@@ -6728,6 +6755,8 @@ MonoBehaviour:
   renderTextureScale: 0.85
   maxRenderDistance: 60
   shadowRenderDistance: 50
+  farThrottleDistance: 20
+  farRenderInterval: 2
   cullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -8123,10 +8152,8 @@ MonoBehaviour:
   defaultRotationAxis: 2
   defaultStartMode: 2
   defaultTolerance: 5
-  useSnap: 0
-  snapAngle: 45
-  smoothSnapSpeed: 12
-  invertAllRotations: 1
+  stepAngle: 45
+  rotateSpeed: 12
   discLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -8140,8 +8167,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 1846445034}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 68298804}
     startMode: 0
     startAngle: 0
@@ -8150,8 +8178,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 68298805}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 252634120}
     startMode: 0
     startAngle: 0
@@ -8160,8 +8189,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 252634121}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 1088014696}
     startMode: 0
     startAngle: 0
@@ -8170,8 +8200,9 @@ MonoBehaviour:
     links: []
     overrideSettings: 0
     customTolerance: 5
-    invertRotation: 0
     clickCollider: {fileID: 1088014697}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   sockets:
   - {fileID: 638491748}
   lockRotationUntilSlotted: 0
@@ -8252,6 +8283,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0

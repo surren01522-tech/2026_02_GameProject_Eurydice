@@ -37,16 +37,16 @@ public static class SceneEnvironmentManager
 
         public static RenderSettingsSnapshot Capture()
         {
-            return new RenderSettingsSnapshot
+            AmbientMode mode = RenderSettings.ambientMode;
+            var snapshot = new RenderSettingsSnapshot
             {
                 skybox = RenderSettings.skybox,
                 sun = RenderSettings.sun,
-                ambientMode = RenderSettings.ambientMode,
+                ambientMode = mode,
                 ambientSkyColor = RenderSettings.ambientSkyColor,
                 ambientEquatorColor = RenderSettings.ambientEquatorColor,
                 ambientGroundColor = RenderSettings.ambientGroundColor,
                 ambientIntensity = RenderSettings.ambientIntensity,
-                ambientProbe = RenderSettings.ambientProbe,
                 subtractiveShadowColor = RenderSettings.subtractiveShadowColor,
                 defaultReflectionMode = RenderSettings.defaultReflectionMode,
                 customReflectionTexture = RenderSettings.customReflectionTexture,
@@ -59,6 +59,11 @@ public static class SceneEnvironmentManager
                 fogStartDistance = RenderSettings.fogStartDistance,
                 fogEndDistance = RenderSettings.fogEndDistance
             };
+
+            if (mode == AmbientMode.Custom || mode == AmbientMode.Skybox)
+                snapshot.ambientProbe = RenderSettings.ambientProbe;
+
+            return snapshot;
         }
 
         public void Restore()
@@ -72,7 +77,7 @@ public static class SceneEnvironmentManager
             if (RenderSettings.ambientEquatorColor != ambientEquatorColor) RenderSettings.ambientEquatorColor = ambientEquatorColor;
             if (RenderSettings.ambientGroundColor != ambientGroundColor) RenderSettings.ambientGroundColor = ambientGroundColor;
             if (!Mathf.Approximately(RenderSettings.ambientIntensity, ambientIntensity)) RenderSettings.ambientIntensity = ambientIntensity;
-            if (ambientMode == AmbientMode.Custom && !RenderSettings.ambientProbe.Equals(ambientProbe))
+            if ((ambientMode == AmbientMode.Custom || ambientMode == AmbientMode.Skybox) && !RenderSettings.ambientProbe.Equals(ambientProbe))
                 RenderSettings.ambientProbe = ambientProbe;
 
             if (RenderSettings.defaultReflectionMode != defaultReflectionMode) RenderSettings.defaultReflectionMode = defaultReflectionMode;
@@ -103,6 +108,7 @@ public static class SceneEnvironmentManager
     private static RenderSettingsSnapshot prePortalSnapshot;
 
     public static string ActiveSceneName => activeSceneName;
+    public static event Action<string> OnActiveSceneChanged;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Init()
@@ -111,6 +117,7 @@ public static class SceneEnvironmentManager
         WarnedMissingScenes.Clear();
         activeSceneName = string.Empty;
         blendTargetSceneName = string.Empty;
+        OnActiveSceneChanged = null;
         blendFactor = 0f;
         portalRenderDepth = 0;
         activeScopeToken = 0;
@@ -246,13 +253,24 @@ public static class SceneEnvironmentManager
 
         if (saveScene)
             SaveManager.SaveActiveScene(toScene);
+
+        OnActiveSceneChanged?.Invoke(toScene);
     }
 
     public static void RefreshSceneLights(string sceneName)
     {
         if (!Application.isPlaying || portalRenderDepth > 0 || string.IsNullOrEmpty(sceneName)) return;
         if (Environments.TryGetValue(sceneName, out var env) && env != null)
+        {
+            env.InvalidateSavedLightCache();
             env.ApplyLights(sceneName == activeSceneName);
+        }
+    }
+
+    private static void SetSceneBlendWeight(string sceneName, float weight)
+    {
+        if (!string.IsNullOrEmpty(sceneName) && Environments.TryGetValue(sceneName, out var env) && env != null)
+            env.SetVolumeBlendWeight(weight);
     }
 
     public static void SetProximityBlend(string targetScene, float t)
@@ -264,11 +282,8 @@ public static class SceneEnvironmentManager
         {
             if (!string.IsNullOrEmpty(blendTargetSceneName))
             {
-                if (blendTargetSceneName != activeSceneName &&
-                    Environments.TryGetValue(blendTargetSceneName, out var prevEnv) && prevEnv != null)
-                {
-                    prevEnv.SetVolumeBlendWeight(0f);
-                }
+                if (blendTargetSceneName != activeSceneName)
+                    SetSceneBlendWeight(blendTargetSceneName, 0f);
                 blendTargetSceneName = string.Empty;
                 blendFactor = 0f;
             }
@@ -277,17 +292,13 @@ public static class SceneEnvironmentManager
 
         if (blendTargetSceneName != targetScene)
         {
-            if (!string.IsNullOrEmpty(blendTargetSceneName) && blendTargetSceneName != activeSceneName &&
-                Environments.TryGetValue(blendTargetSceneName, out var oldEnv) && oldEnv != null)
-            {
-                oldEnv.SetVolumeBlendWeight(0f);
-            }
+            if (!string.IsNullOrEmpty(blendTargetSceneName) && blendTargetSceneName != activeSceneName)
+                SetSceneBlendWeight(blendTargetSceneName, 0f);
             blendTargetSceneName = targetScene;
         }
 
         blendFactor = t;
-        if (Environments.TryGetValue(targetScene, out var targetEnv) && targetEnv != null)
-            targetEnv.SetVolumeBlendWeight(t);
+        SetSceneBlendWeight(targetScene, t);
     }
 
     public static PortalRenderScope EnterPortalRenderScope(string targetSceneName, out bool environmentSwapped)
@@ -305,10 +316,7 @@ public static class SceneEnvironmentManager
             portalRenderDepth = 1;
             activeScopeToken = sameSceneToken;
             scopedTargetSceneName = targetSceneName;
-
-            if (Environments.TryGetValue(blendTargetSceneName, out var blendEnv) && blendEnv != null)
-                blendEnv.SetVolumeBlendWeight(0f);
-
+            SetSceneBlendWeight(blendTargetSceneName, 0f);
             environmentSwapped = true;
             return new PortalRenderScope(sameSceneToken);
         }
@@ -335,11 +343,8 @@ public static class SceneEnvironmentManager
             activeEnv.SetVolumeBlendWeight(0f);
         }
 
-        if (!string.IsNullOrEmpty(blendTargetSceneName) && blendTargetSceneName != targetSceneName &&
-            Environments.TryGetValue(blendTargetSceneName, out var otherBlendEnv) && otherBlendEnv != null)
-        {
-            otherBlendEnv.SetVolumeBlendWeight(0f);
-        }
+        if (blendTargetSceneName != targetSceneName)
+            SetSceneBlendWeight(blendTargetSceneName, 0f);
 
         targetEnv.ApplyRenderSettings();
         targetEnv.ApplyLights(true);
@@ -360,8 +365,7 @@ public static class SceneEnvironmentManager
 
         if (targetName == activeSceneName)
         {
-            if (!string.IsNullOrEmpty(blendTargetSceneName) && Environments.TryGetValue(blendTargetSceneName, out var blendEnv) && blendEnv != null)
-                blendEnv.SetVolumeBlendWeight(blendFactor);
+            SetSceneBlendWeight(blendTargetSceneName, blendFactor);
             return;
         }
 
@@ -370,8 +374,7 @@ public static class SceneEnvironmentManager
         if (!string.IsNullOrEmpty(targetName) && Environments.TryGetValue(targetName, out var targetEnv) && targetEnv != null)
         {
             targetEnv.ApplyLights(false);
-            float restoreWeight = targetName == blendTargetSceneName ? blendFactor : 0f;
-            targetEnv.SetVolumeBlendWeight(restoreWeight);
+            targetEnv.SetVolumeBlendWeight(targetName == blendTargetSceneName ? blendFactor : 0f);
         }
 
         if (!string.IsNullOrEmpty(activeSceneName) && Environments.TryGetValue(activeSceneName, out var activeEnv) && activeEnv != null)
@@ -380,12 +383,8 @@ public static class SceneEnvironmentManager
             activeEnv.SetVolumeBlendWeight(1f);
         }
 
-        if (!string.IsNullOrEmpty(blendTargetSceneName) && blendTargetSceneName != activeSceneName &&
-            blendTargetSceneName != targetName &&
-            Environments.TryGetValue(blendTargetSceneName, out var prevBlendEnv) && prevBlendEnv != null)
-        {
-            prevBlendEnv.SetVolumeBlendWeight(blendFactor);
-        }
+        if (blendTargetSceneName != activeSceneName && blendTargetSceneName != targetName)
+            SetSceneBlendWeight(blendTargetSceneName, blendFactor);
     }
 
     private static int NextValidToken()

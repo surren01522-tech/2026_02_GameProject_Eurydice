@@ -11,13 +11,26 @@ public class SceneStreamer : MonoBehaviour
     public static SceneStreamer Instance { get; private set; }
     public static bool IsReady => Instance == null || Instance.isReady;
 
+    [SerializeField] private string defaultEntryScene = "";
     [SerializeField] private List<string> alwaysLoadedScenes = new List<string>();
     [SerializeField] private float unloadDelay = 4f;
+    [SerializeField] private ThreadPriority streamingLoadPriority = ThreadPriority.BelowNormal;
+    [SerializeField] private bool warnIfOutsideZone;
+
+    private static readonly WaitForSeconds UnloadPollWait = new WaitForSeconds(0.5f);
+
+    public string DefaultEntryScene => defaultEntryScene;
+    public bool IsUpdating => isUpdating;
+    private string currentAnchorScene;
 
     private readonly HashSet<SceneStreamZone> activeZones = new HashSet<SceneStreamZone>();
     private readonly Dictionary<string, int> pinnedSceneCounts = new Dictionary<string, int>();
     private readonly Dictionary<string, SceneInstance> loadedSceneInstances = new Dictionary<string, SceneInstance>();
     private readonly Dictionary<string, float> pendingUnloads = new Dictionary<string, float>();
+
+    private readonly HashSet<string> targetScenesBuffer = new HashSet<string>();
+    private readonly List<string> toUnloadBuffer = new List<string>();
+    private readonly List<(string sceneName, AsyncOperationHandle<SceneInstance> handle)> pendingLoadHandles = new List<(string, AsyncOperationHandle<SceneInstance>)>();
 
     private bool isReady;
     private bool isUpdating;
@@ -31,52 +44,111 @@ public class SceneStreamer : MonoBehaviour
             return;
         }
         Instance = this;
-        Application.backgroundLoadingPriority = ThreadPriority.Low;
+        SceneEnvironmentManager.OnActiveSceneChanged += HandleActiveSceneChanged;
     }
 
     private void OnDestroy()
     {
-        if (Instance == this) Instance = null;
+        if (Instance == this)
+        {
+            SceneEnvironmentManager.OnActiveSceneChanged -= HandleActiveSceneChanged;
+            Instance = null;
+        }
         loadedSceneInstances.Clear();
         pinnedSceneCounts.Clear();
     }
 
     private IEnumerator Start()
     {
+        Application.backgroundLoadingPriority = ThreadPriority.High;
+
         var player = FindFirstObjectByType<PlayerController>();
         CharacterController cc = null;
         if (player != null && player.TryGetComponent<CharacterController>(out cc))
             cc.enabled = false;
 
-        yield return null;
+        var initHandle = Addressables.InitializeAsync();
+        if (!initHandle.IsDone)
+            yield return initHandle;
+        else
+            yield return null;
+
+        string savedScene = SaveManager.GetLastActiveScene();
+        if (!string.IsNullOrEmpty(defaultEntryScene))
+        {
+            string candidate = !string.IsNullOrEmpty(savedScene) && savedScene != gameObject.scene.name
+                ? savedScene
+                : defaultEntryScene;
+
+            if (candidate != defaultEntryScene)
+            {
+                var locHandle = Addressables.LoadResourceLocationsAsync(candidate);
+                if (!locHandle.IsDone) yield return locHandle;
+                bool validLoc = locHandle.Status == AsyncOperationStatus.Succeeded && locHandle.Result != null && locHandle.Result.Count > 0;
+                Addressables.Release(locHandle);
+                if (!validLoc)
+                {
+                    Debug.LogWarning($"[SceneStreamer] Saved scene '{candidate}' not found in Addressables; using '{defaultEntryScene}'.");
+                    candidate = defaultEntryScene;
+                }
+            }
+
+            currentAnchorScene = candidate;
+        }
+
+        Physics.SyncTransforms();
 
         if (player != null)
         {
-            var zones = FindObjectsByType<SceneStreamZone>(FindObjectsSortMode.None);
-            for (int i = 0; i < zones.Length; i++)
+            var zones = SceneStreamZone.AllZones;
+            for (int i = 0; i < zones.Count; i++)
             {
-                if (zones[i].Contains(player.transform.position))
-                    activeZones.Add(zones[i]);
+                var zone = zones[i];
+                if (zone != null && zone.Contains(player.transform.position))
+                    activeZones.Add(zone);
             }
 
-            if (activeZones.Count == 0 && alwaysLoadedScenes.Count == 0)
+            if (warnIfOutsideZone && activeZones.Count == 0 && alwaysLoadedScenes.Count == 0 && string.IsNullOrEmpty(currentAnchorScene))
                 Debug.LogWarning("[SceneStreamer] Starting position is not within any zone: " + player.transform.position);
         }
 
         yield return UpdateStream(immediateUnload: true);
 
-        string savedScene = SaveManager.GetLastActiveScene();
-        if (!string.IsNullOrEmpty(savedScene) && IsSceneLoaded(savedScene))
+        if (!string.IsNullOrEmpty(currentAnchorScene) && IsSceneLoaded(currentAnchorScene))
+            SceneEnvironmentManager.SwitchEnvironment(SceneManager.GetActiveScene().name, currentAnchorScene, saveScene: false);
+        else if (!string.IsNullOrEmpty(savedScene) && IsSceneLoaded(savedScene))
             SceneEnvironmentManager.SwitchEnvironment(SceneManager.GetActiveScene().name, savedScene, saveScene: false);
         else
             SceneEnvironmentManager.InitializeCurrentScene(SceneManager.GetActiveScene().name);
 
         Physics.SyncTransforms();
+        player?.RestorePlayerTransform();
+        if (player != null)
+        {
+            RefreshZonesForPosition(player.transform.position);
+            if (pendingUpdate)
+                yield return UpdateStream(immediateUnload: true);
+            player.EnsureGroundSafetyOnSpawn();
+        }
+
+        PortalManager.Prewarm();
+        Application.backgroundLoadingPriority = streamingLoadPriority;
+
+        Physics.SyncTransforms();
         yield return new WaitForFixedUpdate();
-        yield return null;
 
         isReady = true;
         player?.EnableControl();
+    }
+
+    private void HandleActiveSceneChanged(string newActiveScene)
+    {
+        if (!isReady || string.IsNullOrEmpty(defaultEntryScene)) return;
+        if (string.IsNullOrEmpty(newActiveScene) || newActiveScene == gameObject.scene.name) return;
+        if (currentAnchorScene == newActiveScene || !loadedSceneInstances.ContainsKey(newActiveScene)) return;
+
+        currentAnchorScene = newActiveScene;
+        RequestUpdate();
     }
 
     public void OnZoneEntered(SceneStreamZone zone)
@@ -135,10 +207,12 @@ public class SceneStreamer : MonoBehaviour
     public void RefreshZonesForPosition(Vector3 worldPos)
     {
         Physics.SyncTransforms();
-        var zones = FindObjectsByType<SceneStreamZone>(FindObjectsSortMode.None);
+        activeZones.RemoveWhere(z => z == null);
+
+        var zones = SceneStreamZone.AllZones;
         bool changed = false;
 
-        for (int i = 0; i < zones.Length; i++)
+        for (int i = 0; i < zones.Count; i++)
         {
             var zone = zones[i];
             if (zone == null) continue;
@@ -170,51 +244,66 @@ public class SceneStreamer : MonoBehaviour
         {
             pendingUpdate = false;
 
-            var targetScenes = new HashSet<string>(alwaysLoadedScenes);
+            targetScenesBuffer.Clear();
+            if (!string.IsNullOrEmpty(currentAnchorScene))
+                targetScenesBuffer.Add(currentAnchorScene);
+
+            for (int i = 0; i < alwaysLoadedScenes.Count; i++)
+                targetScenesBuffer.Add(alwaysLoadedScenes[i]);
+
             foreach (var zone in activeZones)
             {
                 if (zone == null) continue;
                 var scenes = zone.Scenes;
                 for (int i = 0; i < scenes.Count; i++)
-                    targetScenes.Add(scenes[i]);
+                    targetScenesBuffer.Add(scenes[i]);
             }
 
             foreach (var kvp in pinnedSceneCounts)
             {
                 if (kvp.Value > 0 && !string.IsNullOrEmpty(kvp.Key))
-                    targetScenes.Add(kvp.Key);
+                    targetScenesBuffer.Add(kvp.Key);
             }
 
-            foreach (var sceneName in targetScenes)
+            pendingLoadHandles.Clear();
+            foreach (var sceneName in targetScenesBuffer)
             {
                 pendingUnloads.Remove(sceneName);
 
                 if (IsSceneLoaded(sceneName)) continue;
 
                 var handle = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                yield return handle;
+                pendingLoadHandles.Add((sceneName, handle));
+            }
+
+            for (int i = 0; i < pendingLoadHandles.Count; i++)
+            {
+                var (sceneName, handle) = pendingLoadHandles[i];
+                if (!handle.IsDone)
+                    yield return handle;
 
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                     loadedSceneInstances[sceneName] = handle.Result;
                 else
                     Debug.LogError("[SceneStreamer] Failed to load addressable scene: " + sceneName);
             }
+            pendingLoadHandles.Clear();
 
             foreach (var sceneName in loadedSceneInstances.Keys)
             {
-                if (!targetScenes.Contains(sceneName) && !pendingUnloads.ContainsKey(sceneName))
+                if (!targetScenesBuffer.Contains(sceneName) && !pendingUnloads.ContainsKey(sceneName))
                     pendingUnloads[sceneName] = immediateUnload ? 0f : Time.time + unloadDelay;
             }
 
-            var toUnload = new List<string>();
+            toUnloadBuffer.Clear();
             foreach (var kvp in pendingUnloads)
             {
-                if (Time.time >= kvp.Value) toUnload.Add(kvp.Key);
+                if (Time.time >= kvp.Value) toUnloadBuffer.Add(kvp.Key);
             }
 
-            for (int i = 0; i < toUnload.Count; i++)
+            for (int i = 0; i < toUnloadBuffer.Count; i++)
             {
-                string sceneName = toUnload[i];
+                string sceneName = toUnloadBuffer[i];
                 pendingUnloads.Remove(sceneName);
 
                 if (loadedSceneInstances.TryGetValue(sceneName, out var instance))
@@ -223,10 +312,11 @@ public class SceneStreamer : MonoBehaviour
                     yield return Addressables.UnloadSceneAsync(instance);
                 }
             }
+            toUnloadBuffer.Clear();
 
             if (pendingUnloads.Count > 0)
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return UnloadPollWait;
                 pendingUpdate = true;
             }
         }

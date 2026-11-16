@@ -58,20 +58,43 @@ public class SceneEnvironment : MonoBehaviour
     public string SceneName => gameObject.scene.name;
     public bool IsCaptured => isCaptured;
 
+    private string cachedSavedLight;
+    private bool savedLightCacheValid;
+
     private void Awake()
     {
         RebuildCachedProbe();
+        savedLightCacheValid = false;
     }
 
     private void OnEnable()
     {
         RebuildCachedProbe();
+        savedLightCacheValid = false;
+        SaveManager.OnSaveDataDeleted += InvalidateSavedLightCache;
         SceneEnvironmentManager.Register(this);
     }
 
     private void OnDisable()
     {
+        SaveManager.OnSaveDataDeleted -= InvalidateSavedLightCache;
         SceneEnvironmentManager.Unregister(this);
+    }
+
+    public void InvalidateSavedLightCache()
+    {
+        savedLightCacheValid = false;
+    }
+
+    private string GetCachedSavedLight()
+    {
+        if (!Application.isPlaying) return null;
+        if (!savedLightCacheValid)
+        {
+            cachedSavedLight = SaveManager.GetActiveLight(SceneName);
+            savedLightCacheValid = true;
+        }
+        return cachedSavedLight;
     }
 
     public void RebuildCachedProbe()
@@ -146,7 +169,7 @@ public class SceneEnvironment : MonoBehaviour
     {
         if (directionalLights == null || directionalLights.Length == 0) return;
 
-        string savedLight = Application.isPlaying ? SaveManager.GetActiveLight(SceneName) : null;
+        string savedLight = Application.isPlaying ? GetCachedSavedLight() : null;
         bool hasSavedMatch = false;
         if (!string.IsNullOrEmpty(savedLight))
         {
@@ -227,7 +250,11 @@ public class SceneEnvironment : MonoBehaviour
         {
             var b = volumes[i];
             if (b.volume != null)
-                b.volume.weight = b.originalWeight * factor;
+            {
+                float targetWeight = b.originalWeight * factor;
+                if (!Mathf.Approximately(b.volume.weight, targetWeight))
+                    b.volume.weight = targetWeight;
+            }
         }
     }
 

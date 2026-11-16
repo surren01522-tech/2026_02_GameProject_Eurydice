@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using DG.Tweening;
+using UnityEngine.Serialization;
 
 public class DiscPuzzle : PuzzleBase
 {
@@ -11,12 +11,12 @@ public class DiscPuzzle : PuzzleBase
     [SerializeField] private DiscRotationAxis defaultRotationAxis = DiscRotationAxis.LocalZ;
     [SerializeField] private DiscStartAngleMode defaultStartMode = DiscStartAngleMode.RandomSnap;
     [SerializeField] private float defaultTolerance = 5f;
-    [SerializeField] private bool useSnap = false;
-    [SerializeField] private float snapAngle = 45f;
-    [SerializeField] private float smoothSnapSpeed = 12f;
-    [SerializeField] private bool invertAllRotations = false;
+    [FormerlySerializedAs("snapAngle")]
+    [SerializeField, Min(0.1f)] private float stepAngle = 45f;
+    [FormerlySerializedAs("smoothSnapSpeed")]
+    [SerializeField, Min(0f)] private float rotateSpeed = 12f;
     [SerializeField] private LayerMask discLayerMask = ~0;
-    [SerializeField] private float maxRayDistance = 10;
+    [SerializeField] private float maxRayDistance = 10f;
 
     [FoldGroup("조각 설정")]
     [SerializeField] private List<DiscPiece> pieces = new List<DiscPiece>();
@@ -35,10 +35,6 @@ public class DiscPuzzle : PuzzleBase
     [FoldGroup("디버그 설정")]
     [SerializeField] private bool debugLogSuccess = true;
 
-    private int activePieceIndex = -1;
-    private float lastMouseAngle;
-    private bool isDragging;
-    private Vector2 cachedScreenPivot;
     private readonly HashSet<int> visitedIndices = new HashSet<int>();
     private readonly RaycastHit[] hitBuffer = new RaycastHit[16];
 
@@ -124,7 +120,7 @@ public class DiscPuzzle : PuzzleBase
     {
         List<float> angles = new List<float>();
         for (int i = 0; i < pieces.Count; i++)
-            angles.Add(pieces[i] != null ? pieces[i].currentAngle : 0f);
+            angles.Add(pieces[i] != null ? pieces[i].logicalAngle : 0f);
 
         SaveManager.SavePuzzleState(uniqueId, completed, angles, gameObject.scene.name);
     }
@@ -169,7 +165,7 @@ public class DiscPuzzle : PuzzleBase
 
     private void OnDestroy()
     {
-        StopAllPieceSnaps();
+        StopAllPieceSnaps(snapToLogical: false);
         UnbindSocketEvents();
     }
 
@@ -211,7 +207,7 @@ public class DiscPuzzle : PuzzleBase
     private void InitializePieces()
     {
         for (int i = 0; i < pieces.Count; i++)
-            pieces[i]?.Init(defaultRotationAxis, defaultStartMode, snapAngle, defaultTolerance);
+            pieces[i]?.Init(defaultRotationAxis, defaultStartMode, stepAngle, defaultTolerance);
 
         if (AreAllPiecesCorrect())
         {
@@ -219,7 +215,8 @@ public class DiscPuzzle : PuzzleBase
             {
                 if (pieces[i] != null && pieces[i].canRotate)
                 {
-                    pieces[i].ApplyDeltaAngle(snapAngle > 0f ? snapAngle : 45f, defaultRotationAxis);
+                    visitedIndices.Clear();
+                    RotatePieceRecursive(i, stepAngle, 0f, null);
                     break;
                 }
             }
@@ -230,175 +227,116 @@ public class DiscPuzzle : PuzzleBase
     {
         if (!IsActive || IsCompleted) return;
         if (GameStateManager.HasActiveModal || (InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode)) return;
-        if (Mouse.current == null) return;
+        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
 
-        HandleDragInput();
+        HandleClickInput();
     }
 
-    private void HandleDragInput()
+    private void HandleClickInput()
     {
         if (cam == null) return;
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+        int hitCount = Physics.RaycastNonAlloc(ray, hitBuffer, maxRayDistance, discLayerMask);
+        if (hitCount <= 0) return;
+
+        for (int i = 1; i < hitCount; i++)
         {
-            Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-            int hitCount = Physics.RaycastNonAlloc(ray, hitBuffer, maxRayDistance, discLayerMask);
-
-            if (hitCount > 0)
+            var key = hitBuffer[i];
+            int j = i - 1;
+            while (j >= 0 && hitBuffer[j].distance > key.distance)
             {
-                for (int i = 1; i < hitCount; i++)
+                hitBuffer[j + 1] = hitBuffer[j];
+                j--;
+            }
+            hitBuffer[j + 1] = key;
+        }
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            ItemSocket hitSocket = hitBuffer[i].collider.GetComponentInParent<ItemSocket>();
+            if (hitSocket != null && (sockets == null || sockets.Contains(hitSocket) || IsBoundSocket(hitSocket)))
+            {
+                if (hitSocket.CanInteract)
                 {
-                    var key = hitBuffer[i];
-                    int j = i - 1;
-                    while (j >= 0 && hitBuffer[j].distance > key.distance)
-                    {
-                        hitBuffer[j + 1] = hitBuffer[j];
-                        j--;
-                    }
-                    hitBuffer[j + 1] = key;
-                }
-
-                for (int i = 0; i < hitCount; i++)
-                {
-                    ItemSocket hitSocket = hitBuffer[i].collider.GetComponentInParent<ItemSocket>();
-                    if (hitSocket != null && (sockets == null || sockets.Contains(hitSocket) || IsBoundSocket(hitSocket)))
-                    {
-                        if (hitSocket.CanInteract)
-                        {
-                            hitSocket.Interact(null);
-                            return;
-                        }
-                    }
-                }
-
-                for (int i = 0; i < hitCount; i++)
-                {
-                    int pieceIdx = FindPieceIndexByCollider(hitBuffer[i].collider);
-                    if (pieceIdx >= 0 && pieces[pieceIdx] != null)
-                    {
-                        DiscPiece clickedPiece = pieces[pieceIdx];
-
-                        if (!clickedPiece.IsSlotted)
-                        {
-                            if (clickedPiece.boundSocket != null && clickedPiece.boundSocket.CanInteract)
-                            {
-                                clickedPiece.boundSocket.Interact(null);
-                                return;
-                            }
-                            InteractionFeedbackUIManager.Instance?.Show("필요한 부품을 먼저 끼워야 합니다.");
-                            return;
-                        }
-
-                        if (!CanRotatePieces)
-                        {
-                            InteractionFeedbackUIManager.Instance?.Show("필요한 장치를 먼저 끼워야 합니다.");
-                            return;
-                        }
-
-                        if (!clickedPiece.canRotate) return;
-
-                        StopAllPieceSnaps();
-
-                        activePieceIndex = pieceIdx;
-                        Vector3 pivotPos = clickedPiece.pieceTransform != null ? clickedPiece.pieceTransform.position : transform.position;
-                        cachedScreenPivot = cam.WorldToScreenPoint(pivotPos);
-                        lastMouseAngle = CalculateMouseAngle(cachedScreenPivot);
-                        isDragging = true;
-                        return;
-                    }
+                    hitSocket.Interact(null);
+                    return;
                 }
             }
         }
-        else if (isDragging && activePieceIndex >= 0 && activePieceIndex < pieces.Count)
+
+        for (int i = 0; i < hitCount; i++)
         {
-            DiscPiece activePiece = pieces[activePieceIndex];
+            int pieceIdx = FindPieceIndexByCollider(hitBuffer[i].collider);
+            if (pieceIdx < 0 || pieces[pieceIdx] == null) continue;
 
-            if (!Mouse.current.leftButton.isPressed)
+            DiscPiece clickedPiece = pieces[pieceIdx];
+            if (!clickedPiece.IsSlotted)
             {
-                if (useSnap && snapAngle > 0f)
+                if (clickedPiece.boundSocket != null && clickedPiece.boundSocket.CanInteract)
                 {
-                    SnapAllAffectedPieces();
+                    clickedPiece.boundSocket.Interact(null);
+                    return;
                 }
-
-                activePieceIndex = -1;
-                isDragging = false;
-                SaveCurrentPuzzleState(false);
-                CheckSolution();
+                InteractionFeedbackUIManager.Instance?.Show("필요한 부품을 먼저 끼워야 합니다.");
+                return;
             }
-            else
+
+            if (!CanRotatePieces)
             {
-                float currentAngle = CalculateMouseAngle(cachedScreenPivot);
-                float delta = Mathf.DeltaAngle(lastMouseAngle, currentAngle);
-
-                bool shouldInvert = invertAllRotations ^ (activePiece.overrideSettings && activePiece.invertRotation);
-                if (shouldInvert) delta = -delta;
-
-                visitedIndices.Clear();
-                RotatePieceRecursive(activePieceIndex, delta);
-
-                lastMouseAngle = currentAngle;
-                CheckSolution();
+                InteractionFeedbackUIManager.Instance?.Show("필요한 장치를 먼저 끼워야 합니다.");
+                return;
             }
+
+            if (!clickedPiece.canRotate) return;
+
+            RotateClickedPiece(pieceIdx);
+            return;
         }
     }
 
-    private void RotatePieceRecursive(int pieceIdx, float delta)
+    private void RotateClickedPiece(int pieceIdx)
+    {
+        visitedIndices.Clear();
+        float duration = rotateSpeed > 0f ? Mathf.Clamp(2.5f / rotateSpeed, 0.08f, 0.35f) : 0f;
+        RotatePieceRecursive(pieceIdx, stepAngle, duration, CheckSolution);
+        SaveCurrentPuzzleState(false);
+
+        if (duration <= 0f)
+            CheckSolution();
+    }
+
+    private void RotatePieceRecursive(int pieceIdx, float delta, float duration, Action onTweenComplete)
     {
         if (pieceIdx < 0 || pieceIdx >= pieces.Count) return;
-        if (visitedIndices.Contains(pieceIdx)) return;
+        if (!visitedIndices.Add(pieceIdx)) return;
 
-        visitedIndices.Add(pieceIdx);
         DiscPiece piece = pieces[pieceIdx];
         if (piece == null || !piece.canRotate) return;
 
-        piece.ApplyDeltaAngle(delta, defaultRotationAxis);
+        piece.RotateStep(delta, defaultRotationAxis, duration, gameObject, duration > 0f ? onTweenComplete : null);
 
-        if (piece.links != null)
+        if (piece.links == null) return;
+        for (int i = 0; i < piece.links.Count; i++)
         {
-            for (int i = 0; i < piece.links.Count; i++)
-            {
-                DiscLink link = piece.links[i];
-                RotatePieceRecursive(link.targetIndex, delta * link.ratio);
-            }
+            DiscLink link = piece.links[i];
+            RotatePieceRecursive(link.targetIndex, delta * link.ratio, duration, onTweenComplete);
         }
     }
 
-    private void SnapAllAffectedPieces()
+    private void StopAllPieceSnaps(bool snapToLogical)
     {
-        float duration = smoothSnapSpeed > 0f ? Mathf.Clamp(2.5f / smoothSnapSpeed, 0.08f, 0.35f) : 0.2f;
-
-        foreach (int idx in visitedIndices)
-        {
-            if (idx >= 0 && idx < pieces.Count && pieces[idx] != null && pieces[idx].canRotate)
-            {
-                DiscPiece p = pieces[idx];
-                float targetSnap = Mathf.Repeat(Mathf.Round(p.currentAngle / snapAngle) * snapAngle, 360f);
-                float startAngle = p.currentAngle;
-                float endAngle = startAngle + Mathf.DeltaAngle(startAngle, targetSnap);
-
-                p.snapTween?.Kill();
-                p.snapTween = DOVirtual.Float(startAngle, endAngle, duration, val => p.SetAngle(val, defaultRotationAxis))
-                    .SetEase(Ease.OutBack)
-                    .SetLink(gameObject)
-                    .OnComplete(() =>
-                    {
-                        p.SetAngle(targetSnap, defaultRotationAxis);
-                        p.snapTween = null;
-                        SaveCurrentPuzzleState(false);
-                        CheckSolution();
-                    });
-            }
-        }
-    }
-
-    private void StopAllPieceSnaps()
-    {
+        if (pieces == null) return;
         for (int i = 0; i < pieces.Count; i++)
-        {
-            if (pieces[i]?.snapTween == null) continue;
-            pieces[i].snapTween.Kill();
-            pieces[i].snapTween = null;
-        }
+            pieces[i]?.StopTween(defaultRotationAxis, snapToLogical);
+    }
+
+    private bool HasActivePieceTween()
+    {
+        if (pieces == null) return false;
+        for (int i = 0; i < pieces.Count; i++)
+            if (pieces[i] != null && pieces[i].IsTweening) return true;
+        return false;
     }
 
     private int FindPieceIndexByCollider(Collider col)
@@ -416,12 +354,6 @@ public class DiscPuzzle : PuzzleBase
         return -1;
     }
 
-    private float CalculateMouseAngle(Vector2 screenPivot)
-    {
-        Vector2 dir = Mouse.current.position.ReadValue() - screenPivot;
-        return Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    }
-
     public bool AreAllPiecesCorrect()
     {
         if (pieces == null || pieces.Count == 0) return false;
@@ -432,11 +364,9 @@ public class DiscPuzzle : PuzzleBase
 
     public void CheckSolution()
     {
-        if (IsCompleted || !AreSocketsFulfilled || !AreAllPiecesCorrect()) return;
+        if (IsCompleted || HasActivePieceTween() || !AreSocketsFulfilled || !AreAllPiecesCorrect()) return;
 
-        isDragging = false;
-        activePieceIndex = -1;
-        StopAllPieceSnaps();
+        StopAllPieceSnaps(snapToLogical: false);
 
         if (snapToTargetOnSolved && pieces != null)
         {
@@ -448,7 +378,7 @@ public class DiscPuzzle : PuzzleBase
         {
             Debug.Log($"[DiscPuzzle] Successfully solved! All {pieces.Count} pieces aligned to target angles.");
             for (int i = 0; i < pieces.Count; i++)
-                Debug.Log($"[DiscPuzzle] Piece #{i} ('{pieces[i]?.pieceTransform?.name}') Angle: {pieces[i]?.currentAngle:F1} deg (Target: {pieces[i]?.targetAngle:F1} deg)");
+                Debug.Log($"[DiscPuzzle] Piece #{i} ('{pieces[i]?.pieceTransform?.name}') Angle: {pieces[i]?.logicalAngle:F1} deg (Target: {pieces[i]?.targetAngle:F1} deg)");
         }
 
         if (solvedSound != null && AudioManager.Instance != null)
@@ -462,7 +392,7 @@ public class DiscPuzzle : PuzzleBase
     [ContextMenu("Debug: Force Solve")]
     public void ForceSolve()
     {
-        StopAllPieceSnaps();
+        StopAllPieceSnaps(snapToLogical: false);
         for (int i = 0; i < pieces.Count; i++)
             pieces[i]?.SetAngle(pieces[i].targetAngle, defaultRotationAxis);
 
@@ -474,23 +404,23 @@ public class DiscPuzzle : PuzzleBase
     [ContextMenu("Debug: Reset To Start Angles")]
     public void ResetToStartAngles()
     {
-        StopAllPieceSnaps();
+        StopAllPieceSnaps(snapToLogical: false);
         InitializePieces();
     }
 
     [ContextMenu("Debug: Shuffle Discs")]
     public void ShuffleDiscs()
     {
-        StopAllPieceSnaps();
-        float step = snapAngle > 0f ? snapAngle : 45f;
+        StopAllPieceSnaps(snapToLogical: false);
+        float step = stepAngle > 0f ? stepAngle : 45f;
         int maxSteps = Mathf.Max(1, Mathf.RoundToInt(360f / step));
         for (int i = 0; i < pieces.Count; i++)
             if (pieces[i] != null && pieces[i].canRotate)
-                pieces[i].SetAngle(UnityEngine.Random.Range(0, maxSteps) * step, defaultRotationAxis);
+                pieces[i].SetAngle(pieces[i].targetAngle - UnityEngine.Random.Range(0, maxSteps) * step, defaultRotationAxis);
     }
 
     protected override void OnExit()
     {
-        if (isDragging) { activePieceIndex = -1; isDragging = false; }
+        StopAllPieceSnaps(snapToLogical: true);
     }
 }

@@ -57,14 +57,7 @@ public class InventoryManager : MonoBehaviour
         {
             var loadedItems = Resources.LoadAll<ItemData>("Items");
             if (loadedItems != null && loadedItems.Length > 0)
-            {
                 itemDatabase.AddRange(loadedItems);
-            }
-            else
-            {
-                var allItems = Resources.LoadAll<ItemData>("");
-                if (allItems != null) itemDatabase.AddRange(allItems);
-            }
         }
 
         foreach (var item in itemDatabase)

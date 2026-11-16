@@ -53,19 +53,7 @@ public class DebugSettingSection : SettingSection
 
     private void ReloadCurrentScene()
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (!Application.CanStreamedLevelBeLoaded(sceneName))
-        {
-            for (int s = 0; s < SceneManager.sceneCount; s++)
-            {
-                string sName = SceneManager.GetSceneAt(s).name;
-                if (Application.CanStreamedLevelBeLoaded(sName))
-                {
-                    sceneName = sName;
-                    break;
-                }
-            }
-        }
+        string sceneName = SceneManager.sceneCount > 0 ? SceneManager.GetSceneAt(0).name : SceneManager.GetActiveScene().name;
         SceneLoader.Load(sceneName, savePlayer: false);
     }
 

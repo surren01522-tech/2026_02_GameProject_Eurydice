@@ -1139,6 +1139,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 728071393}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 845968899}
     startMode: 0
     startAngle: 0
@@ -1149,6 +1151,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 845968896}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 1527061918}
     startMode: 0
     startAngle: 0
@@ -1159,6 +1163,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 1527061915}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 587799577}
     startMode: 0
     startAngle: 0
@@ -1169,6 +1175,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 587799574}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   sockets:
   - {fileID: 1573643334}
   - {fileID: 2089884746}
@@ -1609,6 +1617,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -1984,11 +1995,18 @@ MonoBehaviour:
   targetPortalId: Portal_C
   targetSceneName: Region_C
   linkedPortal: {fileID: 0}
-  zoneLight: {fileID: 0}
   startOpen: 1
+  closeAfterPassThrough: 0
+  useDistancePin: 0
+  pinDistance: 30
+  unpinDistance: 42
+  requireCameraSight: 1
+  pinViewAngle: 80
+  sightUnpinDelay: 2
   syncStateWithLinked: 1
   mirrorForwardDirection: 1
   portalRenderer: {fileID: 2001328472}
+  portalShader: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
   openDuration: 1.2
   closeDuration: 0.6
   openCurve:
@@ -2061,6 +2079,9 @@ MonoBehaviour:
       m_Calls: []
   renderTextureScale: 0.85
   maxRenderDistance: 60
+  shadowRenderDistance: 50
+  farThrottleDistance: 20
+  farRenderInterval: 2
   cullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2172,8 +2193,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14226653, y: -0.0000000042774646, z: 6.147933e-10, w: 0.9898284}
-  m_LocalPosition: {x: 0, y: 2.5118444, z: -4.299}
+  m_LocalRotation: {x: 0.16609594, y: -2.2517052e-15, z: -1.7520056e-16, w: 0.9861096}
+  m_LocalPosition: {x: 0, y: 2.4631293, z: -3.499}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2717,6 +2738,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -3068,6 +3092,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -3191,29 +3218,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 659046796}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &688957941 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 364259623178915991, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-  m_PrefabInstance: {fileID: 748599633553901104}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &688957946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688957941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
-  hoverScale: 1.01
-  pressScale: 0.97
-  duration: 0.15
-  hoverEase: 27
-  pressEase: 6
-  releaseEase: 27
 --- !u!1 &728071392
 GameObject:
   m_ObjectHideFlags: 0
@@ -5960,6 +5964,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -6122,29 +6129,6 @@ Transform:
   - {fileID: 1500390260}
   m_Father: {fileID: 147586245}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1551893138 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3143322841275811889, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-  m_PrefabInstance: {fileID: 748599633553901104}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1551893143
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1551893138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
-  hoverScale: 1.01
-  pressScale: 0.97
-  duration: 0.15
-  hoverEase: 27
-  pressEase: 6
-  releaseEase: 27
 --- !u!1 &1555183477
 GameObject:
   m_ObjectHideFlags: 0
@@ -6398,6 +6382,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -6485,6 +6472,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -6679,11 +6669,18 @@ MonoBehaviour:
   targetPortalId: Portal_B
   targetSceneName: Region_B
   linkedPortal: {fileID: 0}
-  zoneLight: {fileID: 0}
   startOpen: 0
+  closeAfterPassThrough: 0
+  useDistancePin: 0
+  pinDistance: 30
+  unpinDistance: 42
+  requireCameraSight: 1
+  pinViewAngle: 80
+  sightUnpinDelay: 2
   syncStateWithLinked: 1
   mirrorForwardDirection: 1
   portalRenderer: {fileID: 2071951832}
+  portalShader: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
   openDuration: 1.2
   closeDuration: 0.6
   openCurve:
@@ -6756,6 +6753,9 @@ MonoBehaviour:
       m_Calls: []
   renderTextureScale: 0.85
   maxRenderDistance: 60
+  shadowRenderDistance: 50
+  farThrottleDistance: 20
+  farRenderInterval: 2
   cullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -6780,29 +6780,6 @@ Transform:
   - {fileID: 2071951834}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1699282746 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9053944194319079559, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-  m_PrefabInstance: {fileID: 748599633553901104}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1699282751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1699282746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76f27111baa873b4295c8342934bc7e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIButtonTween
-  hoverScale: 1.01
-  pressScale: 0.97
-  duration: 0.15
-  hoverEase: 27
-  pressEase: 6
-  releaseEase: 27
 --- !u!1 &1733051480
 GameObject:
   m_ObjectHideFlags: 0
@@ -7897,9 +7874,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610efdb032a3f5b418a9e2ac8228772d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneStreamer
+  defaultEntryScene: 
   alwaysLoadedScenes:
   - Region_A
   unloadDelay: 4
+  streamingLoadPriority: 1
+  warnIfOutsideZone: 0
 --- !u!4 &2008619048
 Transform:
   m_ObjectHideFlags: 0
@@ -8156,6 +8136,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 1846445034}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 68298804}
     startMode: 0
     startAngle: 0
@@ -8166,6 +8148,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 68298805}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 252634120}
     startMode: 0
     startAngle: 0
@@ -8176,6 +8160,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 252634121}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   - pieceTransform: {fileID: 1088014696}
     startMode: 0
     startAngle: 0
@@ -8186,6 +8172,8 @@ MonoBehaviour:
     customTolerance: 5
     invertRotation: 0
     clickCollider: {fileID: 1088014697}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
   sockets:
   - {fileID: 638491748}
   lockRotationUntilSlotted: 0
@@ -8266,6 +8254,9 @@ MonoBehaviour:
   placeFX: {fileID: 0}
   placeSound: {fileID: 0}
   retrieveSound: {fileID: 0}
+  autoPlaceFromInventory: 0
+  allowRetrieve: 1
+  missingItemPromptFormat: "{name}\uC774(\uAC00) \uD544\uC694\uD569\uB2C8\uB2E4."
   promptFormat: Place {name}
   retrievePromptFormat: Take {name}
   displayMode: 0
@@ -8324,10 +8315,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5684567131648259810, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 117731800}
     - target: {fileID: 7796154008565783859, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -8415,16 +8402,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 9053944194319079559, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1699282751}
-    - targetCorrespondingSourceObject: {fileID: 3143322841275811889, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1551893143}
-    - targetCorrespondingSourceObject: {fileID: 364259623178915991, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 688957946}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
 --- !u!1001 &2610690056437104639
 PrefabInstance:
@@ -8566,19 +8544,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9898284
+      value: 0.9861097
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.14226648
+      value: 0.16609593
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000024126999
+      value: -0.0000000041357144
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0000000034677337
+      value: 6.966012e-10
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8639,19 +8617,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9898284
+      value: 0.9861097
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.14226648
+      value: 0.16609593
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000023291124
+      value: -0.0000000042613926
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0000000033475942
+      value: 7.1777e-10
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8675,6 +8653,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 330585546}
+  - {fileID: 564145941}
   - {fileID: 7265053336814482366}
   - {fileID: 8924859309647336989}
   - {fileID: 410087041}
@@ -8694,4 +8673,3 @@ SceneRoots:
   - {fileID: 256927882}
   - {fileID: 198516584}
   - {fileID: 199103032}
-  - {fileID: 564145941}

@@ -12,11 +12,10 @@ public enum DiscRotationAxis
 
 public enum DiscStartAngleMode
 {
-    UseGlobalDefault,
-    SpecificAngle,
-    RandomSnap,
-    FullRandom,
-    AsIs
+    UseGlobalDefault = 0,
+    SpecificAngle = 1,
+    RandomSnap = 2,
+    AsIs = 4
 }
 
 [Serializable]
@@ -47,26 +46,26 @@ public class DiscPiece
     [FoldGroup("Overrides (Optional)", defaultExpanded: false)]
     public bool overrideSettings = false;
     public float customTolerance = 5f;
-    public bool invertRotation = false;
     public Collider clickCollider;
 
     [FoldGroup("소켓 연동 (선택)", defaultExpanded: false)]
     public ItemSocket boundSocket;
     public bool hideUntilSocketPlaced = false;
 
-    [NonSerialized] public float currentAngle;
+    [NonSerialized] public float logicalAngle;
     [NonSerialized] public Tween snapTween;
+
+    [NonSerialized] private float visualAngle;
+    [NonSerialized] private float tweenEndAngle;
 
     public Transform TargetTransform => pieceTransform;
     public bool IsSlotted => boundSocket == null || boundSocket.IsCorrect;
+    public bool IsTweening => snapTween != null && snapTween.IsActive();
 
-    /// <summary>
-    /// 목표 각도와의 오차 범위를 비교하여 올바른 위치에 도달했는지 확인합니다.
-    /// </summary>
     public bool CheckIsCorrect(float defaultTolerance) =>
-        Mathf.Abs(Mathf.DeltaAngle(currentAngle, targetAngle)) <= (overrideSettings ? customTolerance : defaultTolerance);
+        Mathf.Abs(Mathf.DeltaAngle(logicalAngle, targetAngle)) <= (overrideSettings ? customTolerance : defaultTolerance);
 
-    public void Init(DiscRotationAxis axis, DiscStartAngleMode globalMode, float snapStep, float defaultTol)
+    public void Init(DiscRotationAxis axis, DiscStartAngleMode globalMode, float stepAngle, float defaultTol)
     {
         if (pieceTransform != null && clickCollider == null)
             clickCollider = pieceTransform.GetComponentInChildren<Collider>();
@@ -84,36 +83,46 @@ public class DiscPiece
                 break;
 
             case DiscStartAngleMode.RandomSnap:
-                float step = snapStep > 0f ? snapStep : 45f;
-                int maxSteps = Mathf.Max(1, Mathf.RoundToInt(360f / step));
-                float selectedSnap = 0f;
-                int attempts = 20;
-                while (attempts-- > 0)
-                {
-                    selectedSnap = UnityEngine.Random.Range(0, maxSteps) * step;
-                    if (Mathf.Abs(Mathf.DeltaAngle(selectedSnap, targetAngle)) > tol)
-                        break;
-                }
-                SetAngle(selectedSnap, axis);
-                break;
-
-            case DiscStartAngleMode.FullRandom:
-                float randAngle = UnityEngine.Random.Range(0f, 360f);
-                if (Mathf.Abs(Mathf.DeltaAngle(randAngle, targetAngle)) <= tol)
-                    randAngle = Mathf.Repeat(randAngle + 180f, 360f);
-                SetAngle(randAngle, axis);
+                SetAngle(PickRandomStepAngle(stepAngle, tol), axis);
                 break;
 
             case DiscStartAngleMode.AsIs:
+                SyncFromTransform(axis);
+                break;
+
             default:
-                currentAngle = GetAxisAngle(axis);
+                Debug.LogWarning($"[DiscPiece] 지원하지 않는 StartMode({(int)resolvedMode})입니다. RandomSnap으로 설정하세요.");
+                SyncFromTransform(axis);
                 break;
         }
     }
 
-    /// <summary>
-    /// 지정된 축의 로컬 오일러 각도를 반환합니다.
-    /// </summary>
+    private float PickRandomStepAngle(float stepAngle, float tol)
+    {
+        float step = stepAngle > 0f ? stepAngle : 45f;
+        int maxSteps = Mathf.Max(1, Mathf.RoundToInt(360f / step));
+        if (maxSteps <= 1) return targetAngle;
+
+        int startOffset = UnityEngine.Random.Range(1, maxSteps);
+        float selected = targetAngle;
+        for (int i = 0; i < maxSteps - 1; i++)
+        {
+            int offset = 1 + (startOffset + i - 1) % (maxSteps - 1);
+            float candidate = targetAngle - offset * step;
+            selected = candidate;
+            if (Mathf.Abs(Mathf.DeltaAngle(candidate, targetAngle)) > tol)
+                break;
+        }
+        return selected;
+    }
+
+    private void SyncFromTransform(DiscRotationAxis axis)
+    {
+        logicalAngle = Mathf.Repeat(GetAxisAngle(axis), 360f);
+        visualAngle = logicalAngle;
+        tweenEndAngle = logicalAngle;
+    }
+
     public float GetAxisAngle(DiscRotationAxis axis)
     {
         if (pieceTransform == null) return 0f;
@@ -127,21 +136,66 @@ public class DiscPiece
         };
     }
 
-    /// <summary>
-    /// 상대 각도 변화량을 더해 회전을 적용합니다.
-    /// </summary>
-    public void ApplyDeltaAngle(float deltaAngle, DiscRotationAxis axis)
+    // 연타 중에도 스텝이 어긋나지 않도록 논리 목표 각도와 트윈 목표 각도를 별도로 누적 관리
+    public void RotateStep(float deltaAngle, DiscRotationAxis axis, float duration, GameObject linkTarget, Action onComplete = null)
     {
-        if (canRotate) SetAngle(currentAngle + deltaAngle, axis);
+        if (!canRotate || Mathf.Approximately(deltaAngle, 0f)) return;
+
+        logicalAngle = Mathf.Repeat(logicalAngle + deltaAngle, 360f);
+        float baseEnd = IsTweening ? tweenEndAngle : visualAngle;
+        tweenEndAngle = baseEnd + deltaAngle;
+
+        KillTween();
+
+        if (duration <= 0f || pieceTransform == null)
+        {
+            SetAngle(logicalAngle, axis);
+            onComplete?.Invoke();
+            return;
+        }
+
+        float startVal = visualAngle;
+        float endVal = tweenEndAngle;
+
+        snapTween = DOVirtual.Float(startVal, endVal, duration, val =>
+        {
+            visualAngle = val;
+            ApplyRotation(Mathf.Repeat(val, 360f), axis);
+        })
+        .SetEase(Ease.OutBack)
+        .SetLink(linkTarget)
+        .OnComplete(() =>
+        {
+            visualAngle = logicalAngle;
+            tweenEndAngle = logicalAngle;
+            ApplyRotation(logicalAngle, axis);
+            snapTween = null;
+            onComplete?.Invoke();
+        });
     }
 
-    /// <summary>
-    /// 절대 각도를 지정하여 회전을 적용합니다.
-    /// </summary>
     public void SetAngle(float angle, DiscRotationAxis axis)
     {
-        currentAngle = Mathf.Repeat(angle, 360f);
-        ApplyRotation(currentAngle, axis);
+        KillTween();
+        logicalAngle = Mathf.Repeat(angle, 360f);
+        visualAngle = logicalAngle;
+        tweenEndAngle = logicalAngle;
+        ApplyRotation(logicalAngle, axis);
+    }
+
+    public void StopTween(DiscRotationAxis axis, bool snapToLogical)
+    {
+        bool wasTweening = snapTween != null;
+        KillTween();
+        if (snapToLogical && wasTweening)
+            SetAngle(logicalAngle, axis);
+    }
+
+    public void KillTween()
+    {
+        if (snapTween == null) return;
+        snapTween.Kill();
+        snapTween = null;
     }
 
     private void ApplyRotation(float angle, DiscRotationAxis axis)

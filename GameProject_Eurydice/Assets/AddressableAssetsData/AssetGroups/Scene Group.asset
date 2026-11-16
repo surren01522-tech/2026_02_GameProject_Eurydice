@@ -39,6 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Seamless_Scene
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1a36d351bb49e04fb4e59e79c30a19c
+    m_Address: Chapter_0
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Seamless_Scene
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: be36d64ca79330340a92bbc6e726cb73, type: 2}
   m_SchemaSet:

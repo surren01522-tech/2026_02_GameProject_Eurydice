@@ -25,6 +25,7 @@ public class SceneLoader : MonoBehaviour
         }
 
         if (savePlayer) FindFirstObjectByType<PlayerController>()?.SavePlayerTransform();
+        SaveManager.FlushSave();
         UIWindowManager.Instance?.CloseAllTabs(animatePanel: false);
 
         SceneLoader loader = null;

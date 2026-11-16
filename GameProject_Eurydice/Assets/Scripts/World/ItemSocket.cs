@@ -104,11 +104,6 @@ public class ItemSocket : MonoBehaviour, IInteractable
         if (string.IsNullOrEmpty(uniqueId)) Debug.LogWarning($"{gameObject.name} | 소켓의 Unique Id가 설정되지 않았습니다.");
     }
 
-    private void Start()
-    {
-        RestoreFromSave();
-    }
-
     private void RestoreFromSave()
     {
         var data = SaveManager.GetSocketData(uniqueId, gameObject.scene.name);
@@ -119,19 +114,6 @@ public class ItemSocket : MonoBehaviour, IInteractable
 
             if (placedItem == null && requiredItem != null && requiredItem.id == data.placedItemId)
                 placedItem = requiredItem;
-
-            if (placedItem == null)
-            {
-                var allItems = Resources.LoadAll<ItemData>("Items");
-                for (int i = 0; i < allItems.Length; i++)
-                {
-                    if (allItems[i] != null && allItems[i].id == data.placedItemId)
-                    {
-                        placedItem = allItems[i];
-                        break;
-                    }
-                }
-            }
 
             placedAmount = data.placedAmount > 0 ? data.placedAmount : requiredAmount;
             isPlaced = placedItem != null;
