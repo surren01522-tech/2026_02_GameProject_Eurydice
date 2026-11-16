@@ -6,7 +6,7 @@ using UnityEngine;
 public class SaveData
 {
     public InventorySaveData inventory = new();
-    public List<MinimapFogSaveData> fogRegions = new();
+    public List<MapRegionSaveData> mapRegions = new();
     public string lastActiveScene = string.Empty;
     public List<SceneSaveData> scenes = new();
     public AchievementSaveData achievements = new();
@@ -21,6 +21,7 @@ public class SceneSaveData
     public List<SocketSaveData> sockets = new();
     public List<DiscPuzzleSaveData> puzzles = new();
     public List<string> openPortalIds = new();
+    public List<string> closedPortalIds = new();
     public string activeLightName;
 
     public SceneSaveData() { }
@@ -87,15 +88,32 @@ public class DiscPuzzleSaveData
 }
 
 [Serializable]
-public class MinimapFogSaveData
+public class MapTileFogSaveData
 {
-    public string mapId;
+    public string tileId;
+    public int width;
+    public int height;
     public string fogBase64Data;
 
-    public MinimapFogSaveData(string mapId, string fogBase64Data)
+    public MapTileFogSaveData(string tileId, int width, int height, string fogBase64Data)
+    {
+        this.tileId = tileId;
+        this.width = width;
+        this.height = height;
+        this.fogBase64Data = fogBase64Data;
+    }
+}
+
+[Serializable]
+public class MapRegionSaveData
+{
+    public string mapId;
+    public bool isDiscovered;
+    public List<MapTileFogSaveData> tiles = new();
+
+    public MapRegionSaveData(string mapId)
     {
         this.mapId = mapId;
-        this.fogBase64Data = fogBase64Data;
     }
 }
 

@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28cd0aaceb84c5c8d35a9b853ce29cc, type: 3}
+  m_Name: Play_test_Map
+  m_EditorClassIdentifier: Assembly-CSharp::MapRegionData
+  mapId: Play_test
+  displayName: Play Test
+  sceneNames:
+  - Play_test
+  - Region_A
+  - Region_B
+  - Region_C
+  worldCenter: {x: 24.625004, y: 0.25}
+  worldSize: {x: 104.250015, y: 154.5}
+  bakeCameraY: 600
+  bakeDepth: 2000
+  revealRadius: 15
+  innerRevealPercent: 0.6
+  fogPixelsPerMeter: 1.5
+  minFogResolution: 32
+  maxFogResolution: 512
+  tiles:
+  - tileId: main
+    worldCenter: {x: 24.625004, y: 0.25}
+    worldSize: {x: 104.250015, y: 154.5}
+    mapTexture: {fileID: 2800000, guid: f1140b83f5ea9614483bac5be041e90d, type: 3}
+    uvRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    fogWidth: 0
+    fogHeight: 0
+  staticMarkers:
+  - markerId: Portal_A
+    markerType: 0
+    label: Portal A -> Region B
+    worldPosition: {x: 1, y: 1.5, z: 8.5}
+    revealWithFog: 0
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 1, g: 1, b: 1, a: 1}
+  - markerId: Portal_D
+    markerType: 0
+    label: Portal D -> Region C
+    worldPosition: {x: 5, y: 1.5, z: 8.5}
+    revealWithFog: 0
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 1, g: 1, b: 1, a: 1}
+  - markerId: Portal_B
+    markerType: 0
+    label: Portal B (Region B)
+    worldPosition: {x: 1, y: 1.5, z: -54.5}
+    revealWithFog: 1
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 1, g: 1, b: 1, a: 1}
+  - markerId: Portal_C
+    markerType: 0
+    label: Portal C -> Play Test
+    worldPosition: {x: 47.5, y: 1.5, z: 0}
+    revealWithFog: 1
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 1, g: 1, b: 1, a: 1}
+  - markerId: DiscPuzzle1
+    markerType: 2
+    label: Disc Puzzle 1
+    worldPosition: {x: -4.75, y: 2, z: -1.75}
+    revealWithFog: 1
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 1, g: 1, b: 1, a: 1}

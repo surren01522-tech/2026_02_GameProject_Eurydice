@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28cd0aaceb84c5c8d35a9b853ce29cc, type: 3}
+  m_Name: Chapter_0_Map
+  m_EditorClassIdentifier: Assembly-CSharp::MapRegionData
+  mapId: Chapter_0
+  displayName: Chapter 0
+  sceneNames:
+  - Chapter_0
+  worldCenter: {x: 0, y: 254.05937}
+  worldSize: {x: 604, y: 744.59576}
+  bakeCameraY: 80
+  bakeDepth: 200
+  revealRadius: 15
+  innerRevealPercent: 0.6
+  fogPixelsPerMeter: 1.5
+  minFogResolution: 32
+  maxFogResolution: 512
+  tiles:
+  - tileId: main
+    worldCenter: {x: 0, y: 254.05937}
+    worldSize: {x: 604, y: 744.59576}
+    mapTexture: {fileID: 2800000, guid: 871d3970110d55245be5df55eef5f285, type: 3}
+    uvRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    fogWidth: 0
+    fogHeight: 0
+  staticMarkers: []

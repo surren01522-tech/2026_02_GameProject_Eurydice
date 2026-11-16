@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0349a17f8644e28e40ee3f7b14240f, type: 3}
+  m_Name: MapMarkerStyleSet
+  m_EditorClassIdentifier: Assembly-CSharp::MapMarkerStyleSet
+  entries:
+  - type: 0
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    color: {r: 0.35, g: 0.85, b: 1, a: 1}
+    size: 26
+  - type: 1
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    color: {r: 1, g: 1, b: 1, a: 1}
+    size: 22
+  - type: 2
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    color: {r: 1, g: 0.85, b: 0.25, a: 1}
+    size: 24
+  - type: 3
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    color: {r: 0.45, g: 0.95, b: 0.55, a: 1}
+    size: 20
+  - type: 4
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    color: {r: 0.9, g: 0.65, b: 1, a: 1}
+    size: 22

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28cd0aaceb84c5c8d35a9b853ce29cc, type: 3}
+  m_Name: Play_test_Seamless_Map
+  m_EditorClassIdentifier: Assembly-CSharp::MapRegionData
+  mapId: Play_test_Seamless
+  displayName: Seamless Field
+  sceneNames:
+  - Play_test_Seamless
+  worldCenter: {x: 1, y: 1009.5}
+  worldSize: {x: 59.340008, y: 59.340088}
+  bakeCameraY: 650
+  bakeDepth: 2000
+  revealRadius: 15
+  innerRevealPercent: 0.6
+  fogPixelsPerMeter: 1.5
+  minFogResolution: 32
+  maxFogResolution: 512
+  tiles:
+  - tileId: main
+    worldCenter: {x: 1, y: 1009.5}
+    worldSize: {x: 59.340008, y: 59.340088}
+    mapTexture: {fileID: 2800000, guid: 738a9e07ca7bb84499aa08c7ef7fca7f, type: 3}
+    uvRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    fogWidth: 0
+    fogHeight: 0
+  staticMarkers: []

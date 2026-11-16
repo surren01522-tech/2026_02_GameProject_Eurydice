@@ -4,6 +4,7 @@ Shader "UI/MinimapFogMask"
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _FogTex ("Fog Texture", 2D) = "white" {}
+        _MainUvRect ("Main UV Rect", Vector) = (0,0,1,1)
         _Color ("Tint", Color) = (1,1,1,1)
 
         _UnexploredColor ("Unexplored Color", Color) = (0.08, 0.08, 0.1, 1)
@@ -82,6 +83,7 @@ Shader "UI/MinimapFogMask"
             fixed4 _TextureSampleAdd;
             float4 _ClipRect;
             float4 _MainTex_ST;
+            float4 _MainUvRect;
 
             v2f vert(appdata_t v)
             {
@@ -97,7 +99,8 @@ Shader "UI/MinimapFogMask"
 
             fixed4 frag(v2f IN) : SV_Target
             {
-                half4 mapTex = tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd;
+                float2 mapUv = IN.texcoord * _MainUvRect.zw + _MainUvRect.xy;
+                half4 mapTex = tex2D(_MainTex, mapUv) + _TextureSampleAdd;
                 half4 fogColor = tex2D(_FogTex, IN.texcoord);
 
                 float visibleFactor = saturate(1.0 - fogColor.a);

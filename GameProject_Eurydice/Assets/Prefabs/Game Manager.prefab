@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 766799276271429593}
   - component: {fileID: 8689828517501176970}
   - component: {fileID: 5965155381694548891}
+  - component: {fileID: 9102345678901234567}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -620,3 +621,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &9102345678901234567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2424944371094158774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 277b93ad4a28418ea63930732277fdeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapManager
+  regions: []
+  resourcesMapsFolder: Maps
+  defaultStyleSet: {fileID: 11400000, guid: a1b2c3d4e5f647899012abcdef123402, type: 2}
+  revealMoveThreshold: 1.5
+  fogSaveDebounceSeconds: 2
+  regionAutoBoundsPadding: 2
