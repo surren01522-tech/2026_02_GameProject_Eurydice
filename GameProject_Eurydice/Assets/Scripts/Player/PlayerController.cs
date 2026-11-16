@@ -353,7 +353,7 @@ public class PlayerController : MonoBehaviour
     {
         if (controller == null || !controller.enabled) return;
 
-        if (inputActions.Player.Jump.WasPressedThisFrame() && controller.isGrounded)
+        if (inputActions.Player.Jump.IsPressed() && controller.isGrounded)
             verticalVelocity = Mathf.Sqrt(jumpPower * -2f * gravity);
     }
 

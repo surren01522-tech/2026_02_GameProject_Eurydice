@@ -444,10 +444,14 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 			MaterialKeywordMasks[matId] = mask;
 		}
 		
-		UpdateLightsParameters(volumetricFogMaterial, fogVolume, enableMainLightContribution, enableAdditionalLightsContribution, mainLightIndex, visibleLights);
+		int customAdditionalLightsCount = enableAdditionalLightsContribution
+			? Mathf.Min(additionalLightsCount, UniversalRenderPipeline.maxVisibleAdditionalLights)
+			: 0;
+
+		UpdateLightsParameters(volumetricFogMaterial, fogVolume, enableMainLightContribution, enableAdditionalLightsContribution, mainLightIndex, customAdditionalLightsCount, visibleLights);
 
 		volumetricFogMaterial.SetInteger(FrameCountId, Time.renderedFrameCount % 64);
-		volumetricFogMaterial.SetInteger(CustomAdditionalLightsCountId, enableAdditionalLightsContribution ? additionalLightsCount : 0);
+		volumetricFogMaterial.SetInteger(CustomAdditionalLightsCountId, customAdditionalLightsCount);
 		volumetricFogMaterial.SetFloat(DistanceId, fogVolume.distance.value);
 		volumetricFogMaterial.SetFloat(BaseHeightId, fogVolume.baseHeight.value);
 		volumetricFogMaterial.SetFloat(MaximumHeightId, fogVolume.maximumHeight.value);
@@ -473,25 +477,19 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 	/// <param name="enableAdditionalLightsContribution"></param>
 	/// <param name="mainLightIndex"></param>
 	/// <param name="visibleLights"></param>
-	private static void UpdateLightsParameters(Material volumetricFogMaterial, VolumetricFogVolumeComponent fogVolume, bool enableMainLightContribution, bool enableAdditionalLightsContribution, int mainLightIndex, NativeArray<VisibleLight> visibleLights)
+	private static void UpdateLightsParameters(Material volumetricFogMaterial, VolumetricFogVolumeComponent fogVolume, bool enableMainLightContribution, bool enableAdditionalLightsContribution, int mainLightIndex, int customAdditionalLightsCount, NativeArray<VisibleLight> visibleLights)
 	{
-		// TODO: Forward+ and deferred+ visibleLights.Length is 256. In forward, it is 257 so the main light is considered apart. In deferred it seems to not have any limit (seen 1.6k and beyond).
-		// All rendering paths have maxVisibleAdditionalLights at 256.
-		// For the time being, just assume that if additional lights contribution to fog is enabled, we are either using clustered rendering, or using forward or deferred with, at most, 257 visible lights.
-		int lastIndex = Mathf.Clamp(visibleLights.Length, 0, LightsParametersLength);
-		lastIndex = lastIndex - 1;
-
-		if (enableMainLightContribution && lastIndex >= 0)
+		if (enableMainLightContribution)
 		{
-			Anisotropies[lastIndex] = fogVolume.anisotropy.value;
-			Scatterings[lastIndex] = fogVolume.scattering.value;
+			Anisotropies[customAdditionalLightsCount] = fogVolume.anisotropy.value;
+			Scatterings[customAdditionalLightsCount] = fogVolume.scattering.value;
 		}
 
 		if (enableAdditionalLightsContribution)
 		{
 			int additionalLightIndex = 0;
 
-			for (int i = 0; i <= lastIndex; ++i)
+			for (int i = 0; i < visibleLights.Length && additionalLightIndex < customAdditionalLightsCount; ++i)
 			{
 				if (i == mainLightIndex)
 					continue;
