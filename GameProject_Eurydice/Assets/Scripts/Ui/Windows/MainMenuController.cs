@@ -31,7 +31,11 @@ public class MainMenuController : MonoBehaviour
 
     public static bool HasGameStarted { get; set; } = false;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStaticState() => HasGameStarted = false;
+
     private bool isTransitioning;
+    private bool hadSaveDataOnStart;
     private CinemachineSplineDolly splineDolly;
     private Tween fadeTween;
 
@@ -62,9 +66,10 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
+        hadSaveDataOnStart = SaveManager.HasSaveData();
         GameStateManager.SetMainMenuActive(true);
         if (continueButton != null)
-            continueButton.interactable = SaveManager.HasSaveData();
+            continueButton.interactable = hadSaveDataOnStart;
     }
 
     private void BypassMainMenu()
@@ -159,6 +164,8 @@ public class MainMenuController : MonoBehaviour
     private IEnumerator TransitionRoutine(bool isNewGame)
     {
         isTransitioning = true;
+        while (!SceneStreamer.IsReady)
+            yield return null;
 
         if (menuCanvasGroup != null)
         {
@@ -172,10 +179,20 @@ public class MainMenuController : MonoBehaviour
         if (isNewGame)
         {
             SaveManager.DeleteSaveData();
+            if (SceneStreamer.Instance != null &&
+                !string.IsNullOrEmpty(SceneStreamer.Instance.DefaultEntryScene) &&
+                (hadSaveDataOnStart || SceneEnvironmentManager.ActiveSceneName != SceneStreamer.Instance.DefaultEntryScene))
+            {
+                HasGameStarted = true;
+                SceneLoader.Load(UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name, savePlayer: false);
+                yield break;
+            }
+
             var player = FindFirstObjectByType<PlayerController>();
             if (player != null && initialSpawnPoint != null)
             {
                 player.Teleport(initialSpawnPoint.position, initialSpawnPoint.rotation, initialSpawnPoint.position, initialSpawnPoint.rotation);
+                SceneStreamer.Instance?.RefreshZonesForPosition(initialSpawnPoint.position);
             }
         }
 
