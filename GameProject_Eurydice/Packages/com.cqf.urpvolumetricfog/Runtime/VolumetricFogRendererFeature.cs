@@ -10,6 +10,13 @@ using UnityEngine.Rendering.Universal;
 public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 {
 	private static readonly System.Collections.Generic.HashSet<int> ForcedFogCameraIds = new();
+	internal static event System.Action<int> OnFogCameraUnregistered;
+	public static event System.Action<ScriptableRenderer, Camera> OnAddCameraPasses;
+
+	public static bool IsForcedFogCamera(Camera cam)
+	{
+		return cam != null && ForcedFogCameraIds.Contains(cam.GetInstanceID());
+	}
 
 	public static void RegisterFogCamera(Camera cam)
 	{
@@ -18,7 +25,10 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 
 	public static void UnregisterFogCamera(Camera cam)
 	{
-		if (cam != null) ForcedFogCameraIds.Remove(cam.GetInstanceID());
+		if (cam == null) return;
+		int id = cam.GetInstanceID();
+		if (ForcedFogCameraIds.Remove(id))
+			OnFogCameraUnregistered?.Invoke(id);
 	}
 
 	#region Private Attributes
@@ -28,8 +38,14 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 	[HideInInspector]
 	[SerializeField] private Shader volumetricFogShader;
 
+	[Header("Portal Optimization")]
+	[SerializeField, Range(4, 128)] private int portalMaxSteps = 36;
+	[SerializeField, Range(0, 4)] private int portalBlurIterations = 1;
+	[SerializeField] private bool portalDisableAdditionalLights = true;
+
 	private Material downsampleDepthMaterial;
 	private Material volumetricFogMaterial;
+	private Material portalVolumetricFogMaterial;
 
 	private VolumetricFogRenderPass volumetricFogRenderPass;
 
@@ -42,9 +58,13 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 	/// </summary>
 	public override void Create()
 	{
+#if !UNITY_6000_4_OR_NEWER
+		volumetricFogRenderPass?.Dispose();
+#endif
 		ValidateResourcesForVolumetricFogRenderPass(true);
 
-		volumetricFogRenderPass = new VolumetricFogRenderPass(downsampleDepthMaterial, volumetricFogMaterial, VolumetricFogRenderPass.DefaultRenderPassEvent);
+		volumetricFogRenderPass = new VolumetricFogRenderPass(downsampleDepthMaterial, volumetricFogMaterial, portalVolumetricFogMaterial, VolumetricFogRenderPass.DefaultRenderPassEvent);
+		volumetricFogRenderPass.ConfigurePortalQuality(portalMaxSteps, portalBlurIterations, portalDisableAdditionalLights);
 	}
 
 	/// <summary>
@@ -55,12 +75,14 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 	public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
 	{
 		Camera cam = renderingData.cameraData.camera;
+		OnAddCameraPasses?.Invoke(renderer, cam);
 		bool isForcedCamera = cam != null && ForcedFogCameraIds.Contains(cam.GetInstanceID());
 		bool isPostProcessEnabled = renderingData.postProcessingEnabled && (renderingData.cameraData.postProcessEnabled || isForcedCamera);
 		bool shouldAddVolumetricFogRenderPass = isPostProcessEnabled && ShouldAddVolumetricFogRenderPass(renderingData.cameraData.cameraType);
-		
+
 		if (shouldAddVolumetricFogRenderPass)
 		{
+			volumetricFogRenderPass.ConfigurePortalQuality(portalMaxSteps, portalBlurIterations, portalDisableAdditionalLights);
 			volumetricFogRenderPass.renderPassEvent = GetRenderPassEvent();
 			volumetricFogRenderPass.ConfigureInput(ScriptableRenderPassInput.Depth);
 			renderer.EnqueuePass(volumetricFogRenderPass);
@@ -80,6 +102,7 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 #endif
 		CoreUtils.Destroy(downsampleDepthMaterial);
 		CoreUtils.Destroy(volumetricFogMaterial);
+		CoreUtils.Destroy(portalVolumetricFogMaterial);
 	}
 
 	#endregion
@@ -104,11 +127,14 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 
 			CoreUtils.Destroy(volumetricFogMaterial);
 			volumetricFogMaterial = CoreUtils.CreateEngineMaterial(volumetricFogShader);
+
+			CoreUtils.Destroy(portalVolumetricFogMaterial);
+			portalVolumetricFogMaterial = CoreUtils.CreateEngineMaterial(volumetricFogShader);
 		}
 
 		bool okDepth = downsampleDepthShader != null && downsampleDepthMaterial != null;
-		bool okVolumetric = volumetricFogShader != null && volumetricFogMaterial != null;
-		
+		bool okVolumetric = volumetricFogShader != null && volumetricFogMaterial != null && portalVolumetricFogMaterial != null;
+
 		return okDepth && okVolumetric;
 	}
 
@@ -135,7 +161,7 @@ public sealed class VolumetricFogRendererFeature : ScriptableRendererFeature
 	private RenderPassEvent GetRenderPassEvent()
 	{
 		VolumetricFogVolumeComponent fogVolume = VolumeManager.instance.stack.GetComponent<VolumetricFogVolumeComponent>();
-		
+
 		return (RenderPassEvent)fogVolume.renderPassEvent.value;
 	}
 

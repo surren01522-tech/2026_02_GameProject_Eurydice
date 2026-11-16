@@ -3,6 +3,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using Unity.Collections;
+using System.Collections.Generic;
 
 #if UNITY_6000_0_OR_NEWER
 using System;
@@ -56,6 +57,9 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 		public TextureHandle downsampledCameraDepthTarget;
 		public TextureHandle volumetricFogRenderTarget;
 		public UniversalLightData lightData;
+		public int maxStepsOverride;
+		public bool forceDisableAdditionalLights;
+		public int blurIterationsCap;
 	}
 
 #endif
@@ -111,13 +115,33 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 
 	private Material downsampleDepthMaterial;
 	private Material volumetricFogMaterial;
+	private Material portalVolumetricFogMaterial;
+
+	private int portalMaxSteps = 36;
+	private int portalBlurIterations = 1;
+	private bool portalDisableAdditionalLights = true;
+
+	private static readonly Dictionary<int, int> MaterialKeywordMasks = new Dictionary<int, int>();
 
 #if !UNITY_6000_4_OR_NEWER
 
-	private RTHandle downsampledCameraDepthRTHandle;
-	private RTHandle volumetricFogRenderRTHandle;
-	private RTHandle volumetricFogBlurRTHandle;
-	private RTHandle volumetricFogUpsampleCompositionRTHandle;
+	private sealed class CameraRTSet
+	{
+		public RTHandle downsampledDepth;
+		public RTHandle render;
+		public RTHandle blur;
+		public RTHandle upsampleComposition;
+
+		public void Release()
+		{
+			downsampledDepth?.Release();
+			render?.Release();
+			blur?.Release();
+			upsampleComposition?.Release();
+		}
+	}
+
+	private readonly Dictionary<int, CameraRTSet> cameraRTs = new Dictionary<int, CameraRTSet>();
 
 #endif
 
@@ -130,10 +154,7 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 	/// <summary>
 	/// Constructor.
 	/// </summary>
-	/// <param name="downsampleDepthMaterial"></param>
-	/// <param name="volumetricFogMaterial"></param>
-	/// <param name="passEvent"></param>
-	public VolumetricFogRenderPass(Material downsampleDepthMaterial, Material volumetricFogMaterial, RenderPassEvent passEvent) : base()
+	public VolumetricFogRenderPass(Material downsampleDepthMaterial, Material volumetricFogMaterial, Material portalVolumetricFogMaterial, RenderPassEvent passEvent) : base()
 	{
 		profilingSampler = new ProfilingSampler("Volumetric Fog");
 		downsampleDepthProfilingSampler = new ProfilingSampler("Downsample Depth");
@@ -144,8 +165,20 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 
 		this.downsampleDepthMaterial = downsampleDepthMaterial;
 		this.volumetricFogMaterial = volumetricFogMaterial;
+		this.portalVolumetricFogMaterial = portalVolumetricFogMaterial;
+
+#if !UNITY_6000_4_OR_NEWER
+		VolumetricFogRendererFeature.OnFogCameraUnregistered += ReleaseCameraRTs;
+#endif
 
 		InitializePassesIndices();
+	}
+
+	public void ConfigurePortalQuality(int maxSteps, int blurIterations, bool disableAdditionalLights)
+	{
+		portalMaxSteps = Mathf.Max(4, maxSteps);
+		portalBlurIterations = Mathf.Max(0, blurIterations);
+		portalDisableAdditionalLights = disableAdditionalLights;
 	}
 
 	/// <summary>
@@ -178,26 +211,33 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 	{
 		base.OnCameraSetup(cmd, ref renderingData);
 
+		int camId = renderingData.cameraData.camera != null ? renderingData.cameraData.camera.GetInstanceID() : 0;
+		if (!cameraRTs.TryGetValue(camId, out CameraRTSet rtSet))
+		{
+			rtSet = new CameraRTSet();
+			cameraRTs[camId] = rtSet;
+		}
+
 		RenderTextureDescriptor cameraTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
 		cameraTargetDescriptor.depthBufferBits = (int)DepthBits.None;
 
 		RenderTextureFormat originalColorFormat = cameraTargetDescriptor.colorFormat;
 		Vector2Int originalResolution = new Vector2Int(cameraTargetDescriptor.width, cameraTargetDescriptor.height);
 
-		cameraTargetDescriptor.width /= (int)DownsampleFactor.Half;
-		cameraTargetDescriptor.height /= (int)DownsampleFactor.Half;
+		cameraTargetDescriptor.width = Mathf.Max(1, cameraTargetDescriptor.width / (int)DownsampleFactor.Half);
+		cameraTargetDescriptor.height = Mathf.Max(1, cameraTargetDescriptor.height / (int)DownsampleFactor.Half);
 		cameraTargetDescriptor.graphicsFormat = GraphicsFormat.R32_SFloat;
-		ReAllocateIfNeeded(ref downsampledCameraDepthRTHandle, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: DownsampledCameraDepthRTName);
+		ReAllocateIfNeeded(ref rtSet.downsampledDepth, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: DownsampledCameraDepthRTName);
 
 		cameraTargetDescriptor.colorFormat = RenderTextureFormat.ARGBHalf;
-		ReAllocateIfNeeded(ref volumetricFogRenderRTHandle, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: VolumetricFogRenderRTName);
-		ReAllocateIfNeeded(ref volumetricFogBlurRTHandle, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: VolumetricFogBlurRTName);
+		ReAllocateIfNeeded(ref rtSet.render, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: VolumetricFogRenderRTName);
+		ReAllocateIfNeeded(ref rtSet.blur, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: VolumetricFogBlurRTName);
 
 		cameraTargetDescriptor.width = originalResolution.x;
 		cameraTargetDescriptor.height = originalResolution.y;
 		cameraTargetDescriptor.colorFormat = originalColorFormat;
 		cameraTargetDescriptor.graphicsFormat = renderingData.cameraData.cameraTargetDescriptor.graphicsFormat;
-		ReAllocateIfNeeded(ref volumetricFogUpsampleCompositionRTHandle, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: VolumetricFogUpsampleCompositionRTName);
+		ReAllocateIfNeeded(ref rtSet.upsampleComposition, cameraTargetDescriptor, wrapMode: TextureWrapMode.Clamp, name: VolumetricFogUpsampleCompositionRTName);
 	}
 
 	/// <summary>
@@ -210,32 +250,49 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 #endif
 	public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 	{
+		Camera cam = renderingData.cameraData.camera;
+		int camId = cam != null ? cam.GetInstanceID() : 0;
+		if (!cameraRTs.TryGetValue(camId, out CameraRTSet rtSet))
+			return;
+
+		bool isPortal = VolumetricFogRendererFeature.IsForcedFogCamera(cam);
+		Material fogMat = isPortal ? portalVolumetricFogMaterial : volumetricFogMaterial;
+
 		CommandBuffer cmd = CommandBufferPool.Get();
 
 		using (new ProfilingScope(cmd, downsampleDepthProfilingSampler))
 		{
-			Blitter.BlitCameraTexture(cmd, downsampledCameraDepthRTHandle, downsampledCameraDepthRTHandle, downsampleDepthMaterial, downsampleDepthPassIndex);
-			volumetricFogMaterial.SetTexture(DownsampledCameraDepthTextureId, downsampledCameraDepthRTHandle);
+			// Pass unused blur RT as dummy source so downsampledDepth is not bound as both SRV and RTV.
+			Blitter.BlitCameraTexture(cmd, rtSet.blur, rtSet.downsampledDepth, downsampleDepthMaterial, downsampleDepthPassIndex);
+			fogMat.SetTexture(DownsampledCameraDepthTextureId, rtSet.downsampledDepth);
 		}
 
 		using (new ProfilingScope(cmd, profilingSampler))
 		{
-			UpdateVolumetricFogMaterialParameters(volumetricFogMaterial, renderingData.lightData.mainLightIndex, renderingData.lightData.additionalLightsCount, renderingData.lightData.visibleLights);
-			Blitter.BlitCameraTexture(cmd, volumetricFogRenderRTHandle, volumetricFogRenderRTHandle, volumetricFogMaterial, volumetricFogRenderPassIndex);
+			UpdateVolumetricFogMaterialParameters(
+				fogMat,
+				renderingData.lightData.mainLightIndex,
+				renderingData.lightData.additionalLightsCount,
+				renderingData.lightData.visibleLights,
+				isPortal ? portalMaxSteps : -1,
+				isPortal && portalDisableAdditionalLights);
+			Blitter.BlitCameraTexture(cmd, rtSet.blur, rtSet.render, fogMat, volumetricFogRenderPassIndex);
 
 			int blurIterations = VolumeManager.instance.stack.GetComponent<VolumetricFogVolumeComponent>().blurIterations.value;
+			if (isPortal)
+				blurIterations = Mathf.Min(blurIterations, portalBlurIterations);
 
 			for (int i = 0; i < blurIterations; ++i)
 			{
-				Blitter.BlitCameraTexture(cmd, volumetricFogRenderRTHandle, volumetricFogBlurRTHandle, volumetricFogMaterial, volumetricFogHorizontalBlurPassIndex);
-				Blitter.BlitCameraTexture(cmd, volumetricFogBlurRTHandle, volumetricFogRenderRTHandle, volumetricFogMaterial, volumetricFogVerticalBlurPassIndex);
+				Blitter.BlitCameraTexture(cmd, rtSet.render, rtSet.blur, fogMat, volumetricFogHorizontalBlurPassIndex);
+				Blitter.BlitCameraTexture(cmd, rtSet.blur, rtSet.render, fogMat, volumetricFogVerticalBlurPassIndex);
 			}
 
-			volumetricFogMaterial.SetTexture(VolumetricFogTextureId, volumetricFogRenderRTHandle);
+			fogMat.SetTexture(VolumetricFogTextureId, rtSet.render);
 
 			RTHandle cameraColorRt = renderingData.cameraData.renderer.cameraColorTargetHandle;
-			Blitter.BlitCameraTexture(cmd, cameraColorRt, volumetricFogUpsampleCompositionRTHandle, volumetricFogMaterial, volumetricFogUpsampleCompositionPassIndex);
-			Blitter.BlitCameraTexture(cmd, volumetricFogUpsampleCompositionRTHandle, cameraColorRt);
+			Blitter.BlitCameraTexture(cmd, cameraColorRt, rtSet.upsampleComposition, fogMat, volumetricFogUpsampleCompositionPassIndex);
+			Blitter.BlitCameraTexture(cmd, rtSet.upsampleComposition, cameraColorRt);
 		}
 
 		context.ExecuteCommandBuffer(cmd);
@@ -260,6 +317,9 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 		UniversalLightData lightData = frameData.Get<UniversalLightData>();
 		UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
+		bool isPortal = VolumetricFogRendererFeature.IsForcedFogCamera(cameraData.camera);
+		Material fogMat = isPortal ? portalVolumetricFogMaterial : volumetricFogMaterial;
+
 		CreateRenderGraphTextures(renderGraph, cameraData, out TextureHandle downsampledCameraDepthTarget, out TextureHandle volumetricFogRenderTarget, out TextureHandle volumetricFogBlurRenderTarget, out TextureHandle volumetricFogUpsampleCompositionTarget);
 
 		using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass("Downsample Depth Pass", out PassData passData, downsampleDepthProfilingSampler))
@@ -280,10 +340,12 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 			passData.stage = PassStage.VolumetricFogRender;
 			passData.source = downsampledCameraDepthTarget;
 			passData.target = volumetricFogRenderTarget;
-			passData.material = volumetricFogMaterial;
+			passData.material = fogMat;
 			passData.materialPassIndex = volumetricFogRenderPassIndex;
 			passData.downsampledCameraDepthTarget = downsampledCameraDepthTarget;
 			passData.lightData = lightData;
+			passData.maxStepsOverride = isPortal ? portalMaxSteps : -1;
+			passData.forceDisableAdditionalLights = isPortal && portalDisableAdditionalLights;
 
 			builder.SetRenderAttachment(volumetricFogRenderTarget, 0, AccessFlags.WriteAll);
 			builder.UseTexture(downsampledCameraDepthTarget);
@@ -299,9 +361,10 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 			passData.stage = PassStage.VolumetricFogBlur;
 			passData.source = volumetricFogRenderTarget;
 			passData.target = volumetricFogBlurRenderTarget;
-			passData.material = volumetricFogMaterial;
+			passData.material = fogMat;
 			passData.materialPassIndex = volumetricFogHorizontalBlurPassIndex;
 			passData.materialAdditionalPassIndex = volumetricFogVerticalBlurPassIndex;
+			passData.blurIterationsCap = isPortal ? portalBlurIterations : int.MaxValue;
 
 			builder.UseTexture(volumetricFogRenderTarget, AccessFlags.ReadWrite);
 			builder.UseTexture(volumetricFogBlurRenderTarget, AccessFlags.ReadWrite);
@@ -313,7 +376,7 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 			passData.stage = PassStage.VolumetricFogUpsampleComposition;
 			passData.source = resourceData.cameraColor;
 			passData.target = volumetricFogUpsampleCompositionTarget;
-			passData.material = volumetricFogMaterial;
+			passData.material = fogMat;
 			passData.materialPassIndex = volumetricFogUpsampleCompositionPassIndex;
 			passData.volumetricFogRenderTarget = volumetricFogRenderTarget;
 
@@ -341,35 +404,50 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 	/// <param name="mainLightIndex"></param>
 	/// <param name="additionalLightsCount"></param>
 	/// <param name="visibleLights"></param>
-	private static void UpdateVolumetricFogMaterialParameters(Material volumetricFogMaterial, int mainLightIndex, int additionalLightsCount, NativeArray<VisibleLight> visibleLights)
+	private static void UpdateVolumetricFogMaterialParameters(Material volumetricFogMaterial, int mainLightIndex, int additionalLightsCount, NativeArray<VisibleLight> visibleLights, int maxStepsOverride = -1, bool forceDisableAdditionalLights = false)
 	{
 		VolumetricFogVolumeComponent fogVolume = VolumeManager.instance.stack.GetComponent<VolumetricFogVolumeComponent>();
 
 		bool enableMainLightContribution = fogVolume.enableMainLightContribution.value && fogVolume.scattering.value > 0.0f && mainLightIndex > -1;
-		bool enableAdditionalLightsContribution = fogVolume.enableAdditionalLightsContribution.value && additionalLightsCount > 0;
+		bool enableAdditionalLightsContribution = !forceDisableAdditionalLights && fogVolume.enableAdditionalLightsContribution.value && additionalLightsCount > 0;
 
 #if UNITY_2023_1_OR_NEWER
 		bool enableAPVContribution = fogVolume.enableAPVContribution.value && fogVolume.APVContributionWeight.value > 0.0f;
-		if (enableAPVContribution)
-			volumetricFogMaterial.EnableKeyword("_APV_CONTRIBUTION_ENABLED");
-		else
-			volumetricFogMaterial.DisableKeyword("_APV_CONTRIBUTION_ENABLED");
+		int mask = (enableAPVContribution ? 1 : 0)
+			| (!enableMainLightContribution ? 2 : 0)
+			| (!enableAdditionalLightsContribution ? 4 : 0);
+#else
+		int mask = (!enableMainLightContribution ? 2 : 0)
+			| (!enableAdditionalLightsContribution ? 4 : 0);
 #endif
 
-		if (enableMainLightContribution)
-			volumetricFogMaterial.DisableKeyword("_MAIN_LIGHT_CONTRIBUTION_DISABLED");
-		else
-			volumetricFogMaterial.EnableKeyword("_MAIN_LIGHT_CONTRIBUTION_DISABLED");
+		int matId = volumetricFogMaterial.GetInstanceID();
+		if (!MaterialKeywordMasks.TryGetValue(matId, out int prevMask) || prevMask != mask)
+		{
+#if UNITY_2023_1_OR_NEWER
+			if (enableAPVContribution)
+				volumetricFogMaterial.EnableKeyword("_APV_CONTRIBUTION_ENABLED");
+			else
+				volumetricFogMaterial.DisableKeyword("_APV_CONTRIBUTION_ENABLED");
+#endif
 
-		if (enableAdditionalLightsContribution)
-			volumetricFogMaterial.DisableKeyword("_ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED");
-		else
-			volumetricFogMaterial.EnableKeyword("_ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED");
+			if (enableMainLightContribution)
+				volumetricFogMaterial.DisableKeyword("_MAIN_LIGHT_CONTRIBUTION_DISABLED");
+			else
+				volumetricFogMaterial.EnableKeyword("_MAIN_LIGHT_CONTRIBUTION_DISABLED");
+
+			if (enableAdditionalLightsContribution)
+				volumetricFogMaterial.DisableKeyword("_ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED");
+			else
+				volumetricFogMaterial.EnableKeyword("_ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED");
+
+			MaterialKeywordMasks[matId] = mask;
+		}
 		
 		UpdateLightsParameters(volumetricFogMaterial, fogVolume, enableMainLightContribution, enableAdditionalLightsContribution, mainLightIndex, visibleLights);
 
 		volumetricFogMaterial.SetInteger(FrameCountId, Time.renderedFrameCount % 64);
-		volumetricFogMaterial.SetInteger(CustomAdditionalLightsCountId, additionalLightsCount);
+		volumetricFogMaterial.SetInteger(CustomAdditionalLightsCountId, enableAdditionalLightsContribution ? additionalLightsCount : 0);
 		volumetricFogMaterial.SetFloat(DistanceId, fogVolume.distance.value);
 		volumetricFogMaterial.SetFloat(BaseHeightId, fogVolume.baseHeight.value);
 		volumetricFogMaterial.SetFloat(MaximumHeightId, fogVolume.maximumHeight.value);
@@ -380,7 +458,10 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 		volumetricFogMaterial.SetFloat(APVContributionWeigthId, fogVolume.enableAPVContribution.value ? fogVolume.APVContributionWeight.value : 0.0f);
 #endif
 		volumetricFogMaterial.SetColor(TintId, fogVolume.tint.value);
-		volumetricFogMaterial.SetInteger(MaxStepsId, fogVolume.maxSteps.value);
+		int steps = fogVolume.maxSteps.value;
+		if (maxStepsOverride > 0)
+			steps = Mathf.Min(steps, maxStepsOverride);
+		volumetricFogMaterial.SetInteger(MaxStepsId, steps);
 	}
 
 	/// <summary>
@@ -490,7 +571,13 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 		if (stage == PassStage.VolumetricFogRender)
 		{
 			passData.material.SetTexture(DownsampledCameraDepthTextureId, passData.downsampledCameraDepthTarget);
-			UpdateVolumetricFogMaterialParameters(passData.material, passData.lightData.mainLightIndex, passData.lightData.additionalLightsCount, passData.lightData.visibleLights);
+			UpdateVolumetricFogMaterialParameters(
+				passData.material,
+				passData.lightData.mainLightIndex,
+				passData.lightData.additionalLightsCount,
+				passData.lightData.visibleLights,
+				passData.maxStepsOverride,
+				passData.forceDisableAdditionalLights);
 		}
 		else if (stage == PassStage.VolumetricFogUpsampleComposition)
 		{
@@ -509,7 +596,7 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 	{
 		CommandBuffer unsafeCmd = CommandBufferHelpers.GetNativeCommandBuffer(context.cmd);
 
-		int blurIterations = VolumeManager.instance.stack.GetComponent<VolumetricFogVolumeComponent>().blurIterations.value;
+		int blurIterations = Mathf.Min(VolumeManager.instance.stack.GetComponent<VolumetricFogVolumeComponent>().blurIterations.value, passData.blurIterationsCap);
 
 		for (int i = 0; i < blurIterations; ++i)
 		{
@@ -538,15 +625,30 @@ public sealed class VolumetricFogRenderPass : ScriptableRenderPass
 #endif
 	}
 
+	public void ReleaseCameraRTs(int cameraId)
+	{
+		if (cameraRTs.TryGetValue(cameraId, out CameraRTSet rtSet))
+		{
+			rtSet.Release();
+			cameraRTs.Remove(cameraId);
+		}
+	}
+
 	/// <summary>
 	/// Disposes the resources used by this pass.
 	/// </summary>
 	public void Dispose()
 	{
-		downsampledCameraDepthRTHandle?.Release();
-		volumetricFogRenderRTHandle?.Release();
-		volumetricFogBlurRTHandle?.Release();
-		volumetricFogUpsampleCompositionRTHandle?.Release();
+		VolumetricFogRendererFeature.OnFogCameraUnregistered -= ReleaseCameraRTs;
+
+		foreach (var kv in cameraRTs)
+			kv.Value.Release();
+		cameraRTs.Clear();
+
+		if (volumetricFogMaterial != null)
+			MaterialKeywordMasks.Remove(volumetricFogMaterial.GetInstanceID());
+		if (portalVolumetricFogMaterial != null)
+			MaterialKeywordMasks.Remove(portalVolumetricFogMaterial.GetInstanceID());
 	}
 
 #endif

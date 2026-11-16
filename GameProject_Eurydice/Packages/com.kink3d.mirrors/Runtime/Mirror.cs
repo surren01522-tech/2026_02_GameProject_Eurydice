@@ -57,10 +57,25 @@ namespace kTools.Mirrors
 
 #region Fields
         const string kGizmoPath = "Packages/com.kink3d.mirrors/Gizmos/Mirror.png";
+        static readonly int ReflectionMapId = Shader.PropertyToID("_ReflectionMap");
+        static readonly int LocalReflectionMapId = Shader.PropertyToID("_LocalReflectionMap");
+        static readonly int LocalMirrorId = Shader.PropertyToID("_LocalMirror");
+
+        struct ReflectionTarget
+        {
+            public Camera sourceCamera;
+            public RenderTexture texture;
+            public RenderTextureDescriptor descriptor;
+        }
+
         Camera m_ReflectionCamera;
         UniversalAdditionalCameraData m_CameraData;
-        RenderTexture m_RenderTexture;
-        RenderTextureDescriptor m_PreviousDescriptor;
+        readonly Dictionary<int, ReflectionTarget> m_CameraRenderTextures = new Dictionary<int, ReflectionTarget>();
+        readonly List<int> m_DeadCameraIds = new List<int>();
+        RenderTexture m_PrimaryReflectionTexture;
+        int m_ActiveGlobalOverrideCameraId;
+        MaterialPropertyBlock m_PropertyBlock;
+        ProfilingSampler m_ProfilingSampler;
 #endregion
 
 #region Constructors
@@ -156,6 +171,7 @@ namespace kTools.Mirrors
         {
             // Callbacks
             RenderPipelineManager.beginCameraRendering += BeginCameraRendering;
+            RenderPipelineManager.endCameraRendering += EndCameraRendering;
             
             // Initialize Components
             InitializeCamera();
@@ -165,9 +181,19 @@ namespace kTools.Mirrors
         {
             // Callbacks
             RenderPipelineManager.beginCameraRendering -= BeginCameraRendering;
+            RenderPipelineManager.endCameraRendering -= EndCameraRendering;
 
-            // Dispose RenderTexture
-            SafeDestroyObject(m_RenderTexture);
+            if (m_ReflectionCamera != null)
+                m_ReflectionCamera.targetTexture = null;
+
+            foreach (var entry in m_CameraRenderTextures.Values)
+            {
+                SafeDestroyObject(entry.texture);
+            }
+            m_CameraRenderTextures.Clear();
+            m_DeadCameraIds.Clear();
+            m_PrimaryReflectionTexture = null;
+            m_ActiveGlobalOverrideCameraId = 0;
         }
 #endregion
 
@@ -176,7 +202,7 @@ namespace kTools.Mirrors
         {
             // Setup Camera
             reflectionCamera.cameraType = CameraType.Reflection;
-            reflectionCamera.targetTexture = m_RenderTexture;
+            reflectionCamera.targetTexture = null;
 
             // Setup AdditionalCameraData
             cameraData.renderShadows = false;
@@ -202,41 +228,115 @@ namespace kTools.Mirrors
 #region Rendering
         void BeginCameraRendering(ScriptableRenderContext context, Camera camera)
         {
-            // Never render Mirrors for Preview or Reflection cameras
-            if(camera.cameraType == CameraType.Preview || camera.cameraType == CameraType.Reflection)
+            // Never render Mirrors for Preview, Reflection, or tiny warmup cameras
+            if(camera == null || camera.cameraType == CameraType.Preview || camera.cameraType == CameraType.Reflection || camera.pixelWidth <= 32 || camera.pixelHeight <= 32)
                 return;
 
-            // Profiling command
-            CommandBuffer cmd = CommandBufferPool.Get($"Mirror {gameObject.GetInstanceID()}");
-#if UNITY_2021_1_OR_NEWER
-            using (new ProfilingScope(cmd, new ProfilingSampler($"Mirror {gameObject.GetInstanceID()}")))
-#else
-            using (new ProfilingSample(cmd, $"Mirror {gameObject.GetInstanceID()}"))
-#endif
-            {
-                ExecuteCommand(context, cmd);
+            m_ProfilingSampler ??= new ProfilingSampler($"Mirror {gameObject.GetInstanceID()}");
 
-                // Test for Descriptor changes
-                var descriptor = GetDescriptor(camera);
-                if(!descriptor.Equals(m_PreviousDescriptor))
+            RenderTexture targetTex = AcquireCameraRenderTexture(camera);
+            reflectionCamera.targetTexture = targetTex;
+
+            if (scope == OutputScope.Global)
+            {
+                if (camera.cameraType == CameraType.Game && camera.targetTexture == null)
                 {
-                    // Dispose RenderTexture
-                    if(m_RenderTexture != null)
-                    {
-                        SafeDestroyObject(m_RenderTexture);
-                    }
-                    
-                    // Create new RenderTexture
-                    m_RenderTexture = new RenderTexture(descriptor);
-                    m_PreviousDescriptor = descriptor;
-                    reflectionCamera.targetTexture = m_RenderTexture;
+                    m_PrimaryReflectionTexture = targetTex;
+                    m_ActiveGlobalOverrideCameraId = 0;
                 }
-                
-                // Execute
-                RenderMirror(context, camera);
-                SetShaderUniforms(context, m_RenderTexture, cmd);
+                else if (camera.targetTexture != null && m_PrimaryReflectionTexture != null)
+                {
+                    m_ActiveGlobalOverrideCameraId = camera.GetInstanceID();
+                }
             }
-            ExecuteCommand(context, cmd);
+
+            CommandBuffer cmd = CommandBufferPool.Get();
+            try
+            {
+                using (new ProfilingScope(cmd, m_ProfilingSampler))
+                {
+                    ExecuteCommand(context, cmd);
+                    RenderMirror(context, camera);
+                    SetShaderUniforms(context, targetTex, cmd);
+                }
+                ExecuteCommand(context, cmd);
+            }
+            finally
+            {
+                CommandBufferPool.Release(cmd);
+            }
+        }
+
+        void EndCameraRendering(ScriptableRenderContext context, Camera camera)
+        {
+            if (scope != OutputScope.Global || m_ActiveGlobalOverrideCameraId == 0 || m_PrimaryReflectionTexture == null || camera == null)
+                return;
+
+            if (camera.GetInstanceID() != m_ActiveGlobalOverrideCameraId)
+                return;
+
+            m_ActiveGlobalOverrideCameraId = 0;
+
+            CommandBuffer cmd = CommandBufferPool.Get();
+            try
+            {
+                cmd.SetGlobalTexture(ReflectionMapId, m_PrimaryReflectionTexture);
+                ExecuteCommand(context, cmd);
+            }
+            finally
+            {
+                CommandBufferPool.Release(cmd);
+            }
+        }
+
+        RenderTexture AcquireCameraRenderTexture(Camera camera)
+        {
+            int camId = camera.GetInstanceID();
+            var descriptor = GetDescriptor(camera);
+
+            if (m_CameraRenderTextures.TryGetValue(camId, out ReflectionTarget entry) && entry.texture != null && descriptor.Equals(entry.descriptor))
+                return entry.texture;
+
+            if (entry.texture != null)
+            {
+                if (reflectionCamera.targetTexture == entry.texture)
+                    reflectionCamera.targetTexture = null;
+                SafeDestroyObject(entry.texture);
+            }
+
+            PruneDeadCameraTargets(camId);
+
+            entry.sourceCamera = camera;
+            entry.descriptor = descriptor;
+            entry.texture = new RenderTexture(descriptor) { hideFlags = HideFlags.DontSave };
+            m_CameraRenderTextures[camId] = entry;
+            return entry.texture;
+        }
+
+        void PruneDeadCameraTargets(int ignoreCamId)
+        {
+            if (m_CameraRenderTextures.Count <= 4)
+                return;
+
+            m_DeadCameraIds.Clear();
+            foreach (var kv in m_CameraRenderTextures)
+            {
+                if (kv.Key != ignoreCamId && kv.Value.sourceCamera == null)
+                    m_DeadCameraIds.Add(kv.Key);
+            }
+
+            for (int i = 0; i < m_DeadCameraIds.Count; i++)
+            {
+                int deadId = m_DeadCameraIds[i];
+                if (m_CameraRenderTextures.TryGetValue(deadId, out ReflectionTarget dead))
+                {
+                    if (reflectionCamera.targetTexture == dead.texture)
+                        reflectionCamera.targetTexture = null;
+                    SafeDestroyObject(dead.texture);
+                    m_CameraRenderTextures.Remove(deadId);
+                }
+            }
+            m_DeadCameraIds.Clear();
         }
 
         void RenderMirror(ScriptableRenderContext context, Camera camera)
@@ -245,10 +345,19 @@ namespace kTools.Mirrors
             var mirrorMatrix = GetMirrorMatrix();
             reflectionCamera.worldToCameraMatrix = camera.worldToCameraMatrix * mirrorMatrix;
 
-            // Make oplique projection matrix where near plane is mirror plane
+            // Reset to a symmetric projection before mirror oblique clip so portal oblique matrices are not double-applied.
+            reflectionCamera.orthographic = camera.orthographic;
+            if (camera.orthographic)
+                reflectionCamera.orthographicSize = camera.orthographicSize;
+            else
+                reflectionCamera.fieldOfView = camera.fieldOfView;
+            reflectionCamera.aspect = camera.aspect;
+            reflectionCamera.nearClipPlane = Mathf.Max(0.05f, camera.nearClipPlane);
+            reflectionCamera.farClipPlane = camera.farClipPlane;
+            reflectionCamera.ResetProjectionMatrix();
+
             var mirrorPlane = GetMirrorPlane(reflectionCamera);
-            var projectionMatrix = camera.CalculateObliqueMatrix(mirrorPlane);
-            reflectionCamera.projectionMatrix = projectionMatrix;
+            reflectionCamera.projectionMatrix = reflectionCamera.CalculateObliqueMatrix(mirrorPlane);
             
             // Miscellanious camera settings
             reflectionCamera.cullingMask = layerMask;
@@ -259,7 +368,7 @@ namespace kTools.Mirrors
             // Render reflection camera with inverse culling
             GL.invertCulling = true;
 #if UNITY_2023_1_OR_NEWER
-            RenderPipeline.SubmitRenderRequest(reflectionCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = m_RenderTexture });
+            RenderPipeline.SubmitRenderRequest(reflectionCamera, new UniversalRenderPipeline.SingleCameraRequest { destination = reflectionCamera.targetTexture });
 #else
             UniversalRenderPipeline.RenderSingleCamera(context, reflectionCamera);
 #endif
@@ -313,19 +422,21 @@ namespace kTools.Mirrors
 #region Output
         void SetShaderUniforms(ScriptableRenderContext context, RenderTexture renderTexture, CommandBuffer cmd)
         {
-            var block = new MaterialPropertyBlock();
+            m_PropertyBlock ??= new MaterialPropertyBlock();
+            m_PropertyBlock.Clear();
             switch(scope)
             {
                 case OutputScope.Global:
                     // Globals
-                    cmd.SetGlobalTexture("_ReflectionMap", renderTexture);
+                    cmd.SetGlobalTexture(ReflectionMapId, renderTexture);
                     ExecuteCommand(context, cmd);
 
                     // Property Blocm
-                    block.SetFloat("_LocalMirror", 0.0f);
+                    m_PropertyBlock.SetFloat(LocalMirrorId, 0.0f);
                     foreach(var renderer in renderers)
                     {
-                        renderer.SetPropertyBlock(block);
+                        if (renderer != null)
+                            renderer.SetPropertyBlock(m_PropertyBlock);
                     }
                     break;
                 case OutputScope.Local:
@@ -333,11 +444,12 @@ namespace kTools.Mirrors
                     Shader.EnableKeyword("_BLEND_MIRRORS");
 
                     // Property Block
-                    block.SetTexture("_LocalReflectionMap", renderTexture);
-                    block.SetFloat("_LocalMirror", 1.0f);
+                    m_PropertyBlock.SetTexture(LocalReflectionMapId, renderTexture);
+                    m_PropertyBlock.SetFloat(LocalMirrorId, 1.0f);
                     foreach(var renderer in renderers)
                     {
-                        renderer.SetPropertyBlock(block);
+                        if (renderer != null)
+                            renderer.SetPropertyBlock(m_PropertyBlock);
                     }
                     break;
             }

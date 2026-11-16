@@ -172,6 +172,7 @@ public static class PortalCameraController
 
         PortalGateway.SwitchZoneEnvironment(entry, exit);
         CleanupSplit();
+        PortalManager.TriggerPassThroughClose(entry, exit);
     }
 
     public static void UpdateSplitGhost()

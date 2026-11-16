@@ -36,6 +36,12 @@ public sealed class PortalTravellerVisual
 
     public PortalGateway ClonePortal { get; private set; }
 
+    public void Prewarm(PlayerController player)
+    {
+        if (player == null) return;
+        EnsureRig(player);
+    }
+
     public void Sync(PlayerController player, PortalGateway splitExit, float splitExitSide, List<PortalGateway> activePortals)
     {
         if (player == null)

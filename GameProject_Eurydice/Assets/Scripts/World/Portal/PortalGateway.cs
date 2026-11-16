@@ -27,6 +27,7 @@ public class PortalGateway : MonoBehaviour
     private static readonly int HasPortalTexId = Shader.PropertyToID("_HasPortalTex");
     private static readonly int OpenProgressId = Shader.PropertyToID("_OpenProgress");
     private static readonly int RippleStrengthId = Shader.PropertyToID("_RippleStrength");
+    private static readonly int RippleSpeedId = Shader.PropertyToID("_RippleSpeed");
     private static readonly int LensCurvatureId = Shader.PropertyToID("_LensCurvature");
     private static readonly int InnerGlowColorId = Shader.PropertyToID("_InnerGlowColor");
     private static readonly int TargetBrightnessId = Shader.PropertyToID("_TargetBrightness");
@@ -37,6 +38,14 @@ public class PortalGateway : MonoBehaviour
     [SerializeField] private string targetSceneName;
     [SerializeField] private PortalGateway linkedPortal;
     [SerializeField] private bool startOpen;
+    [SerializeField] private bool closeAfterPassThrough;
+    [SerializeField] private bool useDistancePin;
+    [SerializeField] private float pinDistance = 30f;
+    [SerializeField] private float unpinDistance = 42f;
+    [SerializeField] private bool requireCameraSight = true;
+    [Range(10f, 180f)]
+    [SerializeField] private float pinViewAngle = 80f;
+    [SerializeField] private float sightUnpinDelay = 2f;
     [SerializeField] private bool syncStateWithLinked = true;
     [SerializeField] private bool mirrorForwardDirection = true;
     [SerializeField] private Renderer portalRenderer;
@@ -69,6 +78,9 @@ public class PortalGateway : MonoBehaviour
     [SerializeField] private float renderTextureScale = 0.85f;
     [SerializeField] private float maxRenderDistance = 60f;
     [SerializeField] private float shadowRenderDistance = 50f;
+    [SerializeField] private float farThrottleDistance = 20f;
+    [Min(1)]
+    [SerializeField] private int farRenderInterval = 2;
     [SerializeField] private LayerMask cullingMask = ~0;
     [SerializeField] private bool useObliqueClip = true;
     [SerializeField] private float clipPlaneOffset = 0.02f;
@@ -80,6 +92,10 @@ public class PortalGateway : MonoBehaviour
     public string TargetPortalId => targetPortalId;
     public PortalState CurrentState { get; private set; } = PortalState.Closed;
     public bool IsOpen => CurrentState == PortalState.Open;
+    public bool CloseAfterPassThrough => closeAfterPassThrough;
+    public bool SyncStateWithLinked => syncStateWithLinked;
+    public bool IsDestinationLoaded => string.IsNullOrEmpty(DestinationSceneName) || SceneStreamer.Instance == null || SceneStreamer.Instance.IsSceneLoaded(DestinationSceneName);
+    public bool IsLoadingVisualActive => Application.isPlaying && (CurrentState == PortalState.Open || CurrentState == PortalState.Opening) && (linkedPortal == null || !IsDestinationLoaded);
     public PortalGateway LinkedPortal => linkedPortal;
     public string DestinationSceneName => linkedPortal != null ? linkedPortal.gameObject.scene.name : targetSceneName;
     public Vector3 ApertureSize => defaultScale;
@@ -100,13 +116,24 @@ public class PortalGateway : MonoBehaviour
     private float currentProgress = 1f;
     private float lastTeleportTime = -10f;
     private bool isScenePinned;
+    private float lastInSightTime = -10f;
+    private int lastRenderedFrame = -1;
+    private bool hasRenderedOnce;
 
     private bool hasBaseMatProps;
     private float baseRipple;
+    private float baseRippleSpeed = 1f;
     private float baseCurvature;
     private Color baseInnerGlow;
     private float baseBrightness = 1f;
+    private bool wasLoadingVisualActive;
+    private bool loadingParticleStarted;
     private float lastFlattenT = -1f;
+    private Texture lastSetPortalTex;
+    private float lastSetHasPortalTex = -1f;
+    private float lastSetOpenProgress = -1f;
+    private float lastSetLightIntensity = -1f;
+    private bool? lastSetLightEnabled;
 
     public void SetLastTeleportTime(float time) => lastTeleportTime = time;
     public void SetLinkedPortal(PortalGateway target) => linkedPortal = target;
@@ -138,11 +165,16 @@ public class PortalGateway : MonoBehaviour
     {
         if (!Application.isPlaying) return;
 
-        PortalManager.Register(this);
-        ItemSocket.OnAnySocketPlaced += OnSocketPlaced;
-
         if (string.IsNullOrEmpty(SceneEnvironmentManager.ActiveSceneName))
             SceneEnvironmentManager.InitializeCurrentScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+
+        bool consumedClosed = SaveManager.IsPortalClosedAnyScene(portalId) ||
+                              (syncStateWithLinked && SaveManager.IsPortalClosedAnyScene(targetPortalId));
+        if (consumedClosed)
+        {
+            SetOpenImmediate(false, syncLinked: false, saveState: false);
+            return;
+        }
 
         bool savedOpen = SaveManager.IsPortalOpenAnyScene(portalId) ||
                          (syncStateWithLinked && SaveManager.IsPortalOpenAnyScene(targetPortalId));
@@ -158,7 +190,12 @@ public class PortalGateway : MonoBehaviour
         PortalManager.Register(this);
         EnsureSetup();
 
-        if (!Application.isPlaying)
+        if (Application.isPlaying)
+        {
+            ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
+            ItemSocket.OnAnySocketPlaced += OnSocketPlaced;
+        }
+        else
         {
             currentProgress = editorPreviewProgress;
             if (portalRenderer != null) portalRenderer.enabled = true;
@@ -168,25 +205,23 @@ public class PortalGateway : MonoBehaviour
 
     private void OnDisable()
     {
+        if (Application.isPlaying)
+            ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
+
         if (PortalCameraController.IsSplitActive && (PortalCameraController.SplitEntry == this || PortalCameraController.SplitExit == this))
             PortalCameraController.CompleteSplit(Camera.main);
 
         PortalManager.Unregister(this);
         PinTargetScene(false);
-        ReleaseCamera();
     }
 
     private void OnDestroy()
     {
-        ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
+        if (Application.isPlaying)
+            ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
         ReleaseCamera();
-
-        if (runtimeMat != null)
-        {
-            if (Application.isPlaying) Destroy(runtimeMat);
-            else DestroyImmediate(runtimeMat);
-            runtimeMat = null;
-        }
+        SafeDestroy(runtimeMat);
+        runtimeMat = null;
     }
 
     private void OnValidate()
@@ -216,16 +251,23 @@ public class PortalGateway : MonoBehaviour
 
         if (debugToggleKey != Key.None && Keyboard.current != null && Keyboard.current[debugToggleKey].wasPressedThisFrame)
             Toggle();
-    }
 
-    private void LateUpdate()
-    {
-        if (Application.isPlaying)
-            PortalManager.UpdateManager();
+        if (CurrentState == PortalState.Open || CurrentState == PortalState.Opening)
+            UpdatePinState();
+
+        if (IsLoadingVisualActive || wasLoadingVisualActive)
+            RefreshVisuals();
     }
 
     public void Open() => SetOpen(true, syncStateWithLinked);
     public void Close() => SetOpen(false, syncStateWithLinked);
+
+    public void NotifyPassThroughCompleted()
+    {
+        if (!Application.isPlaying || !closeAfterPassThrough) return;
+        SaveOpenState(false, markConsumed: true);
+        Close();
+    }
 
     public void Toggle()
     {
@@ -241,7 +283,8 @@ public class PortalGateway : MonoBehaviour
             transitionRoutine = null;
         }
 
-        PinTargetScene(open);
+        if (open) UpdatePinState();
+        else PinTargetScene(false);
 
         CurrentState = open ? PortalState.Open : PortalState.Closed;
         currentProgress = open ? 1f : 0f;
@@ -277,7 +320,12 @@ public class PortalGateway : MonoBehaviour
         if (open && (CurrentState == PortalState.Open || CurrentState == PortalState.Opening)) return;
         if (!open && (CurrentState == PortalState.Closed || CurrentState == PortalState.Closing)) return;
 
-        if (open) PinTargetScene(true);
+        if (open)
+        {
+            UpdatePinState();
+            if (renderTex == null && Camera.main != null)
+                EnsureCamera(Camera.main);
+        }
         SaveOpenState(open);
 
         if (transitionRoutine != null)
@@ -355,6 +403,17 @@ public class PortalGateway : MonoBehaviour
         else onPortalClosed?.Invoke();
     }
 
+    public void PrewarmResources(Camera refCam)
+    {
+        EnsureSetup();
+        EnsureMaterial();
+        if (!Application.isPlaying) return;
+
+        EnsurePortalCameraObject();
+        if (refCam != null && IsOpen)
+            EnsureCamera(refCam);
+    }
+
     public void RenderPortalView(Camera cam, bool isSplitEntry)
     {
         if (currentProgress <= 0.001f || linkedPortal == null || portalRenderer == null || !portalRenderer.enabled) return;
@@ -364,6 +423,11 @@ public class PortalGateway : MonoBehaviour
         Vector3 localCamPos = inT.InverseTransformPoint(cam.transform.position);
         float viewSide = isSplitEntry ? PortalCameraController.SplitEntrySide : (localCamPos.z >= 0f ? 1f : -1f);
         float sqrDist = (cam.transform.position - inT.position).sqrMagnitude;
+
+        if (Application.isPlaying && hasRenderedOnce && !isSplitEntry && farRenderInterval > 1 &&
+            sqrDist > farThrottleDistance * farThrottleDistance &&
+            Time.frameCount - lastRenderedFrame < farRenderInterval)
+            return;
 
         EnsureCamera(cam);
         if (portalCamera == null || renderTex == null) return;
@@ -383,6 +447,7 @@ public class PortalGateway : MonoBehaviour
         portalCamera.aspect = cam.aspect;
         portalCamera.ResetProjectionMatrix();
 
+        bool appliedObliqueClip = false;
         if (useObliqueClip && localCamPos.z * viewSide > 0.04f)
         {
             Vector3 clipNormalWorld = (mirrorForwardDirection ? viewSide : -viewSide) * outT.forward;
@@ -395,10 +460,12 @@ public class PortalGateway : MonoBehaviour
             {
                 Vector4 clipPlane = new Vector4(camSpaceNormal.x, camSpaceNormal.y, camSpaceNormal.z, camSpaceDist);
                 portalCamera.projectionMatrix = portalCamera.CalculateObliqueMatrix(clipPlane);
+                appliedObliqueClip = true;
             }
         }
 
         PortalManager.HideAllPortalRenderers();
+        PortalManager.SetActivePortalObliqueScope(portalCamera, appliedObliqueClip);
         try
         {
             using (SceneEnvironmentManager.EnterPortalRenderScope(DestinationSceneName, out _))
@@ -408,9 +475,12 @@ public class PortalGateway : MonoBehaviour
         }
         finally
         {
+            PortalManager.SetActivePortalObliqueScope(null, false);
             PortalManager.RestorePortalRenderers();
         }
 
+        hasRenderedOnce = true;
+        lastRenderedFrame = Time.frameCount;
         RefreshVisuals();
     }
 
@@ -449,12 +519,34 @@ public class PortalGateway : MonoBehaviour
 
     public void RefreshVisuals()
     {
+        bool loadingVisual = IsLoadingVisualActive;
+        float pulse = loadingVisual ? 0.5f + 0.5f * Mathf.Sin(Time.time * 4f) : 0f;
         float progress = Application.isPlaying ? currentProgress : editorPreviewProgress;
+        if (loadingVisual)
+            progress = CurrentState == PortalState.Open ? (0.50f + 0.14f * pulse) : Mathf.Max(0.25f, progress);
+
+        bool useCache = Application.isPlaying;
 
         if (portalLight != null)
         {
-            portalLight.enabled = progress > 0.01f;
-            portalLight.intensity = progress * maxLightIntensity;
+            bool lightEnabled = progress > 0.01f;
+            float lightIntensity = progress * maxLightIntensity * (loadingVisual ? (0.75f + 0.45f * pulse) : 1f);
+            if (!useCache || lastSetLightEnabled != lightEnabled)
+            {
+                portalLight.enabled = lightEnabled;
+                lastSetLightEnabled = lightEnabled;
+            }
+            if (!useCache || !Mathf.Approximately(lastSetLightIntensity, lightIntensity))
+            {
+                portalLight.intensity = lightIntensity;
+                lastSetLightIntensity = lightIntensity;
+            }
+        }
+
+        if (loadingVisual && activationParticle != null && !loadingParticleStarted)
+        {
+            activationParticle.Play();
+            loadingParticleStarted = true;
         }
 
         if (portalRenderer == null) return;
@@ -462,30 +554,74 @@ public class PortalGateway : MonoBehaviour
         Material mat = EnsureMaterial();
         if (mat == null) return;
 
-        bool hasTex = linkedPortal != null && renderTex != null;
-        if (hasTex)
-            mat.SetTexture(PortalTexId, renderTex);
+        if (Application.isPlaying && hasBaseMatProps)
+        {
+            if (loadingVisual)
+            {
+                SetMatColor(mat, InnerGlowColorId, baseInnerGlow * (1.25f + 0.85f * pulse));
+                SetMatFloat(mat, RippleStrengthId, baseRipple * 1.6f);
+                SetMatFloat(mat, RippleSpeedId, baseRippleSpeed * 1.8f);
+                lastFlattenT = -1f;
+                wasLoadingVisualActive = true;
+            }
+            else if (wasLoadingVisualActive)
+            {
+                SetMatColor(mat, InnerGlowColorId, baseInnerGlow);
+                SetMatFloat(mat, RippleStrengthId, baseRipple);
+                SetMatFloat(mat, RippleSpeedId, baseRippleSpeed);
+                lastFlattenT = -1f;
+                wasLoadingVisualActive = false;
+                loadingParticleStarted = false;
+            }
+        }
 
-        mat.SetFloat(HasPortalTexId, hasTex ? 1f : 0f);
-        mat.SetFloat(OpenProgressId, progress);
+        bool hasTex = !loadingVisual && linkedPortal != null && renderTex != null;
+        if (hasTex && (!useCache || lastSetPortalTex != renderTex))
+        {
+            mat.SetTexture(PortalTexId, renderTex);
+            lastSetPortalTex = renderTex;
+        }
+        else if (!hasTex)
+        {
+            lastSetPortalTex = null;
+        }
+
+        float hasTexFloat = hasTex ? 1f : 0f;
+        if (!useCache || !Mathf.Approximately(lastSetHasPortalTex, hasTexFloat))
+        {
+            mat.SetFloat(HasPortalTexId, hasTexFloat);
+            lastSetHasPortalTex = hasTexFloat;
+        }
+
+        if (!useCache || !Mathf.Approximately(lastSetOpenProgress, progress))
+        {
+            mat.SetFloat(OpenProgressId, progress);
+            lastSetOpenProgress = progress;
+        }
     }
 
     public void SetProximityFlatten(float t)
     {
-        if (runtimeMat == null || !hasBaseMatProps) return;
+        if (runtimeMat == null || !hasBaseMatProps || IsLoadingVisualActive) return;
 
         t = Mathf.Clamp01(t);
         if (Mathf.Abs(t - lastFlattenT) < 0.0005f) return;
         lastFlattenT = t;
 
-        if (runtimeMat.HasProperty(RippleStrengthId))
-            runtimeMat.SetFloat(RippleStrengthId, Mathf.Lerp(baseRipple, 0f, t));
-        if (runtimeMat.HasProperty(LensCurvatureId))
-            runtimeMat.SetFloat(LensCurvatureId, Mathf.Lerp(baseCurvature, 0f, t));
-        if (runtimeMat.HasProperty(InnerGlowColorId))
-            runtimeMat.SetColor(InnerGlowColorId, Color.Lerp(baseInnerGlow, Color.clear, t));
-        if (runtimeMat.HasProperty(TargetBrightnessId))
-            runtimeMat.SetFloat(TargetBrightnessId, Mathf.Lerp(baseBrightness, 1f, t));
+        SetMatFloat(runtimeMat, RippleStrengthId, Mathf.Lerp(baseRipple, 0f, t));
+        SetMatFloat(runtimeMat, LensCurvatureId, Mathf.Lerp(baseCurvature, 0f, t));
+        SetMatColor(runtimeMat, InnerGlowColorId, Color.Lerp(baseInnerGlow, Color.clear, t));
+        SetMatFloat(runtimeMat, TargetBrightnessId, Mathf.Lerp(baseBrightness, 1f, t));
+    }
+
+    private static void SetMatFloat(Material mat, int id, float value)
+    {
+        if (mat.HasProperty(id)) mat.SetFloat(id, value);
+    }
+
+    private static void SetMatColor(Material mat, int id, Color value)
+    {
+        if (mat.HasProperty(id)) mat.SetColor(id, value);
     }
 
     public void PlayTeleportAudioAndEvent(Vector3 targetPos)
@@ -532,6 +668,7 @@ public class PortalGateway : MonoBehaviour
             portalRenderer.sharedMaterial = runtimeMat;
 
             if (runtimeMat.HasProperty(RippleStrengthId)) baseRipple = runtimeMat.GetFloat(RippleStrengthId);
+            if (runtimeMat.HasProperty(RippleSpeedId)) baseRippleSpeed = runtimeMat.GetFloat(RippleSpeedId);
             if (runtimeMat.HasProperty(LensCurvatureId)) baseCurvature = runtimeMat.GetFloat(LensCurvatureId);
             if (runtimeMat.HasProperty(InnerGlowColorId)) baseInnerGlow = runtimeMat.GetColor(InnerGlowColorId);
             if (runtimeMat.HasProperty(TargetBrightnessId))
@@ -544,10 +681,34 @@ public class PortalGateway : MonoBehaviour
                 }
             }
             lastFlattenT = -1f;
+            lastSetPortalTex = null;
+            lastSetHasPortalTex = -1f;
+            lastSetOpenProgress = -1f;
             hasBaseMatProps = true;
         }
 
         return runtimeMat;
+    }
+
+    private void EnsurePortalCameraObject()
+    {
+        if (portalCamera != null) return;
+
+        var camObj = new GameObject($"PortalCam_{name}") { hideFlags = HideFlags.HideAndDontSave };
+        camObj.transform.SetParent(transform, false);
+        portalCamera = camObj.AddComponent<Camera>();
+        portalCamera.enabled = false;
+        portalCamera.cameraType = CameraType.Game;
+        portalCamera.allowHDR = true;
+        portalCamera.allowMSAA = false;
+        cameraData = camObj.AddComponent<UniversalAdditionalCameraData>();
+        cameraData.renderShadows = false;
+        cameraData.renderPostProcessing = false;
+        cameraData.antialiasing = AntialiasingMode.None;
+        cameraData.requiresColorOption = CameraOverrideOption.UsePipelineSettings;
+        cameraData.requiresDepthOption = CameraOverrideOption.UsePipelineSettings;
+        VolumetricFogRendererFeature.RegisterFogCamera(portalCamera);
+        PortalManager.RegisterPortalCamera(portalCamera);
     }
 
     private void EnsureCamera(Camera sourceCam)
@@ -561,8 +722,7 @@ public class PortalGateway : MonoBehaviour
             {
                 if (portalCamera != null) portalCamera.targetTexture = null;
                 renderTex.Release();
-                if (Application.isPlaying) Destroy(renderTex);
-                else DestroyImmediate(renderTex);
+                SafeDestroy(renderTex);
             }
 
             renderTex = new RenderTexture(width, height, 32, RenderTextureFormat.DefaultHDR)
@@ -571,25 +731,12 @@ public class PortalGateway : MonoBehaviour
                 hideFlags = HideFlags.DontSave
             };
             renderTex.Create();
+            lastSetPortalTex = null;
+            lastSetHasPortalTex = -1f;
+            hasRenderedOnce = false;
         }
 
-        if (portalCamera == null)
-        {
-            var camObj = new GameObject($"PortalCam_{name}") { hideFlags = HideFlags.HideAndDontSave };
-            camObj.transform.SetParent(transform, false);
-            portalCamera = camObj.AddComponent<Camera>();
-            portalCamera.enabled = false;
-            portalCamera.cameraType = CameraType.Game;
-            portalCamera.allowHDR = true;
-            portalCamera.allowMSAA = false;
-            cameraData = camObj.AddComponent<UniversalAdditionalCameraData>();
-            cameraData.renderShadows = false;
-            cameraData.renderPostProcessing = false;
-            cameraData.antialiasing = AntialiasingMode.None;
-            cameraData.requiresColorOption = CameraOverrideOption.UsePipelineSettings;
-            cameraData.requiresDepthOption = CameraOverrideOption.UsePipelineSettings;
-            VolumetricFogRendererFeature.RegisterFogCamera(portalCamera);
-        }
+        EnsurePortalCameraObject();
     }
 
     private void ReleaseCamera()
@@ -597,19 +744,80 @@ public class PortalGateway : MonoBehaviour
         if (portalCamera != null)
         {
             VolumetricFogRendererFeature.UnregisterFogCamera(portalCamera);
+            PortalManager.UnregisterPortalCamera(portalCamera);
             portalCamera.targetTexture = null;
-            if (Application.isPlaying) Destroy(portalCamera.gameObject);
-            else DestroyImmediate(portalCamera.gameObject);
+            SafeDestroy(portalCamera.gameObject);
             portalCamera = null;
+            cameraData = null;
         }
 
         if (renderTex != null)
         {
             renderTex.Release();
-            if (Application.isPlaying) Destroy(renderTex);
-            else DestroyImmediate(renderTex);
+            SafeDestroy(renderTex);
             renderTex = null;
         }
+
+        hasRenderedOnce = false;
+        lastRenderedFrame = -1;
+        lastSetPortalTex = null;
+        lastSetHasPortalTex = -1f;
+    }
+
+    private static void SafeDestroy(Object obj)
+    {
+        if (obj == null) return;
+        if (Application.isPlaying) Destroy(obj);
+        else DestroyImmediate(obj);
+    }
+
+    private void UpdatePinState()
+    {
+        if (!Application.isPlaying || string.IsNullOrEmpty(targetSceneName)) return;
+        bool wantOpen = CurrentState == PortalState.Open || CurrentState == PortalState.Opening;
+        if (!wantOpen)
+        {
+            PinTargetScene(false);
+            return;
+        }
+
+        PinTargetScene(!useDistancePin || ShouldDistancePin());
+    }
+
+    private bool ShouldDistancePin()
+    {
+        if (PortalCameraController.IsSplitActive &&
+            (PortalCameraController.SplitEntry == this || PortalCameraController.SplitExit == this))
+            return true;
+
+        Camera cam = Camera.main;
+        Transform refT = PortalManager.TrackedPlayer != null ? PortalManager.TrackedPlayer.transform : (cam != null ? cam.transform : null);
+        if (refT == null) return false;
+
+        float enterDist = Mathf.Max(0.5f, pinDistance);
+        float limitDist = isScenePinned ? Mathf.Max(enterDist + 1f, unpinDistance) : enterDist;
+        float sqrDist = (transform.position - refT.position).sqrMagnitude;
+        if (sqrDist > limitDist * limitDist) return false;
+        if (!requireCameraSight || cam == null) return true;
+
+        float safetyDist = Mathf.Min(4f, enterDist * 0.25f);
+        float viewAngle = isScenePinned ? Mathf.Min(180f, pinViewAngle + 25f) : pinViewAngle;
+        if (sqrDist <= safetyDist * safetyDist || IsInCameraView(cam, viewAngle))
+        {
+            lastInSightTime = Time.time;
+            return true;
+        }
+
+        return isScenePinned && Time.time - lastInSightTime <= sightUnpinDelay;
+    }
+
+    private bool IsInCameraView(Camera cam, float viewAngleDeg)
+    {
+        Vector3 toPortal = transform.position - cam.transform.position;
+        float sqrMag = toPortal.sqrMagnitude;
+        if (sqrMag < 0.0001f) return true;
+        float cosThreshold = Mathf.Cos(viewAngleDeg * 0.5f * Mathf.Deg2Rad);
+        return Vector3.Dot(cam.transform.forward, toPortal / Mathf.Sqrt(sqrMag)) >= cosThreshold;
     }
 
     private void PinTargetScene(bool pinned)
@@ -622,17 +830,17 @@ public class PortalGateway : MonoBehaviour
         isScenePinned = pinned;
     }
 
-    private void SaveOpenState(bool open)
+    private void SaveOpenState(bool open, bool markConsumed = false)
     {
         if (!Application.isPlaying) return;
 
         if (!string.IsNullOrEmpty(portalId))
-            SaveManager.SetPortalOpenState(portalId, open, gameObject.scene.name);
+            SaveManager.SetPortalOpenState(portalId, open, gameObject.scene.name, !open && markConsumed);
 
         if (syncStateWithLinked && !string.IsNullOrEmpty(targetPortalId))
         {
             string sceneName = !string.IsNullOrEmpty(targetSceneName) ? targetSceneName : gameObject.scene.name;
-            SaveManager.SetPortalOpenState(targetPortalId, open, sceneName);
+            SaveManager.SetPortalOpenState(targetPortalId, open, sceneName, !open && markConsumed);
         }
     }
 
@@ -703,10 +911,7 @@ public class PortalGateway : MonoBehaviour
             tempQuad.transform.localScale = visualScale;
 
             if (tempQuad.TryGetComponent<Collider>(out var col))
-            {
-                if (Application.isPlaying) Destroy(col);
-                else DestroyImmediate(col);
-            }
+                SafeDestroy(col);
 
             portalRenderer = tempQuad.GetComponent<Renderer>();
         }
@@ -716,9 +921,7 @@ public class PortalGateway : MonoBehaviour
                 mf.sharedMesh = quadMesh;
 
             portalRenderer.transform.localScale = visualScale;
-
-            if (Application.isPlaying) Destroy(tempQuad);
-            else DestroyImmediate(tempQuad);
+            SafeDestroy(tempQuad);
         }
 
         defaultScale = visualScale;

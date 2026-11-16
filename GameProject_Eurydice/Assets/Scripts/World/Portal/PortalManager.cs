@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public static class PortalManager
 {
@@ -9,15 +10,34 @@ public static class PortalManager
 
     private static readonly Dictionary<string, PortalGateway> PortalsById = new();
     private static readonly List<PortalGateway> ActivePortalsList = new();
+    private static readonly HashSet<int> PortalCameraIds = new();
     private static readonly Plane[] FrustumPlanes = new Plane[6];
     private static readonly List<Renderer> HiddenRenderers = new(16);
     private static readonly PortalTravellerVisual TravellerVisual = new();
 
+    private static PortalManagerRunner runner;
     private static PlayerController trackedPlayer;
     private static Vector3 prevPlayerPos;
     private static bool hasPrevPlayerPos;
     private static int lastSteppedFrame = -1;
     private static bool isRenderingAnyPortal;
+    private static Camera activePortalRenderCamera;
+    private static bool activePortalUsedObliqueClip;
+    private static bool hasPrewarmed;
+
+    private sealed class PortalManagerRunner : MonoBehaviour
+    {
+        private void Start()
+        {
+            if (SceneStreamer.Instance == null)
+                Prewarm();
+        }
+
+        private void LateUpdate()
+        {
+            UpdateManager();
+        }
+    }
 
     public static IReadOnlyList<PortalGateway> ActivePortals => ActivePortalsList;
     public static PlayerController TrackedPlayer => trackedPlayer;
@@ -27,8 +47,125 @@ public static class PortalManager
     {
         ActivePortalsList.Clear();
         PortalsById.Clear();
+        PortalCameraIds.Clear();
+        runner = null;
+        trackedPlayer = null;
+        hasPrevPlayerPos = false;
+        lastSteppedFrame = -1;
+        isRenderingAnyPortal = false;
+        activePortalRenderCamera = null;
+        activePortalUsedObliqueClip = false;
+        hasPrewarmed = false;
+        PortalObliqueDepthFix.ReleaseResources();
         UnhookPipeline();
         HookPipeline();
+    }
+
+    internal static void SetActivePortalObliqueScope(Camera cam, bool usedObliqueClip)
+    {
+        activePortalRenderCamera = usedObliqueClip ? cam : null;
+        activePortalUsedObliqueClip = usedObliqueClip && cam != null;
+    }
+
+    public static bool IsPortalCamera(Camera cam)
+    {
+        return cam != null && PortalCameraIds.Contains(cam.GetInstanceID());
+    }
+
+    internal static void RegisterPortalCamera(Camera cam)
+    {
+        if (cam != null)
+            PortalCameraIds.Add(cam.GetInstanceID());
+    }
+
+    internal static void UnregisterPortalCamera(Camera cam)
+    {
+        if (cam != null)
+            PortalCameraIds.Remove(cam.GetInstanceID());
+    }
+
+    public static void Prewarm()
+    {
+        if (!Application.isPlaying || hasPrewarmed) return;
+        hasPrewarmed = true;
+
+        EnsureRunner();
+
+        var svc = Resources.Load<ShaderVariantCollection>("PortalShaderVariants");
+        if (svc != null && !svc.isWarmedUp)
+            svc.WarmUp();
+
+        if (trackedPlayer == null)
+            trackedPlayer = Object.FindFirstObjectByType<PlayerController>();
+
+        if (trackedPlayer != null)
+        {
+            TravellerVisual.Prewarm(trackedPlayer);
+            trackedPlayer.CameraModeController?.Prewarm();
+        }
+
+        Camera mainCam = Camera.main;
+        for (int i = 0; i < ActivePortalsList.Count; i++)
+            ActivePortalsList[i]?.PrewarmResources(mainCam);
+
+        if (mainCam != null && ActivePortalsList.Count > 0)
+            WarmupPortalRenderPipeline(mainCam);
+    }
+
+    private static void WarmupPortalRenderPipeline(Camera mainCam)
+    {
+        var tempRt = new RenderTexture(16, 16, 16, RenderTextureFormat.DefaultHDR)
+        {
+            hideFlags = HideFlags.DontSave
+        };
+        tempRt.Create();
+
+        var camGo = new GameObject("PortalWarmupCam") { hideFlags = HideFlags.HideAndDontSave };
+        var tempCam = camGo.AddComponent<Camera>();
+        tempCam.enabled = false;
+        tempCam.cameraType = CameraType.Game;
+        tempCam.allowHDR = true;
+        tempCam.allowMSAA = false;
+        tempCam.targetTexture = tempRt;
+        tempCam.cullingMask = mainCam.cullingMask;
+        tempCam.transform.SetPositionAndRotation(mainCam.transform.position, mainCam.transform.rotation);
+
+        var data = camGo.AddComponent<UniversalAdditionalCameraData>();
+        data.renderShadows = false;
+        data.renderPostProcessing = false;
+        data.antialiasing = AntialiasingMode.None;
+        data.requiresColorOption = CameraOverrideOption.UsePipelineSettings;
+        data.requiresDepthOption = CameraOverrideOption.UsePipelineSettings;
+
+        VolumetricFogRendererFeature.RegisterFogCamera(tempCam);
+        RegisterPortalCamera(tempCam);
+        PortalObliqueDepthFix.PrewarmShader();
+
+        isRenderingAnyPortal = true;
+        SetActivePortalObliqueScope(tempCam, true);
+        try
+        {
+            RenderPipeline.SubmitRenderRequest(tempCam, new UniversalRenderPipeline.SingleCameraRequest { destination = tempRt });
+        }
+        finally
+        {
+            SetActivePortalObliqueScope(null, false);
+            isRenderingAnyPortal = false;
+            UnregisterPortalCamera(tempCam);
+            VolumetricFogRendererFeature.UnregisterFogCamera(tempCam);
+            tempCam.targetTexture = null;
+            tempRt.Release();
+            Object.Destroy(tempRt);
+            Object.Destroy(camGo);
+        }
+    }
+
+    private static void EnsureRunner()
+    {
+        if (!Application.isPlaying || runner != null) return;
+        var go = new GameObject("PortalManagerRunner") { hideFlags = HideFlags.HideAndDontSave };
+        Object.DontDestroyOnLoad(go);
+        runner = go.AddComponent<PortalManagerRunner>();
     }
 
     public static void Register(PortalGateway portal)
@@ -38,6 +175,7 @@ public static class PortalManager
         if (!ActivePortalsList.Contains(portal))
             ActivePortalsList.Add(portal);
 
+        EnsureRunner();
         HookPipeline();
 
         if (!string.IsNullOrEmpty(portal.PortalId))
@@ -63,7 +201,8 @@ public static class PortalManager
             if (trackedPlayer != null)
                 trackedPlayer.CameraModeController?.SetNearPortalClip(false, Camera.main);
 
-            TravellerVisual.Dispose();
+            TravellerVisual.Deactivate();
+            PortalObliqueDepthFix.ReleaseResources();
             trackedPlayer = null;
             hasPrevPlayerPos = false;
             lastSteppedFrame = -1;
@@ -81,12 +220,21 @@ public static class PortalManager
     {
         RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
         RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+        VolumetricFogRendererFeature.OnAddCameraPasses -= OnAddCameraPasses;
+        VolumetricFogRendererFeature.OnAddCameraPasses += OnAddCameraPasses;
         PortalCameraController.HookBrain();
     }
 
     private static void UnhookPipeline()
     {
         RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+        VolumetricFogRendererFeature.OnAddCameraPasses -= OnAddCameraPasses;
+    }
+
+    private static void OnAddCameraPasses(ScriptableRenderer renderer, Camera cam)
+    {
+        if (isRenderingAnyPortal && activePortalUsedObliqueClip && cam != null && cam == activePortalRenderCamera)
+            PortalObliqueDepthFix.EnqueuePasses(renderer);
     }
 
     public static void UpdateManager()
@@ -301,6 +449,31 @@ public static class PortalManager
 
         SceneStreamer.Instance?.RefreshZonesForPosition(targetPos);
         entry.PlayTeleportAudioAndEvent(targetPos);
+        if (!shouldSplit)
+            TriggerPassThroughClose(entry, exit);
+    }
+
+    internal static void TriggerPassThroughClose(PortalGateway entry, PortalGateway exit)
+    {
+        if (entry != null && entry.CloseAfterPassThrough)
+        {
+            if (exit != null && entry.SyncStateWithLinked)
+            {
+                SaveManager.SetPortalOpenState(entry.PortalId, false, entry.gameObject.scene.name, markConsumedClosed: true);
+                SaveManager.SetPortalOpenState(exit.PortalId, false, exit.gameObject.scene.name, markConsumedClosed: true);
+                exit.Close();
+            }
+            else
+            {
+                entry.NotifyPassThroughCompleted();
+            }
+        }
+
+        if (exit != null && exit.CloseAfterPassThrough &&
+            exit.CurrentState != PortalState.Closed && exit.CurrentState != PortalState.Closing)
+        {
+            exit.NotifyPassThroughCompleted();
+        }
     }
 
     private static bool TryDetectCross(PortalGateway portal, Vector3 prevWorld, Vector3 currWorld, out float entrySide, out Vector3 currLocal)

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PortalShaderVariants
+  m_Shaders:
+  - first: {fileID: 4800000, guid: cffeaeec0396a2c4dad475266cc8dfeb, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 08f816187f9af0244a95556ee0cab83f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: _ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED
+        passType: 0
+      - keywords: _ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED _CLUSTER_LIGHT_LOOP
+        passType: 0
+      - keywords: _ADDITIONAL_LIGHTS_CONTRIBUTION_DISABLED _CLUSTER_LIGHT_LOOP _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 0
+      - keywords: _CLUSTER_LIGHT_LOOP
+        passType: 0
+      - keywords: _CLUSTER_LIGHT_LOOP _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 13
+  - first: {fileID: 4800000, guid: 7e21e0ef3d8dcbb48b02fc606922796b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 13
+      - keywords: _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
+        passType: 13

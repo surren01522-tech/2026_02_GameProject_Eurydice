@@ -63,11 +63,13 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
         private void EnsureRTHandles()
         {
             int textureSize = 2048;
-            RenderingUtils.ReAllocateIfNeeded(ref heightRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.RGFloat, 0), FilterMode.Bilinear);
-            RenderingUtils.ReAllocateIfNeeded(ref heightDepthRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.RFloat, 32), FilterMode.Bilinear);
-            RenderingUtils.ReAllocateIfNeeded(ref maskRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.RFloat, 0), FilterMode.Bilinear);
-            RenderingUtils.ReAllocateIfNeeded(ref colorRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.ARGBFloat, 0), FilterMode.Bilinear);
-            RenderingUtils.ReAllocateIfNeeded(ref slopeRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.ARGBFloat, 0), FilterMode.Bilinear);
+            RenderingUtils.ReAllocateHandleIfNeeded(ref heightRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.RGFloat, 0), FilterMode.Bilinear);
+            var depthDesc = new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.Depth, 32);
+            depthDesc.graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.None;
+            RenderingUtils.ReAllocateHandleIfNeeded(ref heightDepthRT, depthDesc, FilterMode.Bilinear);
+            RenderingUtils.ReAllocateHandleIfNeeded(ref maskRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.RFloat, 0), FilterMode.Bilinear);
+            RenderingUtils.ReAllocateHandleIfNeeded(ref colorRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.ARGBFloat, 0), FilterMode.Bilinear);
+            RenderingUtils.ReAllocateHandleIfNeeded(ref slopeRT, new RenderTextureDescriptor(textureSize, textureSize, RenderTextureFormat.ARGBFloat, 0), FilterMode.Bilinear);
         }
 
         private class PassData
@@ -120,13 +122,16 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             if (InfiniteGrassRenderer.instance == null || heightMapMat == null || computeShader == null)
                 return;
 
+            UniversalCameraData cameraData = frameContext.Get<UniversalCameraData>();
+            Camera cam = cameraData.camera;
+            if (cam == null || PortalManager.IsPortalCamera(cam) ||
+                (cameraData.cameraType != CameraType.Game && cameraData.cameraType != CameraType.SceneView))
+                return;
+
             EnsureRTHandles();
 
             UniversalRenderingData renderingData = frameContext.Get<UniversalRenderingData>();
-            UniversalCameraData cameraData = frameContext.Get<UniversalCameraData>();
             UniversalLightData lightData = frameContext.Get<UniversalLightData>();
-
-            Camera cam = cameraData.camera;
 
             float spacing = InfiniteGrassRenderer.instance.spacing;
             float fullDensityDistance = InfiniteGrassRenderer.instance.fullDensityDistance;

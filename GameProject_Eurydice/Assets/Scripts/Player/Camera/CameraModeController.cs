@@ -146,6 +146,8 @@ public class CameraModeController : MonoBehaviour
         }
     }
 
+    public void Prewarm() => EnsureGhostTarget();
+
     private void EnsureGhostTarget()
     {
         if (ghostTarget != null) return;
