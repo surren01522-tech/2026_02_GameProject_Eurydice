@@ -65,7 +65,7 @@ Material:
     - _WindBIntensity: 0.25
     - _WindCFrequency: 11.7
     - _WindCIntensity: 0.125
-    - _WindStrength: 0.7
+    - _WindStrength: 0.85
     m_Colors:
     - _AOColor: {r: 0.049987763, g: 0.3207547, b: 0, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
@@ -82,8 +82,9 @@ Material:
     - _WindBWrap: {r: 0.5, g: 0.5, b: 0, a: 1}
     - _WindCTiling: {r: 0.77, g: 3, b: 0, a: 1}
     - _WindCWrap: {r: 0.5, g: 0.5, b: 0, a: 1}
-    - _WindScroll: {r: -0.15, g: -0.15, b: 0, a: 0}
+    - _WindScroll: {r: -0.085, g: -0.085, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &5562977372024722440
 MonoBehaviour:
   m_ObjectHideFlags: 11

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 78c7bf1625376e943b1b7464041e101f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Examples/Scripts/InputModuleFixerComponent.cs
+  uploadId: 982616

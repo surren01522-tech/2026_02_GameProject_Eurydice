@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 004a873a9e0a6d94da9c8f59d9e10b90
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Runtime/Shaders/SkyClouds_2D.shader
+  uploadId: 982616

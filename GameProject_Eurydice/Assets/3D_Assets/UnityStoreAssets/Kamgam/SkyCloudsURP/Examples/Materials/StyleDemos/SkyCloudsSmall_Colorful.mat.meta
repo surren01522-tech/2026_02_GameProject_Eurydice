@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6b5502d376d3f274abc6927d5ab28d4d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Examples/Materials/StyleDemos/SkyCloudsSmall_Colorful.mat
+  uploadId: 982616

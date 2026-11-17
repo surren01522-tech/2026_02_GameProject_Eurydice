@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f7c35f891061fb04abec8006d5923f06
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297113
+  packageName: 'Shaped Clouds - Fast 2D Cloud System [URP]'
+  packageVersion: 1.1.3
+  assetPath: Assets/ShapedClouds/Demos/Meshes/Textures/doggo.txt
+  uploadId: 997904

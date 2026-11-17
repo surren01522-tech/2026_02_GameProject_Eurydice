@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 58706730efac976428509a42c3d9c200
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Runtime/Shaders/SkyClouds_MobileNoTessellation.shader
+  uploadId: 982616

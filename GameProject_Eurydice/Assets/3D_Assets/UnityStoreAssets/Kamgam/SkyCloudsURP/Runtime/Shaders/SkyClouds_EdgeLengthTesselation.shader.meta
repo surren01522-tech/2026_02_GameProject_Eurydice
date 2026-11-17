@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 425acb8bcf7f3aa4d89b9e356fedb54e
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Runtime/Shaders/SkyClouds_EdgeLengthTesselation.shader
+  uploadId: 982616

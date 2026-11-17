@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d440841c16e92f44da0f944e49165b43
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Runtime/Prefabs/SkyClouds_Mask0.prefab
+  uploadId: 982616

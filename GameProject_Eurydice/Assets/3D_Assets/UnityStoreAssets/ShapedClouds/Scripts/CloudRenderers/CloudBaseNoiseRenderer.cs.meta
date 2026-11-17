@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 5d2a10d8ba7f48d48ba7c5900c074442
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mesh: {fileID: -7399136301523328422, guid: 15ee07d7139d98a429e91cece158e33d, type: 3}
+  - material: {fileID: 2100000, guid: c461e31b6aaeada41ae27f955e1bda4c, type: 2}
+  - noiseTexture: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297113
+  packageName: 'Shaped Clouds - Fast 2D Cloud System [URP]'
+  packageVersion: 1.1.3
+  assetPath: Assets/ShapedClouds/Scripts/CloudRenderers/CloudBaseNoiseRenderer.cs
+  uploadId: 997904

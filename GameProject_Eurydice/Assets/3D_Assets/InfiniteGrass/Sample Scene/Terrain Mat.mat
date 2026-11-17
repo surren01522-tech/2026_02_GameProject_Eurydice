@@ -62,8 +62,8 @@ Material:
     - _QueueOffset: 0
     - _Smoothness: 0
     m_Colors:
-    - _ColorA: {r: 0, g: 0.5294118, b: 0.17254902, a: 1}
-    - _ColorB: {r: 0.50980395, g: 0.7529412, b: 0, a: 1}
-    - _OverlayColor: {r: 0.047058824, g: 0.3019608, b: 0, a: 1}
+    - _ColorA: {r: 0, g: 0.726, b: 0.23662215, a: 1}
+    - _ColorB: {r: 0.6757292, g: 0.998, b: 0, a: 1}
+    - _OverlayColor: {r: 0.06623379, g: 0.425, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

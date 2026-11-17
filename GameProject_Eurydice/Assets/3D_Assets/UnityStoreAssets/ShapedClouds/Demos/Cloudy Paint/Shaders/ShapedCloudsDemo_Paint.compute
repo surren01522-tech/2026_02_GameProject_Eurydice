@@ -1,0 +1,32 @@
+#pragma kernel paint
+
+Texture2D<float> source;
+RWTexture2D<float> result;
+
+float height;
+
+float2 pos1;
+float2 pos2;
+
+float size = 50;
+float strength = 1;
+
+[numthreads(8, 8, 1)]
+void paint(uint3 id: SV_DispatchThreadID) {
+	// Converts the position of the thread into texcoords.
+	float2 uv = float2((float)id.x/height, (float)id.y/height);
+	
+	// r = distance from line segment.
+	float2 ab = pos2 - pos1;
+	float2 ap = uv - pos1;
+
+	float t = clamp(dot(ap, ab)/dot(ab, ab), 0, 1);
+	float2 q = pos1 + t*ab;
+
+	float d = length(uv - q);
+
+	float r = saturate(size/1000-d)*strength;
+
+	// Add value and saturate.
+	result[id.xy] = saturate(source[id.xy].r + r);
+}

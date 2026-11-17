@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9fa85d96ea1a74341b92beb4283cd50d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297113
+  packageName: 'Shaped Clouds - Fast 2D Cloud System [URP]'
+  packageVersion: 1.1.3
+  assetPath: Assets/ShapedClouds/Resources/Shaped Clouds/Materials/Mesh/ShapedClouds_Volume.mat
+  uploadId: 997904

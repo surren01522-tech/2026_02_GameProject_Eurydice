@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: e673fb2594548fc4d91e020728bdc66e
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _NoiseTexture: {fileID: 2800000, guid: e50cf4a263e85e94cb09826d47d2234c, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297113
+  packageName: 'Shaped Clouds - Fast 2D Cloud System [URP]'
+  packageVersion: 1.1.3
+  assetPath: Assets/ShapedClouds/Resources/Shaped Clouds/Shaders/ShapedClouds_CloudFilter.shader
+  uploadId: 997904

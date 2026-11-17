@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a92117d34b231f14f8b15e1ac7dd4ed3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297113
+  packageName: 'Shaped Clouds - Fast 2D Cloud System [URP]'
+  packageVersion: 1.1.3
+  assetPath: Assets/ShapedClouds/Demos/ShapedCloudsDemo_VolumeProfile.asset
+  uploadId: 997904

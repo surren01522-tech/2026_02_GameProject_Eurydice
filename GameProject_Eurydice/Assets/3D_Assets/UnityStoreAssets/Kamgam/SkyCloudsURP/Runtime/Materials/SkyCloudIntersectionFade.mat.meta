@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 60381268557768741b0498ef9caa18d1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288138
+  packageName: 'Sky Clouds URP: Fluffy Cloud Shader'
+  packageVersion: 1.2.0
+  assetPath: Assets/Kamgam/SkyCloudsURP/Runtime/Materials/SkyCloudIntersectionFade.mat
+  uploadId: 982616
