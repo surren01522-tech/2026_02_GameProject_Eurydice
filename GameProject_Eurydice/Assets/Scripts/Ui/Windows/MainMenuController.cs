@@ -64,6 +64,28 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
+        if (SceneStreamer.IsReady)
+        {
+            ActivateMainMenu();
+        }
+        else
+        {
+            if (splineDolly != null) splineDolly.enabled = false;
+            StartCoroutine(WaitForStreamAndShowMenu());
+        }
+    }
+
+    private IEnumerator WaitForStreamAndShowMenu()
+    {
+        while (!SceneStreamer.IsReady)
+            yield return null;
+
+        if (splineDolly != null) splineDolly.enabled = true;
+        ActivateMainMenu();
+    }
+
+    private void ActivateMainMenu()
+    {
         GameStateManager.SetMainMenuActive(true);
         if (continueButton != null)
             continueButton.interactable = SaveManager.HasSaveData();

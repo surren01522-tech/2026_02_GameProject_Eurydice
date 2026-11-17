@@ -13,6 +13,17 @@ public class ScreenFader : MonoBehaviour
 
     public static bool IsFading { get; private set; }
 
+    public static void HoldBlack()
+    {
+        EnsureInstance();
+        if (activeInstance == null || activeInstance.canvasGroup == null) return;
+        activeInstance.StopAllCoroutines();
+        activeInstance.canvasGroup.DOKill();
+        activeInstance.canvasGroup.alpha = 1f;
+        activeInstance.canvasGroup.blocksRaycasts = true;
+        IsFading = true;
+    }
+
     public static void FadeOut(float duration = -1f, Action onComplete = null)
     {
         EnsureInstance();

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -31,6 +33,8 @@ public class UIWindowManager : MonoBehaviour
     private Tween fadeTween;
     private InputSystem_Actions inputActions;
     private bool openedViaEscape;
+    private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
+    private PointerEventData pointerData;
 
     private void Awake()
     {
@@ -100,6 +104,24 @@ public class UIWindowManager : MonoBehaviour
     }
 
     private void OnEscapePerformed(InputAction.CallbackContext _) => HandleEscape();
+
+    private void Update()
+    {
+        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
+
+        bool hasOpenUI = currentTab != WindowTab.None
+            || (settingUI != null && settingUI.IsOpen)
+            || (InventoryUIManager.Instance != null && InventoryUIManager.Instance.IsSelectionMode);
+        if (!hasOpenUI || EventSystem.current == null) return;
+
+        pointerData ??= new PointerEventData(EventSystem.current);
+        pointerData.position = Mouse.current.position.ReadValue();
+        raycastResults.Clear();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+        if (raycastResults.Count == 0)
+            HandleEscape();
+    }
 
     public void ToggleTab(WindowTab tab)
     {

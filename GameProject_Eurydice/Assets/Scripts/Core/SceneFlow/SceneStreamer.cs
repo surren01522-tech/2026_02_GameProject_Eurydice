@@ -45,6 +45,9 @@ public class SceneStreamer : MonoBehaviour
         }
         Instance = this;
         SceneEnvironmentManager.OnActiveSceneChanged += HandleActiveSceneChanged;
+
+        if (!SceneLoader.IsLoading && (!string.IsNullOrEmpty(defaultEntryScene) || alwaysLoadedScenes.Count > 0))
+            ScreenFader.HoldBlack();
     }
 
     private void OnDestroy()
@@ -139,6 +142,8 @@ public class SceneStreamer : MonoBehaviour
 
         isReady = true;
         player?.EnableControl();
+        if (!SceneLoader.IsLoading)
+            ScreenFader.FadeIn();
     }
 
     private void HandleActiveSceneChanged(string newActiveScene)
