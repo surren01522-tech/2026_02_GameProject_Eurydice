@@ -58,6 +58,21 @@ public static class SaveManager
         }
     }
 
+    private static bool suppressProgressLoad;
+
+    public static bool SuppressProgressLoad
+    {
+        get => suppressProgressLoad;
+        set
+        {
+            if (suppressProgressLoad == value) return;
+            suppressProgressLoad = value;
+            currentSaveData = null;
+            sceneLookup.Clear();
+            isDirty = false;
+        }
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStaticState()
     {
@@ -66,6 +81,7 @@ public static class SaveManager
         currentSaveData = null;
         sceneLookup.Clear();
         isDirty = false;
+        suppressProgressLoad = false;
         hooksRegistered = false;
         flushRunner = null;
         activeWriteTask = null;
@@ -141,6 +157,8 @@ public static class SaveManager
 
     public static void SaveGame(SaveData data)
     {
+        if (suppressProgressLoad) return;
+
         try
         {
             flushRunner?.Cancel();
@@ -159,6 +177,8 @@ public static class SaveManager
 
     public static void SaveDeferred(SaveData data)
     {
+        if (suppressProgressLoad) return;
+
         currentSaveData = data;
         isDirty = true;
         if (!Application.isPlaying)
@@ -202,6 +222,8 @@ public static class SaveManager
 
     public static void FlushSave()
     {
+        if (suppressProgressLoad) return;
+
         flushRunner?.Cancel();
         try
         {
@@ -229,7 +251,7 @@ public static class SaveManager
 
     public static SaveData LoadGame()
     {
-        if (!File.Exists(SaveDataPath))
+        if (suppressProgressLoad || !File.Exists(SaveDataPath))
         {
             currentSaveData = new SaveData();
             RebuildSceneLookup(currentSaveData);

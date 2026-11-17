@@ -4,16 +4,13 @@ using UnityEngine.UI;
 using Unity.Cinemachine;
 using DG.Tweening;
 
+[DefaultExecutionOrder(-100)]
 public class MainMenuController : MonoBehaviour
 {
     [Header("시네머신 참조")]
     [SerializeField] private CinemachineBrain cinemachineBrain;
     [SerializeField] private CinemachineCamera titleCamera;
     [SerializeField] private int titlePriority = 20;
-
-    [Header("스폰 설정")]
-    [Tooltip("새 게임 시 플레이어가 배치될 시작 위치")]
-    [SerializeField] private Transform initialSpawnPoint;
 
     [Header("에디터 설정")]
     [Tooltip("게임 시작 시 메인 메뉴를 자동으로 띄울지 여부")]
@@ -35,12 +32,14 @@ public class MainMenuController : MonoBehaviour
     private static void ResetStaticState() => HasGameStarted = false;
 
     private bool isTransitioning;
-    private bool hadSaveDataOnStart;
     private CinemachineSplineDolly splineDolly;
     private Tween fadeTween;
 
+    private bool ShouldBypassMenu() => (Application.isEditor && bypassInEditor) || HasGameStarted || !autoShowOnStart;
+
     private void Awake()
     {
+        SaveManager.SuppressProgressLoad = !ShouldBypassMenu();
         FindReferences();
         InitTitleCamera();
         BindButtons();
@@ -59,17 +58,15 @@ public class MainMenuController : MonoBehaviour
 
     private void Start()
     {
-        bool shouldBypass = (Application.isEditor && bypassInEditor) || HasGameStarted || !autoShowOnStart;
-        if (shouldBypass)
+        if (ShouldBypassMenu())
         {
             BypassMainMenu();
             return;
         }
 
-        hadSaveDataOnStart = SaveManager.HasSaveData();
         GameStateManager.SetMainMenuActive(true);
         if (continueButton != null)
-            continueButton.interactable = hadSaveDataOnStart;
+            continueButton.interactable = SaveManager.HasSaveData();
     }
 
     private void BypassMainMenu()
@@ -176,24 +173,17 @@ public class MainMenuController : MonoBehaviour
         if (splineDolly != null)
             splineDolly.enabled = false;
 
+        SaveManager.SuppressProgressLoad = false;
+
         if (isNewGame)
         {
             SaveManager.DeleteSaveData();
-            if (SceneStreamer.Instance != null &&
-                !string.IsNullOrEmpty(SceneStreamer.Instance.DefaultEntryScene) &&
-                (hadSaveDataOnStart || SceneEnvironmentManager.ActiveSceneName != SceneStreamer.Instance.DefaultEntryScene))
-            {
-                HasGameStarted = true;
-                SceneLoader.Load(UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name, savePlayer: false);
-                yield break;
-            }
-
-            var player = FindFirstObjectByType<PlayerController>();
-            if (player != null && initialSpawnPoint != null)
-            {
-                player.Teleport(initialSpawnPoint.position, initialSpawnPoint.rotation, initialSpawnPoint.position, initialSpawnPoint.rotation);
-                SceneStreamer.Instance?.RefreshZonesForPosition(initialSpawnPoint.position);
-            }
+        }
+        else
+        {
+            HasGameStarted = true;
+            SceneLoader.Load(UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name, savePlayer: false);
+            yield break;
         }
 
         Tween fade = FadeMenu(0f, fadeDuration, deactivateOnEnd: true);
