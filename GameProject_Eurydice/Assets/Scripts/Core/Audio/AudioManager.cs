@@ -31,8 +31,18 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip submitClip;
     [SerializeField] private AudioClip cancelClip;
 
+    [Header("상태별 BGM 덕킹")]
+    [SerializeField, Range(0f, 1f)] private float modalBgmScale = 0.4f;
+    [SerializeField, Range(0f, 1f)] private float puzzleBgmScale = 0.5f;
+    [SerializeField, Min(0f)] private float duckFadeDuration = 0.3f;
+
     private Sequence bgmFadeSeq;
     private Sequence ambFadeSeq;
+    private Tween bgmDuckTween;
+    private AudioClip targetBgmClip;
+    private AudioClip targetAmbienceClip;
+    private float bgmFadeWeight = 1f;
+    private float bgmDuckScale = 1f;
 
     private void Awake()
     {
@@ -47,10 +57,52 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        GameStateManager.OnInputModeChanged += HandleInputModeChanged;
+        HandleInputModeChanged(GameStateManager.CurrentInputMode);
+    }
+
+    private void OnDisable()
+    {
+        GameStateManager.OnInputModeChanged -= HandleInputModeChanged;
+    }
+
     private void OnDestroy()
     {
         bgmFadeSeq?.Kill();
         ambFadeSeq?.Kill();
+        bgmDuckTween?.Kill();
+    }
+
+    private void HandleInputModeChanged(InputMode mode)
+    {
+        float targetScale = mode switch
+        {
+            InputMode.UIModal => modalBgmScale,
+            InputMode.Puzzle => puzzleBgmScale,
+            _ => 1f
+        };
+
+        bgmDuckTween?.Kill();
+        if (duckFadeDuration <= 0f)
+        {
+            bgmDuckScale = targetScale;
+            ApplyBgmVolume();
+            return;
+        }
+
+        bgmDuckTween = DOVirtual.Float(bgmDuckScale, targetScale, duckFadeDuration, val =>
+        {
+            bgmDuckScale = val;
+            ApplyBgmVolume();
+        }).SetUpdate(true).SetLink(gameObject);
+    }
+
+    private void ApplyBgmVolume()
+    {
+        if (bgmSource != null)
+            bgmSource.volume = bgmFadeWeight * bgmDuckScale;
     }
 
     private void InitSources()
@@ -154,30 +206,39 @@ public class AudioManager : MonoBehaviour
     public void PlayBGM(AudioClip clip, bool loop = true)
     {
         bgmFadeSeq?.Kill();
+        targetBgmClip = clip;
         if (bgmSource == null) return;
 
         if (clip == null)
         {
             bgmSource.Stop();
+            bgmSource.clip = null;
             return;
         }
 
         bgmSource.clip = clip;
         bgmSource.loop = loop;
-        bgmSource.volume = 1f;
+        bgmFadeWeight = 1f;
+        ApplyBgmVolume();
         bgmSource.Play();
     }
 
     public void FadeBGM(AudioClip newClip, float duration = 1.5f, bool loop = true)
     {
         if (bgmSource == null) return;
+        if (IsAlreadyTargeting(bgmSource, bgmFadeSeq, targetBgmClip, newClip)) return;
+
+        targetBgmClip = newClip;
         bgmFadeSeq?.Kill();
-        bgmFadeSeq = FadeAudioSource(bgmSource, newClip, duration, loop);
+        bgmFadeSeq = FadeBgmSource(newClip, duration, loop);
     }
 
     public void PlayAmbience(AudioClip clip, float duration = 1.5f)
     {
         if (ambienceSource == null) return;
+        if (IsAlreadyTargeting(ambienceSource, ambFadeSeq, targetAmbienceClip, clip)) return;
+
+        targetAmbienceClip = clip;
         ambFadeSeq?.Kill();
         ambFadeSeq = FadeAudioSource(ambienceSource, clip, duration, true);
     }
@@ -185,8 +246,53 @@ public class AudioManager : MonoBehaviour
     public void StopAmbience(float duration = 1.5f)
     {
         if (ambienceSource == null) return;
+        if (IsAlreadyTargeting(ambienceSource, ambFadeSeq, targetAmbienceClip, null)) return;
+
+        targetAmbienceClip = null;
         ambFadeSeq?.Kill();
         ambFadeSeq = FadeAudioSource(ambienceSource, null, duration, true);
+    }
+
+    private static bool IsAlreadyTargeting(AudioSource source, Sequence seq, AudioClip currentTarget, AudioClip nextClip)
+    {
+        bool isFading = seq != null && seq.IsActive();
+        if (nextClip == null)
+            return currentTarget == null && !source.isPlaying && !isFading;
+
+        return currentTarget == nextClip && (source.isPlaying || isFading);
+    }
+
+    private Sequence FadeBgmSource(AudioClip newClip, float duration, bool loop)
+    {
+        float halfDuration = Mathf.Max(duration * 0.5f, 0.01f);
+        Sequence seq = DOTween.Sequence().SetUpdate(true).SetLink(bgmSource.gameObject);
+
+        if (bgmSource.isPlaying && bgmSource.clip != null)
+        {
+            seq.Append(DOVirtual.Float(bgmFadeWeight, 0f, halfDuration, val =>
+            {
+                bgmFadeWeight = val;
+                ApplyBgmVolume();
+            })).AppendCallback(bgmSource.Stop);
+        }
+
+        if (newClip != null)
+        {
+            seq.AppendCallback(() =>
+            {
+                bgmSource.clip = newClip;
+                bgmSource.loop = loop;
+                bgmFadeWeight = 0f;
+                ApplyBgmVolume();
+                bgmSource.Play();
+            }).Append(DOVirtual.Float(0f, 1f, halfDuration, val =>
+            {
+                bgmFadeWeight = val;
+                ApplyBgmVolume();
+            }));
+        }
+
+        return seq;
     }
 
     private Sequence FadeAudioSource(AudioSource source, AudioClip newClip, float duration, bool loop)

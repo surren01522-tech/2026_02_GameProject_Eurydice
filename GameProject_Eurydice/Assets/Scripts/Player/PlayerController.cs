@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -36,6 +38,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxFrameDeltaTime = 0.1f;
     [SerializeField] private float voidRescueDropDistance = 15f;
 
+    [Header("오디오 설정")]
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private List<SurfaceAudioSet> surfaceAudioSets = new List<SurfaceAudioSet>();
+    [SerializeField, Min(0.05f)] private float walkStepInterval = 0.5f;
+    [SerializeField, Min(0.05f)] private float runStepInterval = 0.32f;
+    [SerializeField, Range(0f, 1f)] private float footstepVolume = 0.7f;
+    [SerializeField] private Vector2 footstepPitchRange = new Vector2(0.92f, 1.08f);
+    [SerializeField] private float minLandFallSpeed = -5f;
+
+    [Serializable]
+    public struct SurfaceAudioSet
+    {
+        public AudioSurface.SurfaceType surface;
+        public AudioClip[] footstepClips;
+        public AudioClip landClip;
+    }
+
     private const float MaxSubStepDelta = 0.02f;
     private const float GroundSearchDistance = 500f;
 
@@ -50,6 +69,10 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastSafeGroundedPos;
     private Quaternion lastSafeGroundedRot = Quaternion.identity;
     private bool hasSafeGroundedPos;
+    private float stepTimer;
+    private bool wasGrounded = true;
+    private float airPeakFallSpeed;
+    private Collider currentGroundCollider;
 
     public InputSystem_Actions InputActions => inputActions;
     public Transform CameraTransform => cameraTransform;
@@ -305,6 +328,7 @@ public class PlayerController : MonoBehaviour
         }
 
         ApplyMovementAndGravity(dt);
+        HandlePlayerAudio(dt);
         TrackSafeGroundOrRescue();
     }
 
@@ -354,7 +378,112 @@ public class PlayerController : MonoBehaviour
         if (controller == null || !controller.enabled) return;
 
         if (inputActions.Player.Jump.IsPressed() && controller.isGrounded)
+        {
             verticalVelocity = Mathf.Sqrt(jumpPower * -2f * gravity);
+            PlayPlayerSFX(jumpClip, 1f);
+        }
+    }
+
+    private void HandlePlayerAudio(float dt)
+    {
+        if (controller == null || !controller.enabled) return;
+
+        bool grounded = controller.isGrounded;
+        if (!grounded)
+        {
+            if (verticalVelocity < airPeakFallSpeed)
+                airPeakFallSpeed = verticalVelocity;
+            stepTimer = 0f;
+        }
+        else
+        {
+            if (!wasGrounded && airPeakFallSpeed <= minLandFallSpeed)
+                PlayPlayerSFX(ResolveLandClip(), 1f);
+
+            airPeakFallSpeed = 0f;
+
+            float horizSpeedSq = moveVelocity.x * moveVelocity.x + moveVelocity.z * moveVelocity.z;
+            AudioClip[] activeFootsteps = ResolveFootstepClips();
+            if (horizSpeedSq > 0.04f && activeFootsteps != null && activeFootsteps.Length > 0)
+            {
+                bool isRunning = inputActions != null && inputActions.Player.Sprint.IsPressed();
+                float interval = isRunning ? runStepInterval : walkStepInterval;
+                stepTimer += dt;
+                if (stepTimer >= interval)
+                {
+                    stepTimer = 0f;
+                    var clip = activeFootsteps[UnityEngine.Random.Range(0, activeFootsteps.Length)];
+                    PlayPlayerSFX(clip, footstepVolume);
+                }
+            }
+            else
+            {
+                stepTimer = 0f;
+            }
+        }
+
+        wasGrounded = grounded;
+    }
+
+    private AudioSurface.SurfaceType GetCurrentSurfaceType()
+    {
+        if (currentGroundCollider == null) return AudioSurface.SurfaceType.Default;
+
+        var surface = currentGroundCollider.GetComponentInParent<AudioSurface>();
+        if (surface != null) return surface.Type;
+
+        if (currentGroundCollider.gameObject.layer == LayerMask.NameToLayer("Water"))
+            return AudioSurface.SurfaceType.Water;
+
+        return AudioSurface.SurfaceType.Default;
+    }
+
+    private SurfaceAudioSet? FindSurfaceSet(AudioSurface.SurfaceType type)
+    {
+        for (int i = 0; i < surfaceAudioSets.Count; i++)
+        {
+            if (surfaceAudioSets[i].surface == type)
+                return surfaceAudioSets[i];
+        }
+        return null;
+    }
+
+    private AudioClip[] ResolveFootstepClips()
+    {
+        var type = GetCurrentSurfaceType();
+        var set = FindSurfaceSet(type);
+        if (set.HasValue && set.Value.footstepClips != null && set.Value.footstepClips.Length > 0)
+            return set.Value.footstepClips;
+
+        if (type != AudioSurface.SurfaceType.Default)
+        {
+            var defaultSet = FindSurfaceSet(AudioSurface.SurfaceType.Default);
+            if (defaultSet.HasValue && defaultSet.Value.footstepClips != null && defaultSet.Value.footstepClips.Length > 0)
+                return defaultSet.Value.footstepClips;
+        }
+        return null;
+    }
+
+    private AudioClip ResolveLandClip()
+    {
+        var type = GetCurrentSurfaceType();
+        var set = FindSurfaceSet(type);
+        if (set.HasValue && set.Value.landClip != null)
+            return set.Value.landClip;
+
+        if (type != AudioSurface.SurfaceType.Default)
+        {
+            var defaultSet = FindSurfaceSet(AudioSurface.SurfaceType.Default);
+            if (defaultSet.HasValue)
+                return defaultSet.Value.landClip;
+        }
+        return null;
+    }
+
+    private void PlayPlayerSFX(AudioClip clip, float volume)
+    {
+        if (clip == null || AudioManager.Instance == null) return;
+        AudioManager.Instance.PlaySFXAt(clip, transform.position, volume, 1f, 20f, footstepPitchRange.x, footstepPitchRange.y);
     }
 
     private void ApplyMovementAndGravity(float remaining)
@@ -413,6 +542,7 @@ public class PlayerController : MonoBehaviour
         Vector3 pos = transform.position;
         float startY = pos.y + controller.center.y + topClearance;
         bool hasFloor = TryProbeGround(new Vector3(pos.x, startY, pos.z), GroundSearchDistance, probeRadius, 0f, out RaycastHit hit);
+        currentGroundCollider = hasFloor ? hit.collider : null;
 
         if (controller.isGrounded && hasFloor && hit.normal.y > 0.4f && hit.distance <= halfHeight + 0.6f)
         {

@@ -26,6 +26,10 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button quitButton;
     [SerializeField] private float fadeDuration = 0.3f;
 
+    [Header("오디오")]
+    [SerializeField] private AudioClip titleBgm;
+    [SerializeField, Min(0f)] private float bgmFadeDuration = 1.5f;
+
     public static bool HasGameStarted { get; set; } = false;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -89,6 +93,8 @@ public class MainMenuController : MonoBehaviour
         GameStateManager.SetMainMenuActive(true);
         if (continueButton != null)
             continueButton.interactable = SaveManager.HasSaveData();
+        if (titleBgm != null && AudioManager.Instance != null)
+            AudioManager.Instance.FadeBGM(titleBgm, bgmFadeDuration);
     }
 
     private void BypassMainMenu()
@@ -223,6 +229,8 @@ public class MainMenuController : MonoBehaviour
 
         HasGameStarted = true;
         GameStateManager.SetMainMenuActive(false);
+        if (titleBgm != null)
+            AudioZone.RefreshActiveAudio();
         isTransitioning = false;
     }
 

@@ -13,16 +13,24 @@ public class UIButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private Ease pressEase = Ease.OutQuad;
     [SerializeField] private Ease releaseEase = Ease.OutBack;
 
+    [Header("사운드")]
+    [SerializeField] private bool playSound = true;
+
     private Selectable selectable;
     private Vector3 defaultScale;
     private Tween scaleTween;
     private bool isHovered;
 
-    public static UIButtonTween Bind(Selectable target)
+    public static UIButtonTween Bind(Selectable target, bool playSound = true)
     {
         if (target == null) return null;
         var comp = target.GetComponent<UIButtonTween>();
-        return comp != null ? comp : target.gameObject.AddComponent<UIButtonTween>();
+        if (comp == null)
+        {
+            comp = target.gameObject.AddComponent<UIButtonTween>();
+            comp.playSound = playSound;
+        }
+        return comp;
     }
 
     private void Awake()
@@ -43,6 +51,7 @@ public class UIButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (selectable != null && !selectable.interactable) return;
         isHovered = true;
         AnimateScale(defaultScale * hoverScale, hoverEase);
+        if (playSound) AudioManager.Instance?.PlayNavigate();
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -55,6 +64,7 @@ public class UIButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (selectable != null && !selectable.interactable) return;
         AnimateScale(defaultScale * pressScale, pressEase, duration * 0.6f);
+        if (playSound) AudioManager.Instance?.PlaySubmit();
     }
 
     public void OnPointerUp(PointerEventData eventData)

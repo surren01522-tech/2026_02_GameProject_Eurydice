@@ -153,7 +153,10 @@ public static class SceneEnvironmentManager
         env.ApplyLights(isPrimary);
 
         if (isPrimary)
+        {
             env.ApplyRenderSettings();
+            AudioZone.RefreshActiveAudio();
+        }
         else if (sceneName == blendTargetSceneName && blendFactor > 0f)
             env.SetVolumeBlendWeight(blendFactor);
     }
@@ -254,7 +257,19 @@ public static class SceneEnvironmentManager
         if (saveScene)
             SaveManager.SaveActiveScene(toScene);
 
+        AudioZone.RefreshActiveAudio();
         OnActiveSceneChanged?.Invoke(toScene);
+    }
+
+    public static void ApplyActiveSceneAudio(bool includeBgm = true, bool includeAmbience = true)
+    {
+        if (AudioManager.Instance == null || string.IsNullOrEmpty(activeSceneName)) return;
+        if (!Environments.TryGetValue(activeSceneName, out var env) || env == null) return;
+
+        if (includeBgm)
+            AudioManager.Instance.FadeBGM(env.BgmClip, env.AudioFadeDuration);
+        if (includeAmbience)
+            AudioManager.Instance.PlayAmbience(env.AmbienceClip, env.AudioFadeDuration);
     }
 
     public static void RefreshSceneLights(string sceneName)

@@ -52,11 +52,19 @@ public class SceneEnvironment : MonoBehaviour
     [SerializeField] private VolumeBinding[] volumes = Array.Empty<VolumeBinding>();
     [SerializeField] private bool isCaptured;
 
+    [FoldGroup("오디오 설정")]
+    [SerializeField] private AudioClip bgmClip;
+    [SerializeField] private AudioClip ambienceClip;
+    [SerializeField, Min(0f)] private float audioFadeDuration = 1.5f;
+
     private SphericalHarmonicsL2 cachedProbe;
     private bool probeInitialized;
 
     public string SceneName => gameObject.scene.name;
     public bool IsCaptured => isCaptured;
+    public AudioClip BgmClip => bgmClip;
+    public AudioClip AmbienceClip => ambienceClip;
+    public float AudioFadeDuration => audioFadeDuration;
 
     private string cachedSavedLight;
     private bool savedLightCacheValid;

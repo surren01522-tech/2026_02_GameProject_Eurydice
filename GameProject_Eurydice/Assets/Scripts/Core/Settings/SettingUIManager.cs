@@ -69,7 +69,7 @@ public class SettingUIManager : MonoBehaviour
             if (btn != null)
             {
                 BindButtonEvents(btn, i);
-                UIButtonTween.Bind(btn);
+                UIButtonTween.Bind(btn, playSound: false);
             }
         }
 
