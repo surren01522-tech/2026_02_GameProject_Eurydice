@@ -3630,7 +3630,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PortalGateway_Mat_PortalGateway
-  m_Shader: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3e12843b6172437a97b72a09065ff2fd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -3674,6 +3674,7 @@ Material:
     - _NoiseScale: 4
     - _NoiseStrength: 0.14
     - _OpenProgress: 1
+    - _PolyCount: 0
     - _QueueControl: 1
     - _QueueOffset: 0
     - _RimWidth: 0.07
@@ -3685,6 +3686,24 @@ Material:
     m_Colors:
     - _FallbackColor: {r: 0.11999995, g: 0.23999995, b: 0.37999994, a: 1}
     - _InnerGlowColor: {r: 0.15, g: 0.55, b: 1.2, a: 1}
+    - _PolyMetrics: {r: 0, g: 0, b: 1, a: 0}
+    - _PolyPair0: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair1: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair10: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair11: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair12: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair13: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair14: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair15: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair2: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair3: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair4: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair5: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair6: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair7: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair8: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair9: {r: 0, g: 0, b: 0, a: 0}
+    - _PolySpace: {r: 0, g: 0, b: 2.2, a: 3}
     - _RimColor: {r: 0.35, g: 1.7, b: 2.4, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
@@ -5779,6 +5798,9 @@ MonoBehaviour:
     originalWeight: 1
     originalPriority: 0
   isCaptured: 1
+  bgmClip: {fileID: 0}
+  ambienceClip: {fileID: 0}
+  audioFadeDuration: 1.5
 --- !u!4 &1509951337
 Transform:
   m_ObjectHideFlags: 0
@@ -6682,7 +6704,15 @@ MonoBehaviour:
   syncStateWithLinked: 1
   mirrorForwardDirection: 1
   portalRenderer: {fileID: 2071951832}
-  portalShader: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
+  portalShader: {fileID: 4800000, guid: 3e12843b6172437a97b72a09065ff2fd, type: 3}
+  shapeMode: 0
+  customCurveSmoothness: 0.85
+  customShapePoints: []
+  evaluatedShapePoints: []
+  polySpaceCenter: {x: 0, y: 0}
+  polySpaceSize: {x: 2.2, y: 3}
+  polyInteriorCenter: {x: 0, y: 0}
+  polyMaxInradius: 1
   openDuration: 1.2
   closeDuration: 0.6
   openCurve:
@@ -6775,7 +6805,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3, y: 583, z: 1018}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2071951834}

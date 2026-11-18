@@ -2533,7 +2533,7 @@ PositionConstraint:
   serializedVersion: 2
   m_Weight: 1
   m_TranslationAtRest: {x: 0, y: 0, z: 0}
-  m_TranslationOffset: {x: 0, y: 0, z: 0}
+  m_TranslationOffset: {x: 0, y: -1, z: 0}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
@@ -2608,8 +2608,8 @@ Transform:
   m_GameObject: {fileID: 1245118531}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 17.16, z: 0}
-  m_LocalScale: {x: 2.2, y: 2.2000005, z: 2.2000005}
+  m_LocalPosition: {x: 0, y: 16.16, z: 0}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 962898203}
@@ -2644,12 +2644,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9710df3aa110a4b976b7e343484e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InfiniteGrassRenderer
+  targetCamera: {fileID: 1378291575}
+  renderInSceneView: 1
   grassMaterial: {fileID: 2100000, guid: 851879c6d723afb4a8aaa2242cee777c, type: 2}
   spacing: 0.13
   drawDistance: 500
   fullDensityDistance: 35
   grassMeshSubdivision: 1
   textureUpdateThreshold: 10
+  slopeVerticalTolerance: 0.75
+  localSlopeRadius: 35
   maxBufferCount: 1
   previewVisibleGrassCount: 0
 --- !u!4 &1275312338
@@ -2684,6 +2688,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb9491ec52a784447b3ce89e7a37e38f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTracker
+  stepEffectTransform: {fileID: 1245118535}
+  stepDiameter: 1.2
+  maxGroundGap: 0.35
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 73
+  footOffsetOverride: 0
 --- !u!114 &1294200486
 MonoBehaviour:
   m_ObjectHideFlags: 0

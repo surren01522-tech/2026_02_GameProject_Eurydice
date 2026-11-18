@@ -8,24 +8,27 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main.unity
     guid: c1d2e3f4a5b647899012abcdef567890
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test Scenes/MainScene_test.unity
     guid: fe915b190258392458404702deca5ec2
   - enabled: 1
     path: Assets/Scenes/Test Scenes/Play_test.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test Scenes/WaterShaderTest.unity
     guid: 31089d011b6b5304b9f8ab39e2f85ce4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test Scenes/Grass_test.unity
     guid: 48afe3fe89405a64781b3f507aa92fcc
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test Scenes/GodRay_test.unity
     guid: 1bb28c921a401b144ba19f2ea7d3dc14
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Test Scenes/GodRay_test_night.unity
     guid: 676e4339acfce22458058b1409412693
+  - enabled: 1
+    path: Assets/Scenes/Chapter_1.unity
+    guid: 7cac95d1f7293914e9012e3b4bccea06
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: c1b14114868871148bd70efd982e5022, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

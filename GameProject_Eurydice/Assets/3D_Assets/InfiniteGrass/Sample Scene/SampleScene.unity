@@ -15346,12 +15346,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9710df3aa110a4b976b7e343484e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetCamera: {fileID: 330585545}
+  renderInSceneView: 1
   grassMaterial: {fileID: 2100000, guid: 851879c6d723afb4a8aaa2242cee777c, type: 2}
   spacing: 0.1
   drawDistance: 300
   fullDensityDistance: 40
   grassMeshSubdivision: 2
   textureUpdateThreshold: 10
+  slopeVerticalTolerance: 0.75
+  localSlopeRadius: 35
   maxBufferCount: 4
   previewVisibleGrassCount: 1
 --- !u!1 &1034065410

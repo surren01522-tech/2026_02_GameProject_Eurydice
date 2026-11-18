@@ -1120,7 +1120,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PortalGateway_Mat_PortalGateway
-  m_Shader: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3e12843b6172437a97b72a09065ff2fd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []

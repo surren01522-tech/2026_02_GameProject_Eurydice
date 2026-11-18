@@ -1,101 +1,240 @@
-#pragma kernel CSMain
+#pragma kernel TileCull
+#pragma kernel SpawnDense
+#pragma kernel SpawnSparse
 
 float _Spacing;
 float _DrawDistance;
-float _TextureUpdateThreshold;
+float _GrassDataRadius;
 float _FullDensityDistance;
 
-int2 _GridStartIndex;
-int2 _GridSize;
+int2 _TileStartIndex;
+int2 _TileGridSize;
 float3 _CameraPosition;
 float2 _CenterPos;
 float3 _BoundsMin;
 float3 _BoundsMax;
 
 float4x4 _VPMatrix;
+float4 _FrustumPlanes[6];
 
 SamplerState linearClampSampler;
 
-//Generated and passedby the Custom Renderer Feature
 Texture2D<float2> _GrassHeightMapRT;
 Texture2D<float> _GrassMaskMapRT;
-//--------------------------------------------------
 
+AppendStructuredBuffer<int2> _DenseTiles;
+AppendStructuredBuffer<int3> _SparseTiles;
+StructuredBuffer<int2> _DenseTilesRO;
+StructuredBuffer<int3> _SparseTilesRO;
 AppendStructuredBuffer<float3> _GrassPositions;
 
-uint murmurHash3(int input) {
-	uint h = abs(input);
-	h ^= h >> 16;
-	h *= 0x85ebca6b;
-	h ^= h >> 13;
-	h *= 0xc2b2ae3d;
-	h ^= h >> 16;
-	return h;
+static const int TILE_W = 16;
+static const int TILE_H = 32;
+
+uint murmurHash3(int input)
+{
+    uint h = (uint)(input >= 0 ? input : -input);
+    h ^= h >> 16;
+    h *= 0x85ebca6b;
+    h ^= h >> 13;
+    h *= 0xc2b2ae3d;
+    h ^= h >> 16;
+    return h;
+}
+
+uint murmurHash2D(int2 p)
+{
+    uint h = asuint(p.x * 73856093 ^ p.y * 19349663);
+    h ^= h >> 16;
+    h *= 0x85ebca6b;
+    h ^= h >> 13;
+    h *= 0xc2b2ae3d;
+    h ^= h >> 16;
+    return h;
 }
 
 float random(int index)
 {
-	return murmurHash3(index) / 4294967295.0;
+    return murmurHash3(index) / 4294967295.0;
 }
 
 float Remap(float In, float2 InMinMax, float2 OutMinMax)
 {
-    return OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
+    return OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / max(InMinMax.y - InMinMax.x, 1e-5);
+}
+
+// 9-bit 2D interleave bijection between rank [0..511] and (x [0..15], y [0..31])
+int2 DecodeRankToLocalCell(uint r, uint tileHash)
+{
+    uint x = ((r & 2u) << 2) | (r & 8u) | ((r & 32u) >> 4) | ((r & 128u) >> 7);
+    uint y = ((r & 1u) << 4) | ((r & 4u) << 1) | ((r & 16u) >> 2) | ((r & 64u) >> 5) | ((r & 256u) >> 8);
+    uint2 tileXor = uint2(tileHash & 15u, (tileHash >> 4) & 31u);
+    return int2(uint2(x, y) ^ tileXor);
+}
+
+uint EncodeLocalCellToRank(int2 localCell, uint tileHash)
+{
+    uint2 tileXor = uint2(tileHash & 15u, (tileHash >> 4) & 31u);
+    uint2 c = uint2(localCell) ^ tileXor;
+    return ((c.y >> 4) & 1u)
+         | (((c.x >> 3) & 1u) << 1)
+         | (((c.y >> 3) & 1u) << 2)
+         | (((c.x >> 2) & 1u) << 3)
+         | (((c.y >> 2) & 1u) << 4)
+         | (((c.x >> 1) & 1u) << 5)
+         | (((c.y >> 1) & 1u) << 6)
+         | ((c.x & 1u) << 7)
+         | ((c.y & 1u) << 8);
+}
+
+bool PassesDensity(uint rank, uint tileHash, uint shift)
+{
+    if (shift < 9u)
+        return rank < (512u >> shift);
+
+    if (rank != 0u)
+        return false;
+
+    uint tileMask = (1u << min(shift - 9u, 21u)) - 1u;
+    return ((tileHash >> 9) & tileMask) == 0u;
+}
+
+void EmitCellIfVisible(int2 tileCoord, int2 localCell, uint rank, uint tileHash, bool checkRank)
+{
+    int2 currentIndex = int2(tileCoord.x * TILE_W, tileCoord.y * TILE_H) + localCell;
+
+    float2 positionXZ = float2(currentIndex) * _Spacing;
+    float2 randomOffset = float2(
+        random(currentIndex.x * 5542 + currentIndex.y),
+        random(currentIndex.y * 9824 + currentIndex.x)
+    );
+    positionXZ += (randomOffset * 2.0 - 1.0) * _Spacing;
+
+    float2 uv = (positionXZ - _CenterPos) / max(_GrassDataRadius, 1e-5);
+    uv = uv * 0.5 + 0.5;
+    if (any(uv < 0.0) || any(uv > 1.0))
+        return;
+
+    float distXZ = length(_CameraPosition.xz - positionXZ);
+    if (distXZ > _DrawDistance)
+        return;
+
+    if (checkRank)
+    {
+        uint minShift = min((uint)floor(distXZ / max(_FullDensityDistance, 0.001)), 30u);
+        if (!PassesDensity(rank, tileHash, minShift))
+            return;
+    }
+
+    float2 heightMap = _GrassHeightMapRT.SampleLevel(linearClampSampler, uv, 0).rg;
+    if (heightMap.g < 0.999)
+        return;
+
+    float maskValue = _GrassMaskMapRT.SampleLevel(linearClampSampler, uv, 0).r;
+    if (saturate(random(currentIndex.x * 9421 + currentIndex.y) - 0.001) < maskValue)
+        return;
+
+    float positionY = Remap(heightMap.r, float2(0.0, 1.0), float2(_BoundsMin.y, _BoundsMax.y));
+    float3 positionWS = float3(positionXZ.x, positionY, positionXZ.y);
+
+    float distanceFromCamera = length(_CameraPosition - positionWS);
+    uint shift = min((uint)floor(distanceFromCamera / max(_FullDensityDistance, 0.001)), 30u);
+    if (!PassesDensity(rank, tileHash, shift))
+        return;
+
+    float4 absPosCS = abs(mul(_VPMatrix, float4(positionWS, 1.0)));
+    if (absPosCS.z <= absPosCS.w && absPosCS.y <= absPosCS.w * 1.5 && absPosCS.x <= absPosCS.w * 1.1 && absPosCS.w <= _DrawDistance)
+    {
+        _GrassPositions.Append(positionWS);
+    }
 }
 
 [numthreads(8, 8, 1)]
-void CSMain(uint3 id : SV_DispatchThreadID)
-{   
-    int2 currentIndex = _GridStartIndex + id.xy;//Index in the Grid
+void TileCull(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_TileGridSize.x || id.y >= (uint)_TileGridSize.y)
+        return;
 
-    float2 positionXZ = currentIndex * _Spacing;//Transform to World position
+    int2 tileCoord = _TileStartIndex + int2(id.xy);
+    int2 baseIndex = int2(tileCoord.x * TILE_W, tileCoord.y * TILE_H);
+    float2 tileMinXZ = float2(baseIndex) * _Spacing - _Spacing;
+    float2 tileMaxXZ = float2(baseIndex + int2(TILE_W - 1, TILE_H - 1)) * _Spacing + _Spacing;
 
-    float2 randomOffset = float2(random(currentIndex.x * 5542 + currentIndex.y), random(currentIndex.y * 9824 + currentIndex.x));
-	positionXZ += (randomOffset * 2 - 1) * _Spacing;//Adding a small offset to it
-	
-    float2 uv = (positionXZ - _CenterPos) / (_TextureUpdateThreshold + _DrawDistance); uv = uv * 0.5 + 0.5;
-    
-    float2 heightMap = _GrassHeightMapRT.SampleLevel(linearClampSampler, uv, 0).rg;//Sampling the HeightMap Texture (Red Channel: Height, Green Channel: Area where grass should be spawned)
-    
-    float maskValue = _GrassMaskMapRT.SampleLevel(linearClampSampler, uv, 0).r;//Sampling the Mask Texture
-    //Since the mask map describes the density and not just areas where the grass should be or not
-    //We calculate a random number and test if it's bigger than the mask value
-    //if the mask value = 1, the random value will never reach 1 so the result is FALSE
-    //if the mask value = 0, the random value is always >= 0, so the result is TRUE
-    //if the mask value = 0.5, the result depends on the random value calculated
-    bool inMask = saturate(random(currentIndex.x * 9421 + currentIndex.y) - 0.001) >= maskValue;
-    
-    if (heightMap.g == 1 && inMask)
+    float2 dataMinXZ = _CenterPos - _GrassDataRadius;
+    float2 dataMaxXZ = _CenterPos + _GrassDataRadius;
+    if (tileMaxXZ.x < dataMinXZ.x || tileMinXZ.x > dataMaxXZ.x ||
+        tileMaxXZ.y < dataMinXZ.y || tileMinXZ.y > dataMaxXZ.y)
+        return;
+
+    float3 bMin = float3(tileMinXZ.x, _BoundsMin.y, tileMinXZ.y);
+    float3 bMax = float3(tileMaxXZ.x, _BoundsMax.y, tileMaxXZ.y);
+
+    float3 d = max(max(bMin - _CameraPosition, _CameraPosition - bMax), 0.0);
+    float distSq = dot(d, d);
+    if (distSq > _DrawDistance * _DrawDistance)
+        return;
+
+    float3 bCenter = 0.5 * (bMin + bMax);
+    float3 bExtents = 0.5 * (bMax - bMin) + float3(2.0, 4.0, 2.0);
+
+    [unroll]
+    for (int i = 0; i < 6; ++i)
     {
-        float positionY = Remap(heightMap.r, float2(0, 1), float2(_BoundsMin.y, _BoundsMax.y));//Reconstruct the Y position from the Height Map
-	
-        float3 positionWS = float3(positionXZ.x, positionY, positionXZ.y);
-
-        //Checking if the grass position is in the density level
-        float distanceFromCamera = length(_CameraPosition - positionWS);
-        //the D value simply increase each "_FullDensityDistance" from the camera
-        //if the distance between the position and the camera is less than the "_FullDensityDistance" : D = 0
-        //if the distance between the position and the camera is greater than the "_FullDensityDistance" but less than 2 * "_FullDensityDistance" : D = 1
-        uint d = uint(floor(distanceFromCamera / _FullDensityDistance));
-        d = 1 << d;//This is just another way of writting d = pow(2, d)
-        
-        //Again like what we did with mask, we calculate a random value, this time not a float but a uint that goes from 0 to the max possible value in the uint
-        //Then we test if the modulo of that random uint with the D value is equal to 0
-        //When D = 1 : every number modulo 1 equal to 0 so the result is always TRUE
-        //When D = 2 : approximatly 50% of the calculated random values gonna fail the test
-        //When D = 4 : approximatly 25% of the calculated random values gonna fail the test
-        bool insideDensityLevel = murmurHash3(currentIndex.x + currentIndex.y * 7954) % d == 0;
-
-        if (insideDensityLevel)
-        {
-            //Frustum culling using the clip position (Taken from Colin Leung repo)
-            float4 absPosCS = abs(mul(_VPMatrix, float4(positionWS, 1.0)));
-		
-            if (absPosCS.z <= absPosCS.w && absPosCS.y <= absPosCS.w * 1.5 && absPosCS.x <= absPosCS.w * 1.1 && absPosCS.w <= _DrawDistance)
-            {
-                //Finally after succeeding all the tests our little position is appended to the buffer
-                _GrassPositions.Append(positionWS);
-            }
-        }
+        float4 p = _FrustumPlanes[i];
+        float r = dot(abs(p.xyz), bExtents);
+        float s = dot(p.xyz, bCenter) + p.w;
+        if (s + r < 0.0)
+            return;
     }
+
+    float minDist = sqrt(distSq);
+    uint minShift = min((uint)floor(minDist / max(_FullDensityDistance, 0.001)), 30u);
+
+    if (minShift < 6u)
+    {
+        _DenseTiles.Append(tileCoord);
+    }
+    else
+    {
+        if (minShift >= 10u)
+        {
+            uint tileHash = murmurHash2D(tileCoord);
+            uint tileMask = (1u << min(minShift - 9u, 21u)) - 1u;
+            if (((tileHash >> 9) & tileMask) != 0u)
+                return;
+        }
+        _SparseTiles.Append(int3(tileCoord.x, tileCoord.y, (int)minShift));
+    }
+}
+
+[numthreads(16, 16, 1)]
+void SpawnDense(uint3 groupID : SV_GroupID, uint3 groupThreadID : SV_GroupThreadID)
+{
+    int2 tileCoord = _DenseTilesRO[groupID.x];
+    uint tileHash = murmurHash2D(tileCoord);
+
+    [unroll]
+    for (int row = 0; row < 2; ++row)
+    {
+        int2 localCell = int2(groupThreadID.x, groupThreadID.y + row * 16);
+        uint rank = EncodeLocalCellToRank(localCell, tileHash);
+        EmitCellIfVisible(tileCoord, localCell, rank, tileHash, true);
+    }
+}
+
+[numthreads(8, 1, 1)]
+void SpawnSparse(uint3 groupID : SV_GroupID, uint3 groupThreadID : SV_GroupThreadID)
+{
+    int3 tileInfo = _SparseTilesRO[groupID.x];
+    uint minShift = (uint)tileInfo.z;
+    uint maxRank = minShift >= 9u ? 1u : (512u >> minShift);
+
+    uint r = groupThreadID.x;
+    if (r >= maxRank)
+        return;
+
+    int2 tileCoord = tileInfo.xy;
+    uint tileHash = murmurHash2D(tileCoord);
+    int2 localCell = DecodeRankToLocalCell(r, tileHash);
+    EmitCellIfVisible(tileCoord, localCell, r, tileHash, false);
 }
