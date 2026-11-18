@@ -194,8 +194,60 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4e587fee5980d3b4fa5da47f57502edd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1647820424}
   m_SourcePrefab: {fileID: 100100000, guid: 4e587fee5980d3b4fa5da47f57502edd, type: 3}
+--- !u!1 &94149361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 94149363}
+  - component: {fileID: 94149362}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &94149362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94149361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: c1ee73cd3eefd8c4d8243457bb652c0e, type: 2}
+--- !u!4 &94149363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94149361}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 29.551287, y: -6.475093, z: -1.5294144}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &258146028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -253,6 +305,46 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 632ffa88f7c9958468560982ce4331d4, type: 3}
+--- !u!1 &292655994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
+  m_PrefabInstance: {fileID: 1172827737}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &292655995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292655994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc26b182cd0a7bf4f8a3aa1b2b847f7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrystalControll
+  material: {fileID: 2100000, guid: a55fcb9f90564bc41bae5fcbaa3a0de2, type: 2}
+  CrystalValue: 1
+  smoothTime: 0.3
+--- !u!1 &905752648 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ad1ea32f1a0e13f4b8d53e1674c09eed, type: 3}
+  m_PrefabInstance: {fileID: 1279813008}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &905752652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905752648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc26b182cd0a7bf4f8a3aa1b2b847f7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrystalControll
+  material: {fileID: 2100000, guid: 9fdcb399386e21149b82762513f60728, type: 2}
+  CrystalValue: 1
+  smoothTime: 0.3
 --- !u!1 &1015059501
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,7 +593,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 292655995}
   m_SourcePrefab: {fileID: 100100000, guid: 98be0baf8af36c9478487ae6f89d2371, type: 3}
 --- !u!1001 &1196041606
 PrefabInstance:
@@ -639,7 +734,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ad1ea32f1a0e13f4b8d53e1674c09eed, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 905752652}
   m_SourcePrefab: {fileID: 100100000, guid: ad1ea32f1a0e13f4b8d53e1674c09eed, type: 3}
 --- !u!1 &1351568684
 GameObject:
@@ -940,6 +1038,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1647820420 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 4e587fee5980d3b4fa5da47f57502edd, type: 3}
+  m_PrefabInstance: {fileID: 29258097}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1647820424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647820420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc26b182cd0a7bf4f8a3aa1b2b847f7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrystalControll
+  material: {fileID: 2100000, guid: 4d9b00c6b1b101848b617a67b7e5d257, type: 2}
+  CrystalValue: 1
+  smoothTime: 0.3
 --- !u!1 &1664663134
 GameObject:
   m_ObjectHideFlags: 0
@@ -1427,6 +1545,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1664663137}
+  - {fileID: 94149363}
   - {fileID: 1581320619}
   - {fileID: 1351568688}
   - {fileID: 1015059505}

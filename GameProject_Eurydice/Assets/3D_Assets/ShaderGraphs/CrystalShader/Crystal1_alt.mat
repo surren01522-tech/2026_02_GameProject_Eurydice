@@ -50,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: f03f3f9c70ef2754085680f46bfb31ce, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5cddd9581ef7f49418d0725456c466ae, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Nomal:
@@ -82,13 +82,14 @@ Material:
     - _AlphaPower: 0.067
     - _Depth: 5.1
     - _DepthPower: 1
-    - _EmissonPower: 8
+    - _EmissonPower: 3
     - _Float: 0.01
     - _FresnelDepth: 1.5
     - _FresnelPower: 2.06
     - _GalaxySpeed: 0.05
     - _NoiseScale: 100
     - _NomalPower: 0.19
+    - _OnOff: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _StarsNoiseSpeed: 0.001
