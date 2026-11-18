@@ -59,7 +59,7 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 1.1
+    m_Value: 1.2
   intensity:
     m_OverrideState: 1
     m_Value: 1.2
@@ -579,7 +579,7 @@ MonoBehaviour:
   active: 1
   distance:
     m_OverrideState: 1
-    m_Value: 81
+    m_Value: 92
   baseHeight:
     m_OverrideState: 1
     m_Value: 0
@@ -594,7 +594,7 @@ MonoBehaviour:
     m_Value: 3.4
   density:
     m_OverrideState: 1
-    m_Value: 0.049
+    m_Value: 0.024
   attenuationDistance:
     m_OverrideState: 1
     m_Value: 128
@@ -609,7 +609,7 @@ MonoBehaviour:
     m_Value: 1
   anisotropy:
     m_OverrideState: 1
-    m_Value: -0.26
+    m_Value: -0.01
   scattering:
     m_OverrideState: 1
     m_Value: 0.503

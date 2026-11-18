@@ -32,6 +32,6 @@ Material:
     - _VorSpeed: 0.05
     m_Colors:
     - _Mask0: {r: 0, g: -999, b: 0, a: 0.001}
-    - _Mask1: {r: 0, g: -999, b: 0, a: 0.001}
+    - _Mask1: {r: 221.07, g: 17.16, b: 125.44, a: 0.7}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
