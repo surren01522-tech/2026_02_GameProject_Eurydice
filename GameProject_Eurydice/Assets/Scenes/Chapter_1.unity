@@ -198,12 +198,12 @@ MonoBehaviour:
     rotation: 0
     windRotation: 0
     layers:
-    - offset: {x: -0.961154, y: -0.7498048}
+    - offset: {x: -0.961154, y: -0.45519817}
       scale: 1
       intensity: 0.1
       wind: {x: 17.975882, y: 8.767423}
       rotation: 64
-    - offset: {x: -0.40515426, y: -0.5238968}
+    - offset: {x: -0.40515426, y: -0.7936075}
       scale: 2
       intensity: 0.075
       wind: {x: 16.68931, y: 6.7429194}
@@ -331,12 +331,12 @@ MonoBehaviour:
   rotation: 0
   windRotation: 0
   layers:
-  - offset: {x: -0.6841234, y: -0.8238351}
+  - offset: {x: -0.7757059, y: -0.9978376}
     scale: 0.7
     intensity: 0.6
     wind: {x: 7.451944, y: 14.158691}
     rotation: 0
-  - offset: {x: -0.98385614, y: -0.43397835}
+  - offset: {x: -0.191668, y: -0.46861386}
     scale: 1
     intensity: 0.4
     wind: {x: 11.836726, y: 1.9727893}
@@ -477,12 +477,12 @@ MonoBehaviour:
   rotation: 0
   windRotation: 0
   layers:
-  - offset: {x: -0.7006911, y: -0.52046484}
+  - offset: {x: -0.7647637, y: -0.65329504}
     scale: 0.7
     intensity: 0.6
     wind: {x: 10.426869, y: 21.616669}
     rotation: 0
-  - offset: {x: -0.9146747, y: 0.005766047}
+  - offset: {x: -0.08806827, y: -0.021756832}
     scale: 1
     intensity: 0.4
     wind: {x: 19.75271, y: 3.13535}
@@ -1306,6 +1306,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8124639754984185698, guid: f1d58fe5cce75824abc7a4724afa35e3, type: 3}
   m_PrefabInstance: {fileID: 427260901}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &472277616
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 472277617}
+  - component: {fileID: 472277618}
+  m_Layer: 0
+  m_Name: WaterParticleRig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &472277617
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472277616}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -744.3725, y: -54.5, z: -850.6789}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 587972748}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &472277618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472277616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e23d5e9b20349a18234567890abcde0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterParticleRig
+  targetParticleSystem: {fileID: 587972750}
+  targetParticleCamera: {fileID: 587972749}
 --- !u!1001 &478739222
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1757,8 +1803,16 @@ PrefabInstance:
       value: 60.000004
       objectReference: {fileID: 0}
     - target: {fileID: 6385616490527466911, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
+      propertyPath: far clip plane
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385616490527466911, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
       propertyPath: m_TargetTexture
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6385616490527466911, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
+      propertyPath: near clip plane
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 6385616490527466911, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
       propertyPath: orthographic size
@@ -1793,11 +1847,24 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2395999261674899114, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 648058117}
+    - targetCorrespondingSourceObject: {fileID: 2395999261674899114, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 472277617}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
 --- !u!4 &587972748 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2395999261674899114, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
+  m_PrefabInstance: {fileID: 587972747}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &587972749 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5935179396264429713, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
+  m_PrefabInstance: {fileID: 587972747}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &587972750 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2159272294909525145, guid: 75d56c2ed09897449965daa481058f5f, type: 3}
   m_PrefabInstance: {fileID: 587972747}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &599870919
@@ -1940,8 +2007,8 @@ Transform:
   m_GameObject: {fileID: 648058116}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4.28, z: 0}
-  m_LocalScale: {x: 4.8772, y: 4.8772, z: 4.8772}
+  m_LocalPosition: {x: 0, y: 0.42, z: 0}
+  m_LocalScale: {x: 6.228184, y: 6.228184, z: 6.228184}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 587972748}
@@ -2513,12 +2580,12 @@ MonoBehaviour:
     rotation: 0
     windRotation: 0
     layers:
-    - offset: {x: -0.58749956, y: -0.94774055}
+    - offset: {x: -0.5837197, y: -0.16841885}
       scale: 2
       intensity: 0.1
       wind: {x: 7.9642105, y: 13.877007}
       rotation: 0
-    - offset: {x: -0.44961384, y: -0.4336379}
+    - offset: {x: -0.6943576, y: -0.8222909}
       scale: 4
       intensity: 0.075
       wind: {x: 9.628571, y: 7.16175}
@@ -3410,12 +3477,12 @@ MonoBehaviour:
     rotation: 0
     windRotation: 0
     layers:
-    - offset: {x: 0.49804646, y: -0.16275848}
+    - offset: {x: 0.50452054, y: -0.6708218}
       scale: 2
       intensity: 0.1
       wind: {x: 4.977632, y: 8.67313}
       rotation: 30
-    - offset: {x: -0.14401205, y: -0.8622523}
+    - offset: {x: -0.1659552, y: -0.37348288}
       scale: 4
       intensity: 0.075
       wind: {x: 5.616666, y: 4.177687}
@@ -4034,7 +4101,7 @@ MonoBehaviour:
   version: 2
   globalVolume: 0
   mode: 1
-  size: {x: 972.0126, y: 296.35876, z: 1079.0048}
+  size: {x: 972.0126, y: 296.35873, z: 1079.0048}
   overrideRendererFilters: 0
   minRendererVolumeSize: 0.1
   objectLayerMask:
@@ -4072,7 +4139,7 @@ Transform:
   m_GameObject: {fileID: 1297280152}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 179.21277, y: 49.515648, z: 280.65814}
+  m_LocalPosition: {x: 179.21277, y: 49.515633, z: 280.65814}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4428,12 +4495,12 @@ MonoBehaviour:
   rotation: 0
   windRotation: 0
   layers:
-  - offset: {x: 0.1, y: -0.75761116}
+  - offset: {x: 0.1, y: -0.86342084}
     scale: 1
     intensity: 0.6
     wind: {x: 23.959064, y: 18.054451}
     rotation: 53
-  - offset: {x: 0.22, y: -0.7276898}
+  - offset: {x: 0.22, y: -0.91814566}
     scale: 2
     intensity: 0.4
     wind: {x: 26.079996, y: 6.988115}
@@ -5116,12 +5183,12 @@ MonoBehaviour:
     rotation: 0
     windRotation: 0
     layers:
-    - offset: {x: -0.0473933, y: 0.45375076}
+    - offset: {x: -0.86891997, y: 0.47127768}
       scale: 1
       intensity: 0.1
       wind: {x: 10.672279, y: 10.540516}
       rotation: 315
-    - offset: {x: -0.82419884, y: 0.3545773}
+    - offset: {x: -0.0056222063, y: 0.5576254}
       scale: 2
       intensity: 0.075
       wind: {x: 10.979013, y: 4.8436823}

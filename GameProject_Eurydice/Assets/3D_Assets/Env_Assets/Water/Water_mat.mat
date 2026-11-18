@@ -27,11 +27,15 @@ Material:
     m_Ints: []
     m_Floats:
     - _FoamLerp: 0.522
-    - _FoamScale: 5.82
+    - _FoamScale: 0.72
+    - _NormalStrength: 0.2
+    - _ReflectionDepth: 6.83
     - _Smoothness: 0.865
     m_Colors:
+    - _BaseColor: {r: 0.66999996, g: 0.98033017, b: 1, a: 1}
     - _UV1: {r: 5, g: 5, b: 0, a: 0}
     - _UV4: {r: 1, g: 1, b: 0, a: 0}
+    - _UnderWater_Color: {r: 0.72, g: 0.8733333, b: 0.88235295, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &192822222179401967
