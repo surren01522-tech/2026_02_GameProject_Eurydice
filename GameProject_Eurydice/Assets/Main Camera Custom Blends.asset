@@ -17,7 +17,7 @@ MonoBehaviour:
     To: Vcam FreeLook
     Blend:
       Style: 2
-      Time: 2
+      Time: 1
       CustomCurve:
         serializedVersion: 2
         m_Curve: []
@@ -28,7 +28,7 @@ MonoBehaviour:
     To: Vcam Strafe
     Blend:
       Style: 2
-      Time: 2
+      Time: 1
       CustomCurve:
         serializedVersion: 2
         m_Curve: []

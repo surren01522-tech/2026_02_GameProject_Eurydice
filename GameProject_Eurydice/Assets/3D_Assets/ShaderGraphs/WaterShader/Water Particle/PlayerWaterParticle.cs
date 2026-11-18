@@ -15,27 +15,26 @@ public class PlayerWaterParticle : MonoBehaviour
     [SerializeField] private float stayEmitInterval = 0.083f;
     [SerializeField] private float spawnRadius = 0.5f;
 
-    private Camera particleCamera;
     private Vector3 prevPosition;
     private float moveYawDeg;
     private float nextStayEmitTime;
     private int waterLayer = -1;
     private bool hasPrevPosition;
-    private bool hasClearedEmptyCam;
 
     private void Awake()
     {
         waterLayer = LayerMask.NameToLayer("Water");
-        if (ParticleCam != null)
-            particleCamera = ParticleCam.GetComponent<Camera>();
     }
 
     public void BindWaterRig(ParticleSystem ps, GameObject cam)
     {
         ParticleSystem = ps;
+        if (ParticleSystem != null)
+        {
+            var main = ParticleSystem.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+        }
         ParticleCam = cam;
-        particleCamera = cam != null ? cam.GetComponent<Camera>() : null;
-        hasClearedEmptyCam = false;
     }
 
     public void UnbindWaterRig(ParticleSystem ps)
@@ -43,18 +42,16 @@ public class PlayerWaterParticle : MonoBehaviour
         if (ParticleSystem != ps) return;
         ParticleSystem = null;
         ParticleCam = null;
-        particleCamera = null;
     }
 
     private void OnEnable()
     {
         prevPosition = transform.position;
         hasPrevPosition = true;
-        hasClearedEmptyCam = false;
         moveYawDeg = transform.eulerAngles.y;
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         Vector3 pos = transform.position;
         if (!hasPrevPosition)
@@ -70,12 +67,17 @@ public class PlayerWaterParticle : MonoBehaviour
         if (dt > 0.0001f && delta.sqrMagnitude <= 25f)
         {
             float horizDistSq = delta.x * delta.x + delta.z * delta.z;
-            float horizDist = horizDistSq > 1e-8f ? Mathf.Sqrt(horizDistSq) : 0f;
-            VelocityXZ = horizDist / dt;
-            VelocityY = Mathf.Abs(delta.y) / dt;
-
-            if (horizDist > 0.001f)
+            if (horizDistSq > 1e-6f)
+            {
+                float horizDist = Mathf.Sqrt(horizDistSq);
+                VelocityXZ = horizDist / dt;
                 moveYawDeg = Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg;
+            }
+            else
+            {
+                VelocityXZ = 0f;
+            }
+            VelocityY = Mathf.Abs(delta.y) / dt;
         }
         else
         {
@@ -83,39 +85,11 @@ public class PlayerWaterParticle : MonoBehaviour
             VelocityY = 0f;
         }
 
+        if (ParticleCam != null)
+            ParticleCam.transform.position = pos + Vector3.up * 10f;
+
         Shader.SetGlobalVector(PlayerPosId, pos);
         Shader.SetGlobalVector(PlayerPosV4Id, new Vector4(pos.x, pos.y, pos.z, transform.localScale.x));
-
-        UpdateParticleCamera(pos);
-    }
-
-    private void UpdateParticleCamera(Vector3 playerPos)
-    {
-        if (ParticleCam == null)
-            return;
-
-        bool hasParticles = ParticleSystem != null && ParticleSystem.particleCount > 0;
-        if (hasParticles)
-        {
-            ParticleCam.transform.position = playerPos + Vector3.up * 10f;
-            hasClearedEmptyCam = false;
-            if (particleCamera != null && !particleCamera.enabled)
-                particleCamera.enabled = true;
-            return;
-        }
-
-        if (!hasClearedEmptyCam)
-        {
-            // Render one empty frame after particles die so _Particle_RT clears its last trail.
-            ParticleCam.transform.position = playerPos + Vector3.up * 10f;
-            hasClearedEmptyCam = true;
-            if (particleCamera != null && !particleCamera.enabled)
-                particleCamera.enabled = true;
-        }
-        else if (particleCamera != null && particleCamera.enabled)
-        {
-            particleCamera.enabled = false;
-        }
     }
 
     private void CreateParticle(float startAngle, float endAngle, float deltaAngle, float speed, float size, float lifetime)
@@ -123,18 +97,7 @@ public class PlayerWaterParticle : MonoBehaviour
         if (ParticleSystem == null || deltaAngle <= 0f)
             return;
 
-        ParticleSystem.MainModule main = ParticleSystem.main;
-        ParticleSystemSimulationSpace simSpace = main.simulationSpace;
-        Transform simTransform = null;
-        if (simSpace == ParticleSystemSimulationSpace.Local)
-            simTransform = ParticleSystem.transform;
-        else if (simSpace == ParticleSystemSimulationSpace.Custom && main.customSimulationSpace != null)
-            simTransform = main.customSimulationSpace;
-
-        Matrix4x4 worldToSim = simTransform != null ? simTransform.worldToLocalMatrix : Matrix4x4.identity;
-        bool useSimMatrix = simTransform != null;
         Vector3 basePos = transform.position;
-
         var emitParams = new ParticleSystem.EmitParams
         {
             startSize = size,
@@ -142,30 +105,23 @@ public class PlayerWaterParticle : MonoBehaviour
             startColor = Color.white
         };
 
+        float startRad = startAngle * Mathf.Deg2Rad;
+        float stepRad = deltaAngle * Mathf.Deg2Rad;
+        float dx = Mathf.Sin(startRad);
+        float dz = Mathf.Cos(startRad);
+        float sinStep = Mathf.Sin(stepRad);
+        float cosStep = Mathf.Cos(stepRad);
+
         for (float angle = startAngle; angle < endAngle; angle += deltaAngle)
         {
-            float rad = angle * Mathf.Deg2Rad;
-            Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
-            Vector3 worldPos = basePos + dir * spawnRadius;
-            Vector3 worldVel = dir * speed;
-
-            if (useSimMatrix)
-            {
-                emitParams.position = worldToSim.MultiplyPoint3x4(worldPos);
-                emitParams.velocity = worldToSim.MultiplyVector(worldVel);
-            }
-            else
-            {
-                emitParams.position = worldPos;
-                emitParams.velocity = worldVel;
-            }
-
+            emitParams.position = new Vector3(basePos.x + dx * spawnRadius, basePos.y, basePos.z + dz * spawnRadius);
+            emitParams.velocity = new Vector3(dx * speed, 0f, dz * speed);
             ParticleSystem.Emit(emitParams, 1);
-        }
 
-        hasClearedEmptyCam = false;
-        if (particleCamera != null && !particleCamera.enabled)
-            particleCamera.enabled = true;
+            float nextX = dx * cosStep + dz * sinStep;
+            dz = dz * cosStep - dx * sinStep;
+            dx = nextX;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
