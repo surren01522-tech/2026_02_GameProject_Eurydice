@@ -3633,7 +3633,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: 3e12843b6172437a97b72a09065ff2fd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SHAPE_CUSTOM
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -3674,36 +3675,36 @@ Material:
     - _NoiseScale: 4
     - _NoiseStrength: 0.14
     - _OpenProgress: 1
-    - _PolyCount: 0
+    - _PolyCount: 9
     - _QueueControl: 1
     - _QueueOffset: 0
     - _RimWidth: 0.07
     - _RippleSpeed: 2
     - _RippleStrength: 0.004
-    - _ShapeMode: 0
+    - _ShapeMode: 1
     - _SwirlStrength: 1.2
     - _TargetBrightness: 1.05
     m_Colors:
     - _FallbackColor: {r: 0.11999995, g: 0.23999995, b: 0.37999994, a: 1}
     - _InnerGlowColor: {r: 0.15, g: 0.55, b: 1.2, a: 1}
-    - _PolyMetrics: {r: 0, g: 0, b: 1, a: 0}
-    - _PolyPair0: {r: 0, g: 0, b: 0, a: 0}
-    - _PolyPair1: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyMetrics: {r: -0.16204311, g: -0.20179276, b: 1.296345, a: 0}
+    - _PolyPair0: {r: -1.4583881, g: -1.8161349, b: 1.4583881, a: -1.8161349}
+    - _PolyPair1: {r: 1.4583881, g: 0.45403373, b: 1.2630011, a: 1.1350844}
     - _PolyPair10: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair11: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair12: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair13: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair14: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair15: {r: 0, g: 0, b: 0, a: 0}
-    - _PolyPair2: {r: 0, g: 0, b: 0, a: 0}
-    - _PolyPair3: {r: 0, g: 0, b: 0, a: 0}
-    - _PolyPair4: {r: 0, g: 0, b: 0, a: 0}
+    - _PolyPair2: {r: 0.729194, g: 1.633648, b: -0.00000006374817, a: 1.8161349}
+    - _PolyPair3: {r: -0.7291941, g: 1.6336479, b: -1.2630011, a: 1.1350844}
+    - _PolyPair4: {r: -1.4583881, g: 0.4540336, b: 0, a: 0}
     - _PolyPair5: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair6: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair7: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair8: {r: 0, g: 0, b: 0, a: 0}
     - _PolyPair9: {r: 0, g: 0, b: 0, a: 0}
-    - _PolySpace: {r: 0, g: 0, b: 2.2, a: 3}
+    - _PolySpace: {r: 0, g: 0, b: 2.9567761, a: 3.6722698}
     - _RimColor: {r: 0.35, g: 1.7, b: 2.4, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
@@ -6705,14 +6706,32 @@ MonoBehaviour:
   mirrorForwardDirection: 1
   portalRenderer: {fileID: 2071951832}
   portalShader: {fileID: 4800000, guid: 3e12843b6172437a97b72a09065ff2fd, type: 3}
-  shapeMode: 0
-  customCurveSmoothness: 0.85
-  customShapePoints: []
-  evaluatedShapePoints: []
+  shapeMode: 1
+  customCurveSmoothness: 0
+  customShapePoints:
+  - {x: -1.4583881, y: -1.8161349}
+  - {x: 1.4583881, y: -1.8161349}
+  - {x: 1.4583881, y: 0.45403373}
+  - {x: 1.2630011, y: 1.1350844}
+  - {x: 0.729194, y: 1.633648}
+  - {x: -0.00000006374817, y: 1.8161349}
+  - {x: -0.7291941, y: 1.6336479}
+  - {x: -1.2630011, y: 1.1350844}
+  - {x: -1.4583881, y: 0.4540336}
+  evaluatedShapePoints:
+  - {x: -1.4583881, y: -1.8161349}
+  - {x: 1.4583881, y: -1.8161349}
+  - {x: 1.4583881, y: 0.45403373}
+  - {x: 1.2630011, y: 1.1350844}
+  - {x: 0.729194, y: 1.633648}
+  - {x: -0.00000006374817, y: 1.8161349}
+  - {x: -0.7291941, y: 1.6336479}
+  - {x: -1.2630011, y: 1.1350844}
+  - {x: -1.4583881, y: 0.4540336}
   polySpaceCenter: {x: 0, y: 0}
-  polySpaceSize: {x: 2.2, y: 3}
-  polyInteriorCenter: {x: 0, y: 0}
-  polyMaxInradius: 1
+  polySpaceSize: {x: 2.9567761, y: 3.6722698}
+  polyInteriorCenter: {x: -0.16204311, y: -0.20179276}
+  polyMaxInradius: 1.296345
   openDuration: 1.2
   closeDuration: 0.6
   openCurve:
@@ -6804,7 +6823,7 @@ Transform:
   m_GameObject: {fileID: 1686042600}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 583, z: 1018}
+  m_LocalPosition: {x: 3, y: 581.8, z: 1018}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8137,7 +8156,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2, y: 3, z: 1}
+  m_LocalScale: {x: 2.9567761, y: 3.6722698, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1686042602}

@@ -505,9 +505,7 @@ public static class PortalManager
         if (Mathf.Abs(dz) < 0.00001f) return false;
 
         Vector3 hit = Vector3.Lerp(prevLocal, currLocal, Mathf.Clamp01(-prevLocal.z / dz));
-        float halfW = Mathf.Max(0.4f, portal.ApertureSize.x * 0.55f);
-        float halfH = Mathf.Max(0.6f, portal.ApertureSize.y * 0.65f);
-        return Mathf.Abs(hit.x) <= halfW && Mathf.Abs(hit.y) <= halfH;
+        return portal.IsLocalPlanePointInsideAperture(hit);
     }
 
     private static void AutoLink(PortalGateway portal)

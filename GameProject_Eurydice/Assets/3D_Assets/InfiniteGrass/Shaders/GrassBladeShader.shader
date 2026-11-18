@@ -176,7 +176,7 @@ Shader "InfiniteGrass/GrassBladeShader"
                 float grassHeight = _GrassHeight * (1.0 - randHeight * _GrassHeightRandomness);
                 if (_GrassDrawDistance > 0.0)
                 {
-                    float edgeFade = 1.0 - smoothstep(_GrassDrawDistance * 0.94, _GrassDrawDistance, distanceFromCamera);
+                    float edgeFade = 1.0 - smoothstep(_GrassDrawDistance * 0.85, _GrassDrawDistance, distanceFromCamera);
                     grassHeight *= edgeFade;
                     grassWidth *= edgeFade;
                 }

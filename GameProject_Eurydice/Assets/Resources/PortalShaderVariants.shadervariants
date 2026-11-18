@@ -28,10 +28,12 @@ ShaderVariantCollection:
         passType: 0
       - keywords: _CLUSTER_LIGHT_LOOP _MAIN_LIGHT_SHADOWS_CASCADE
         passType: 0
-  - first: {fileID: -6465566751694194690, guid: 6e2366073932426468c820f9bbc46df0, type: 3}
+  - first: {fileID: 4800000, guid: 3e12843b6172437a97b72a09065ff2fd, type: 3}
     second:
       variants:
       - keywords: 
+        passType: 13
+      - keywords: _SHAPE_CUSTOM
         passType: 13
   - first: {fileID: 4800000, guid: 7e21e0ef3d8dcbb48b02fc606922796b, type: 3}
     second:

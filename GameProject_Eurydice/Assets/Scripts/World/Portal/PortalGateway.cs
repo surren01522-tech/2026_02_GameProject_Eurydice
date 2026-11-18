@@ -14,10 +14,19 @@ public enum PortalState
     Closing
 }
 
+public enum PortalShapeMode
+{
+    Circle = 0,
+    Custom = 1
+}
+
 [ExecuteAlways]
 [DefaultExecutionOrder(-10)]
 public class PortalGateway : MonoBehaviour
 {
+    public const int MaxCustomShapePoints = 32;
+    private const string DefaultShaderName = "Eurydice/PortalGateway";
+    private const string CustomShapeKeyword = "_SHAPE_CUSTOM";
     private const float PortalCamNearClip = 0.01f;
     private const float ProximityStartDist = 1.5f;
     private const float ProximityFullDist = 0.05f;
@@ -26,6 +35,11 @@ public class PortalGateway : MonoBehaviour
     private static readonly int PortalTexId = Shader.PropertyToID("_PortalTex");
     private static readonly int HasPortalTexId = Shader.PropertyToID("_HasPortalTex");
     private static readonly int OpenProgressId = Shader.PropertyToID("_OpenProgress");
+    private static readonly int ShapeModeId = Shader.PropertyToID("_ShapeMode");
+    private static readonly int PolyCountId = Shader.PropertyToID("_PolyCount");
+    private static readonly int PolySpaceId = Shader.PropertyToID("_PolySpace");
+    private static readonly int PolyMetricsId = Shader.PropertyToID("_PolyMetrics");
+    private static readonly int[] PolyPairIds = CreatePolyPairIds();
     private static readonly int RippleStrengthId = Shader.PropertyToID("_RippleStrength");
     private static readonly int RippleSpeedId = Shader.PropertyToID("_RippleSpeed");
     private static readonly int LensCurvatureId = Shader.PropertyToID("_LensCurvature");
@@ -50,6 +64,16 @@ public class PortalGateway : MonoBehaviour
     [SerializeField] private bool mirrorForwardDirection = true;
     [SerializeField] private Renderer portalRenderer;
     [SerializeField] private Shader portalShader;
+    [SerializeField] private PortalShapeMode shapeMode = PortalShapeMode.Circle;
+    [Range(0f, 1f)]
+    [SerializeField] private float customCurveSmoothness = 0.85f;
+    [SerializeField] private List<Vector2> customShapePoints = new();
+
+    [SerializeField, HideInInspector] private List<Vector2> evaluatedShapePoints = new();
+    [SerializeField, HideInInspector] private Vector2 polySpaceCenter;
+    [SerializeField, HideInInspector] private Vector2 polySpaceSize = new Vector2(2.2f, 3.0f);
+    [SerializeField, HideInInspector] private Vector2 polyInteriorCenter;
+    [SerializeField, HideInInspector] private float polyMaxInradius = 1f;
 
     [FoldGroup("개폐 연출 설정")]
     [SerializeField] private float openDuration = 1.2f;
@@ -98,7 +122,10 @@ public class PortalGateway : MonoBehaviour
     public bool IsLoadingVisualActive => Application.isPlaying && (CurrentState == PortalState.Open || CurrentState == PortalState.Opening) && (linkedPortal == null || !IsDestinationLoaded);
     public PortalGateway LinkedPortal => linkedPortal;
     public string DestinationSceneName => linkedPortal != null ? linkedPortal.gameObject.scene.name : targetSceneName;
-    public Vector3 ApertureSize => defaultScale;
+    public PortalShapeMode ShapeMode => shapeMode;
+    public IReadOnlyList<Vector2> CustomShapePoints => customShapePoints;
+    public IReadOnlyList<Vector2> EvaluatedShapePoints => evaluatedShapePoints;
+    public Vector3 ApertureSize => new Vector3(Mathf.Abs(defaultScale.x), Mathf.Abs(defaultScale.y), Mathf.Abs(defaultScale.z));
     public bool MirrorForward => mirrorForwardDirection;
     public Renderer PortalRenderer => portalRenderer;
     public Camera PortalCamera => portalCamera;
@@ -134,6 +161,16 @@ public class PortalGateway : MonoBehaviour
     private float lastSetOpenProgress = -1f;
     private float lastSetLightIntensity = -1f;
     private bool? lastSetLightEnabled;
+    private bool? lastSetCustomShape;
+    private bool customShapeDirty = true;
+
+    private static int[] CreatePolyPairIds()
+    {
+        var ids = new int[MaxCustomShapePoints / 2];
+        for (int i = 0; i < ids.Length; i++)
+            ids[i] = Shader.PropertyToID($"_PolyPair{i}");
+        return ids;
+    }
 
     public void SetLastTeleportTime(float time) => lastTeleportTime = time;
     public void SetLinkedPortal(PortalGateway target) => linkedPortal = target;
@@ -151,8 +188,10 @@ public class PortalGateway : MonoBehaviour
     private void Awake()
     {
         EnsureSetup();
-        if (portalRenderer != null && portalRenderer.transform.localScale.sqrMagnitude > 0.001f)
+        if (shapeMode == PortalShapeMode.Circle && portalRenderer != null && portalRenderer.transform.localScale.sqrMagnitude > 0.001f)
             defaultScale = portalRenderer.transform.localScale;
+        if (shapeMode == PortalShapeMode.Custom)
+            RebuildCustomShapeMetrics();
     }
 
     public static void SwitchZoneEnvironment(PortalGateway from, PortalGateway to)
@@ -230,7 +269,13 @@ public class PortalGateway : MonoBehaviour
             portalRenderer = GetComponentInChildren<Renderer>();
 
         if (portalShader == null)
-            portalShader = Shader.Find("Shader Graphs/PortalGateway");
+            portalShader = Shader.Find(DefaultShaderName);
+
+        if (shapeMode == PortalShapeMode.Circle && portalRenderer != null && portalRenderer.transform.localScale.sqrMagnitude > 0.001f)
+            defaultScale = portalRenderer.transform.localScale;
+
+        if (shapeMode == PortalShapeMode.Custom)
+            RebuildCustomShapeMetrics();
 
         if (!Application.isPlaying)
         {
@@ -494,18 +539,20 @@ public class PortalGateway : MonoBehaviour
         if (isSplitEntry)
             return 1f - Mathf.InverseLerp(ProximityFullDist, ProximityStartDist, dz);
 
-        float halfW = defaultScale.x * 0.5f;
-        float halfH = defaultScale.y * 0.5f;
-        float dx = Mathf.Max(0f, Mathf.Abs(localCam.x) - halfW);
-        float dy = Mathf.Max(0f, Mathf.Abs(localCam.y) - halfH);
+        Vector3 size = ApertureSize;
+        Vector3 offset = portalRenderer != null ? portalRenderer.transform.localPosition : Vector3.zero;
+        float halfW = size.x * 0.5f;
+        float halfH = size.y * 0.5f;
+        float dx = Mathf.Max(0f, Mathf.Abs(localCam.x - offset.x) - halfW);
+        float dy = Mathf.Max(0f, Mathf.Abs(localCam.y - offset.y) - halfH);
         float apertureDist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
         if (apertureDist >= ProximityStartDist) return 0f;
 
         float rawT = 1f - Mathf.InverseLerp(ProximityFullDist, ProximityStartDist, apertureDist);
         Vector3 closestApertureWorld = transform.TransformPoint(new Vector3(
-            Mathf.Clamp(localCam.x, -halfW, halfW),
-            Mathf.Clamp(localCam.y, -halfH, halfH),
-            0f));
+            Mathf.Clamp(localCam.x, offset.x - halfW, offset.x + halfW),
+            Mathf.Clamp(localCam.y, offset.y - halfH, offset.y + halfH),
+            offset.z));
         Vector3 toPortal = closestApertureWorld - camTransform.position;
         float distSq = toPortal.sqrMagnitude;
         if (distSq > 0.0001f)
@@ -515,6 +562,219 @@ public class PortalGateway : MonoBehaviour
         }
 
         return rawT;
+    }
+
+    public bool IsLocalPlanePointInsideAperture(Vector3 hitLocal)
+    {
+        if (shapeMode == PortalShapeMode.Custom)
+        {
+            var pts = (evaluatedShapePoints != null && evaluatedShapePoints.Count >= 3) ? evaluatedShapePoints : customShapePoints;
+            if (pts != null && pts.Count >= 3)
+                return EvaluatePolygonSignedDistance(new Vector2(hitLocal.x, hitLocal.y), pts) >= 0f;
+        }
+
+        Vector3 size = ApertureSize;
+        Vector3 offset = portalRenderer != null ? portalRenderer.transform.localPosition : Vector3.zero;
+        float halfW = Mathf.Max(0.4f, size.x * 0.55f);
+        float halfH = Mathf.Max(0.6f, size.y * 0.65f);
+        float nx = (hitLocal.x - offset.x) / halfW;
+        float ny = (hitLocal.y - offset.y) / halfH;
+        return (nx * nx + ny * ny) <= 1f;
+    }
+
+    public void ApplyCustomPreset(int presetIndex)
+    {
+        if (customShapePoints == null) customShapePoints = new List<Vector2>();
+        customShapePoints.Clear();
+
+        float halfW = Mathf.Max(0.25f, Mathf.Abs(defaultScale.x) * 0.5f);
+        float halfH = Mathf.Max(0.25f, Mathf.Abs(defaultScale.y) * 0.5f);
+        Vector2 c = portalRenderer != null ? (Vector2)portalRenderer.transform.localPosition : Vector2.zero;
+
+        if (presetIndex == 0)
+        {
+            customShapePoints.Add(c + new Vector2(-halfW, -halfH));
+            customShapePoints.Add(c + new Vector2(halfW, -halfH));
+            customShapePoints.Add(c + new Vector2(halfW, halfH));
+            customShapePoints.Add(c + new Vector2(-halfW, halfH));
+        }
+        else if (presetIndex == 1)
+        {
+            const int segs = 8;
+            for (int i = 0; i < segs; i++)
+            {
+                float a = (i / (float)segs) * Mathf.PI * 2f;
+                customShapePoints.Add(c + new Vector2(Mathf.Cos(a) * halfW, Mathf.Sin(a) * halfH));
+            }
+        }
+        else
+        {
+            customShapePoints.Add(c + new Vector2(-halfW, -halfH));
+            customShapePoints.Add(c + new Vector2(halfW, -halfH));
+            float archBaseY = halfH * 0.25f;
+            float archRadiusY = halfH - archBaseY;
+            const int arcSegs = 6;
+            for (int i = 0; i <= arcSegs; i++)
+            {
+                float a = (i / (float)arcSegs) * Mathf.PI;
+                customShapePoints.Add(c + new Vector2(Mathf.Cos(a) * halfW, archBaseY + Mathf.Sin(a) * archRadiusY));
+            }
+        }
+
+        RebuildCustomShapeMetrics();
+        RefreshVisuals();
+    }
+
+    public void RebuildCustomShapeMetrics()
+    {
+        if (shapeMode != PortalShapeMode.Custom) return;
+
+        if (customShapePoints == null)
+            customShapePoints = new List<Vector2>();
+
+        if (customShapePoints.Count < 3)
+        {
+            ApplyCustomPreset(1);
+            return;
+        }
+
+        if (customShapePoints.Count > MaxCustomShapePoints)
+            customShapePoints.RemoveRange(MaxCustomShapePoints, customShapePoints.Count - MaxCustomShapePoints);
+
+        BuildEvaluatedCurve();
+
+        float minX = float.MaxValue, minY = float.MaxValue;
+        float maxX = float.MinValue, maxY = float.MinValue;
+        Vector2 centroid = Vector2.zero;
+        for (int i = 0; i < evaluatedShapePoints.Count; i++)
+        {
+            Vector2 pt = evaluatedShapePoints[i];
+            if (pt.x < minX) minX = pt.x;
+            if (pt.y < minY) minY = pt.y;
+            if (pt.x > maxX) maxX = pt.x;
+            if (pt.y > maxY) maxY = pt.y;
+            centroid += pt;
+        }
+        centroid /= evaluatedShapePoints.Count;
+
+        Vector2 bestCenter = centroid;
+        float bestDist = EvaluatePolygonSignedDistance(centroid, evaluatedShapePoints);
+        const int GridSteps = 9;
+        for (int gy = 1; gy < GridSteps; gy++)
+        {
+            float ty = gy / (float)GridSteps;
+            float y = Mathf.Lerp(minY, maxY, ty);
+            for (int gx = 1; gx < GridSteps; gx++)
+            {
+                float tx = gx / (float)GridSteps;
+                Vector2 candidate = new Vector2(Mathf.Lerp(minX, maxX, tx), y);
+                float d = EvaluatePolygonSignedDistance(candidate, evaluatedShapePoints);
+                if (d > bestDist)
+                {
+                    bestDist = d;
+                    bestCenter = candidate;
+                }
+            }
+        }
+
+        polyInteriorCenter = bestCenter;
+        polyMaxInradius = Mathf.Max(0.05f, bestDist);
+
+        const float QuadMargin = 0.02f;
+        polySpaceCenter = new Vector2((minX + maxX) * 0.5f, (minY + maxY) * 0.5f);
+        polySpaceSize = new Vector2(Mathf.Max(0.2f, (maxX - minX) + QuadMargin * 2f), Mathf.Max(0.2f, (maxY - minY) + QuadMargin * 2f));
+        defaultScale = new Vector3(polySpaceSize.x, polySpaceSize.y, 1f);
+
+        if (portalRenderer != null)
+        {
+            portalRenderer.transform.localPosition = new Vector3(polySpaceCenter.x, polySpaceCenter.y, 0f);
+            portalRenderer.transform.localRotation = Quaternion.identity;
+            if (!Application.isPlaying || !animateTransformScale)
+                portalRenderer.transform.localScale = defaultScale;
+        }
+
+        customShapeDirty = true;
+    }
+
+    private void BuildEvaluatedCurve()
+    {
+        if (evaluatedShapePoints == null)
+            evaluatedShapePoints = new List<Vector2>(MaxCustomShapePoints);
+        evaluatedShapePoints.Clear();
+
+        int count = customShapePoints.Count;
+        if (customCurveSmoothness <= 0.001f || count >= MaxCustomShapePoints)
+        {
+            for (int i = 0; i < Mathf.Min(count, MaxCustomShapePoints); i++)
+                evaluatedShapePoints.Add(customShapePoints[i]);
+            return;
+        }
+
+        int samplesPerSegment = Mathf.Clamp(MaxCustomShapePoints / count, 1, 8);
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 p0 = customShapePoints[(i - 1 + count) % count];
+            Vector2 p1 = customShapePoints[i];
+            Vector2 p2 = customShapePoints[(i + 1) % count];
+            Vector2 p3 = customShapePoints[(i + 2) % count];
+
+            evaluatedShapePoints.Add(p1);
+            for (int s = 1; s < samplesPerSegment; s++)
+            {
+                float t = s / (float)samplesPerSegment;
+                Vector2 linearPt = Vector2.Lerp(p1, p2, t);
+                Vector2 curvePt = EvalCentripetalCatmullRom(p0, p1, p2, p3, t);
+                evaluatedShapePoints.Add(Vector2.Lerp(linearPt, curvePt, customCurveSmoothness));
+            }
+        }
+    }
+
+    private static Vector2 EvalCentripetalCatmullRom(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float t)
+    {
+        const float Alpha = 0.5f;
+        float t0 = 0f;
+        float t1 = t0 + Mathf.Max(0.0001f, Mathf.Pow(Vector2.Distance(p0, p1), Alpha));
+        float t2 = t1 + Mathf.Max(0.0001f, Mathf.Pow(Vector2.Distance(p1, p2), Alpha));
+        float t3 = t2 + Mathf.Max(0.0001f, Mathf.Pow(Vector2.Distance(p2, p3), Alpha));
+
+        float u = Mathf.Lerp(t1, t2, t);
+        Vector2 a1 = ((t1 - u) * p0 + (u - t0) * p1) / (t1 - t0);
+        Vector2 a2 = ((t2 - u) * p1 + (u - t1) * p2) / (t2 - t1);
+        Vector2 a3 = ((t3 - u) * p2 + (u - t2) * p3) / (t3 - t2);
+        Vector2 b1 = ((t2 - u) * a1 + (u - t0) * a2) / (t2 - t0);
+        Vector2 b2 = ((t3 - u) * a2 + (u - t1) * a3) / (t3 - t1);
+        return ((t2 - u) * b1 + (u - t1) * b2) / (t2 - t1);
+    }
+
+    private static float EvaluatePolygonSignedDistance(Vector2 p, IReadOnlyList<Vector2> pts)
+    {
+        int count = Mathf.Min(pts.Count, MaxCustomShapePoints);
+        if (count < 3) return -1f;
+
+        Vector2 v0 = pts[0];
+        float d = (p - v0).sqrMagnitude;
+        float s = 1f;
+        Vector2 vj = pts[count - 1];
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 vi = pts[i];
+            Vector2 e = vj - vi;
+            Vector2 w = p - vi;
+            float denom = Mathf.Max(Vector2.Dot(e, e), 1e-8f);
+            Vector2 b = w - e * Mathf.Clamp01(Vector2.Dot(w, e) / denom);
+            d = Mathf.Min(d, Vector2.Dot(b, b));
+
+            bool c0 = p.y >= vi.y;
+            bool c1 = p.y < vj.y;
+            bool c2 = e.x * w.y > e.y * w.x;
+            if ((c0 && c1 && c2) || (!c0 && !c1 && !c2))
+                s *= -1f;
+
+            vj = vi;
+        }
+
+        return -s * Mathf.Sqrt(d);
     }
 
     public void RefreshVisuals()
@@ -598,6 +858,41 @@ public class PortalGateway : MonoBehaviour
             mat.SetFloat(OpenProgressId, progress);
             lastSetOpenProgress = progress;
         }
+
+        bool isCustomShape = shapeMode == PortalShapeMode.Custom;
+        if (!useCache || lastSetCustomShape != isCustomShape)
+        {
+            SetMatFloat(mat, ShapeModeId, isCustomShape ? 1f : 0f);
+            if (isCustomShape) mat.EnableKeyword(CustomShapeKeyword);
+            else mat.DisableKeyword(CustomShapeKeyword);
+            lastSetCustomShape = isCustomShape;
+            customShapeDirty = true;
+        }
+
+        if (isCustomShape && (!useCache || customShapeDirty))
+        {
+            if (evaluatedShapePoints == null || evaluatedShapePoints.Count < 3)
+                RebuildCustomShapeMetrics();
+
+            int count = evaluatedShapePoints != null ? Mathf.Min(evaluatedShapePoints.Count, MaxCustomShapePoints) : 0;
+
+            SetMatFloat(mat, PolyCountId, count);
+            if (mat.HasProperty(PolySpaceId))
+                mat.SetVector(PolySpaceId, new Vector4(polySpaceCenter.x, polySpaceCenter.y, polySpaceSize.x, polySpaceSize.y));
+            if (mat.HasProperty(PolyMetricsId))
+                mat.SetVector(PolyMetricsId, new Vector4(polyInteriorCenter.x, polyInteriorCenter.y, polyMaxInradius, 0f));
+
+            for (int pairIdx = 0; pairIdx < PolyPairIds.Length; pairIdx++)
+            {
+                if (!mat.HasProperty(PolyPairIds[pairIdx])) continue;
+                int i0 = pairIdx * 2;
+                int i1 = i0 + 1;
+                Vector2 p0 = i0 < count ? evaluatedShapePoints[i0] : Vector2.zero;
+                Vector2 p1 = i1 < count ? evaluatedShapePoints[i1] : Vector2.zero;
+                mat.SetVector(PolyPairIds[pairIdx], new Vector4(p0.x, p0.y, p1.x, p1.y));
+            }
+            customShapeDirty = false;
+        }
     }
 
     public void SetProximityFlatten(float t)
@@ -640,13 +935,13 @@ public class PortalGateway : MonoBehaviour
         if (shader == null && portalRenderer.sharedMaterial != null)
             shader = portalRenderer.sharedMaterial.shader;
         if (shader == null)
-            shader = Shader.Find("Shader Graphs/PortalGateway");
+            shader = Shader.Find(DefaultShaderName);
         if (shader == null) return portalRenderer.sharedMaterial;
 
         if (!Application.isPlaying)
         {
             Material shared = portalRenderer.sharedMaterial;
-            if (shared == null || shared.shader != shader)
+            if (shared == null)
             {
                 shared = new Material(shader)
                 {
@@ -655,13 +950,27 @@ public class PortalGateway : MonoBehaviour
                 };
                 portalRenderer.sharedMaterial = shared;
             }
+            else if (shared.shader != shader)
+            {
+                shared.shader = shader;
+                shared.renderQueue = 2030;
+            }
             return shared;
         }
 
         if (runtimeMat == null)
         {
             Material source = portalRenderer.sharedMaterial;
-            runtimeMat = (source != null && source.shader == shader) ? new Material(source) : new Material(shader);
+            if (source != null)
+            {
+                runtimeMat = new Material(source);
+                if (runtimeMat.shader != shader)
+                    runtimeMat.shader = shader;
+            }
+            else
+            {
+                runtimeMat = new Material(shader);
+            }
             runtimeMat.name = $"PortalGateway_RuntimeMat_{gameObject.GetInstanceID()}";
             runtimeMat.hideFlags = HideFlags.DontSave;
             runtimeMat.renderQueue = 2030;
@@ -684,6 +993,8 @@ public class PortalGateway : MonoBehaviour
             lastSetPortalTex = null;
             lastSetHasPortalTex = -1f;
             lastSetOpenProgress = -1f;
+            lastSetCustomShape = null;
+            customShapeDirty = true;
             hasBaseMatProps = true;
         }
 
@@ -925,6 +1236,7 @@ public class PortalGateway : MonoBehaviour
         }
 
         defaultScale = visualScale;
+        shapeMode = PortalShapeMode.Circle;
         RefreshVisuals();
     }
 

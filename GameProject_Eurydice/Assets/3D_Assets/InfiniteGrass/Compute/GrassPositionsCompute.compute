@@ -87,16 +87,17 @@ uint EncodeLocalCellToRank(int2 localCell, uint tileHash)
          | ((c.y & 1u) << 8);
 }
 
-bool PassesDensity(uint rank, uint tileHash, uint shift)
+bool PassesContinuousDensity(uint rank, uint tileHash, float keepProb)
 {
-    if (shift < 9u)
-        return rank < (512u >> shift);
+    if (keepProb >= 1.0)
+        return true;
 
-    if (rank != 0u)
-        return false;
+    float frac = (rank == 0u)
+        ? (((tileHash >> 9) & 0xFFFFu) / 65536.0)
+        : (((rank * 2654435761u ^ tileHash) & 0xFFFFu) / 65536.0);
 
-    uint tileMask = (1u << min(shift - 9u, 21u)) - 1u;
-    return ((tileHash >> 9) & tileMask) == 0u;
+    float cellThreshold = (rank + frac) / 512.0;
+    return keepProb > cellThreshold;
 }
 
 void EmitCellIfVisible(int2 tileCoord, int2 localCell, uint rank, uint tileHash, bool checkRank)
@@ -119,10 +120,11 @@ void EmitCellIfVisible(int2 tileCoord, int2 localCell, uint rank, uint tileHash,
     if (distXZ > _DrawDistance)
         return;
 
+    float fullDist = max(_FullDensityDistance, 0.001);
     if (checkRank)
     {
-        uint minShift = min((uint)floor(distXZ / max(_FullDensityDistance, 0.001)), 30u);
-        if (!PassesDensity(rank, tileHash, minShift))
+        float maxKeepProbXZ = exp2(-max(0.0, distXZ / fullDist - 0.5));
+        if (!PassesContinuousDensity(rank, tileHash, maxKeepProbXZ))
             return;
     }
 
@@ -138,8 +140,8 @@ void EmitCellIfVisible(int2 tileCoord, int2 localCell, uint rank, uint tileHash,
     float3 positionWS = float3(positionXZ.x, positionY, positionXZ.y);
 
     float distanceFromCamera = length(_CameraPosition - positionWS);
-    uint shift = min((uint)floor(distanceFromCamera / max(_FullDensityDistance, 0.001)), 30u);
-    if (!PassesDensity(rank, tileHash, shift))
+    float keepProb = exp2(-max(0.0, distanceFromCamera / fullDist - 0.5));
+    if (!PassesContinuousDensity(rank, tileHash, keepProb))
         return;
 
     float4 absPosCS = abs(mul(_VPMatrix, float4(positionWS, 1.0)));
@@ -188,22 +190,24 @@ void TileCull(uint3 id : SV_DispatchThreadID)
     }
 
     float minDist = sqrt(distSq);
-    uint minShift = min((uint)floor(minDist / max(_FullDensityDistance, 0.001)), 30u);
+    float shiftedDist = max(0.0, minDist / max(_FullDensityDistance, 0.001) - 0.5);
+    uint effectiveShift = min((uint)floor(shiftedDist), 30u);
 
-    if (minShift < 6u)
+    if (effectiveShift < 6u)
     {
         _DenseTiles.Append(tileCoord);
     }
     else
     {
-        if (minShift >= 10u)
+        if (effectiveShift >= 9u)
         {
             uint tileHash = murmurHash2D(tileCoord);
-            uint tileMask = (1u << min(minShift - 9u, 21u)) - 1u;
-            if (((tileHash >> 9) & tileMask) != 0u)
+            float maxKeepProb = exp2(-(float)effectiveShift);
+            float tileFrac = ((tileHash >> 9) & 0xFFFFu) / 65536.0;
+            if (maxKeepProb <= tileFrac / 512.0)
                 return;
         }
-        _SparseTiles.Append(int3(tileCoord.x, tileCoord.y, (int)minShift));
+        _SparseTiles.Append(int3(tileCoord.x, tileCoord.y, (int)effectiveShift));
     }
 }
 

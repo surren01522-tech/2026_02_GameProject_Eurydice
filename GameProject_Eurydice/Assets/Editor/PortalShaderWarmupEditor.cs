@@ -29,12 +29,11 @@ public static class PortalShaderWarmupEditor
 
         int added = 0;
 
-        Shader portalShader = Shader.Find("Shader Graphs/PortalGateway");
+        Shader portalShader = Shader.Find("Eurydice/PortalGateway");
         if (portalShader != null)
         {
             added += TryAdd(svc, portalShader, PassType.ScriptableRenderPipeline);
-            added += TryAdd(svc, portalShader, PassType.ScriptableRenderPipeline, "_MAIN_LIGHT_SHADOWS_CASCADE");
-            added += TryAdd(svc, portalShader, PassType.ScriptableRenderPipeline, "_MAIN_LIGHT_SHADOWS");
+            added += TryAdd(svc, portalShader, PassType.ScriptableRenderPipeline, "_SHAPE_CUSTOM");
         }
 
         Shader sliceShader = Shader.Find("Hidden/Eurydice/PortalTravellerSlice");
