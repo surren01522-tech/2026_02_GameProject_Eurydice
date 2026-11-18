@@ -1,0 +1,9 @@
+# Material for Eurydice_MuralPuzzle_03_FlowerHill.obj
+newmtl MuralMaterial
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 0.050 0.050 0.050
+Ns 10.0
+d 1.0
+illum 2
+map_Kd Mural_03_FlowerHill.png
