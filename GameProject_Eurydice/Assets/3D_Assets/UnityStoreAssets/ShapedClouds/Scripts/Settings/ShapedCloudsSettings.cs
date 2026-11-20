@@ -450,14 +450,14 @@ namespace ShapedClouds.Settings {
 			material.SetFloat("_DetailLevel", detailLevel);
 
 			if (layers.Length > 0) {
-				if (lv.Length != layers.Length)
+				if (lv.Length != 8)
 					lv = new Vector4[8];
 				for (int i = 0; i < Mathf.Min(layers.Length, lv.Length); i++)
 					lv[i] = layers[i];
 
 				material.SetVectorArray("_Layer", lv);
 
-				if (lr.Length != layers.Length)
+				if (lr.Length != 8)
 					lr = new float[8];
 				for (int i = 0; i < Mathf.Min(layers.Length, lr.Length); i++)
 					lr[i] = (layers[i].rotation + rotation) * Mathf.Deg2Rad;

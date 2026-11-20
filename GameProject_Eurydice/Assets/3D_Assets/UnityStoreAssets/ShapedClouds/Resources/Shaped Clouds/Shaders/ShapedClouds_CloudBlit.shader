@@ -62,11 +62,11 @@ Shader "Shaped Clouds/CloudBlit" {
 				#if !SC_RENDER_ABOVE_OPAQUES
 					return tex2D(_BlitTexture, i.texcoord.xy);
 				#else
-					// Different from i.viewDir, accurate world space view direction.
 					float3 viewDir = normalize(i.worldPos - GetCameraPositionWS());
-					float domeFactor = 1 / (viewDir.y + _Curvature);
-					if (domeFactor < 0)
+					float denom = viewDir.y + _Curvature;
+					if (denom <= 1e-4)
 						return 0;
+					float domeFactor = 1.0 / denom;
 
 					float z = tex2D(_CameraDepthTexture, i.texcoord.xy).r;
 					float depth = Linear01Depth(z, _ZBufferParams);
@@ -86,7 +86,7 @@ Shader "Shaped Clouds/CloudBlit" {
 					float delta = length(worldPos) - length(viewPos);
 					if (delta > 0)
 						return 0;
-					delta /= -_CloudDepth;
+					delta /= -max(_CloudDepth, 1e-4);
 
 					float4 r = tex2D(_BlitTexture, i.texcoord.xy);
 

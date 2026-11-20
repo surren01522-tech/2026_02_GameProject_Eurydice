@@ -116,6 +116,7 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
 
         private bool hasStaticCache;
         private int cachedCamId;
+        private int cachedGrassRendererId;
         private Vector2 cachedCenterPos;
         private float cachedDataRadius;
         private Vector2 cachedBoundsYMinMax;
@@ -254,8 +255,13 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             return true;
         }
 
-        private Vector2 ComputeTerrainBoundsY(Bounds fallbackBounds)
+        private Vector2 ComputeTerrainBoundsY(Bounds fallbackBounds, Vector2 center, float radius)
         {
+            float minX = center.x - radius;
+            float maxX = center.x + radius;
+            float minZ = center.y - radius;
+            float maxZ = center.y + radius;
+
             float minY = float.MaxValue;
             float maxY = float.MinValue;
 
@@ -266,6 +272,9 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
                     continue;
 
                 Bounds b = r.bounds;
+                if (b.max.x < minX || b.min.x > maxX || b.max.z < minZ || b.min.z > maxZ)
+                    continue;
+
                 if (b.min.y < minY) minY = b.min.y;
                 if (b.max.y > maxY) maxY = b.max.y;
             }
@@ -379,7 +388,7 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameContext)
         {
-            InfiniteGrassRenderer grass = InfiniteGrassRenderer.instance;
+            InfiniteGrassRenderer grass = InfiniteGrassRenderer.GetActiveForCurrentScene();
             if (grass == null || heightMapMat == null || computeShader == null ||
                 tileCullKernel < 0 || spawnDenseKernel < 0 || spawnSparseKernel < 0)
                 return;
@@ -404,13 +413,13 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             float threshold = Mathf.Max(0.01f, grass.textureUpdateThreshold);
             float dataRadius = drawDistance + threshold;
 
-            Bounds cameraBounds = grass.CalculateCameraBounds(cam, drawDistance);
-            Vector2 boundsY = ComputeTerrainBoundsY(cameraBounds);
-
             Vector2 centerPos = new Vector2(
                 Mathf.Floor(cam.transform.position.x / threshold) * threshold,
                 Mathf.Floor(cam.transform.position.z / threshold) * threshold
             );
+
+            Bounds cameraBounds = grass.CalculateCameraBounds(cam, drawDistance);
+            Vector2 boundsY = ComputeTerrainBoundsY(cameraBounds, centerPos, dataRadius);
 
             float localRadius = Mathf.Clamp(grass.localSlopeRadius, 5f, dataRadius);
             Vector3 focusPos = PlayerTracker.Instance != null ? PlayerTracker.Instance.FootPosition : cam.transform.position;
@@ -446,10 +455,12 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             );
 
             int camId = cam.GetInstanceID();
+            int grassId = grass.GetInstanceID();
             bool needStaticUpdate = !hasStaticCache ||
                                     !Application.isPlaying ||
                                     refreshed ||
                                     cachedCamId != camId ||
+                                    cachedGrassRendererId != grassId ||
                                     cachedCenterPos != centerPos ||
                                     !Mathf.Approximately(cachedDataRadius, dataRadius) ||
                                     cachedBoundsYMinMax != boundsY;
@@ -458,6 +469,7 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             {
                 hasStaticCache = true;
                 cachedCamId = camId;
+                cachedGrassRendererId = grassId;
                 cachedCenterPos = centerPos;
                 cachedDataRadius = dataRadius;
                 cachedBoundsYMinMax = boundsY;
@@ -576,7 +588,9 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             cmd.SetGlobalMatrix(ShaderPropertyId.ViewMatrix, view);
             cmd.SetGlobalMatrix(ShaderPropertyId.InverseViewMatrix, view.inverse);
             cmd.SetGlobalMatrix(ShaderPropertyId.ProjectionMatrix, gpuProj);
+            cmd.SetGlobalMatrix(ShaderPropertyId.InverseProjectionMatrix, gpuProj.inverse);
             cmd.SetGlobalMatrix(ShaderPropertyId.ViewAndProjectionMatrix, vp);
+            cmd.SetGlobalMatrix(ShaderPropertyId.InverseViewAndProjectionMatrix, vp.inverse);
         }
 
         private static void DrawHeightRenderers(CommandBuffer cmd, List<Renderer> renderers, Material overrideMat, Vector2 center, float radius)
@@ -732,9 +746,9 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             cmd.SetComputeMatrixParam(cs, ShaderPropertyId.VPMatrix, data.cameraVPMatrix);
             cmd.SetComputeVectorArrayParam(cs, ShaderPropertyId.FrustumPlanes, ScratchFrustumPlanes);
 
-            data.denseTilesBuffer.SetCounterValue(0);
-            data.sparseTilesBuffer.SetCounterValue(0);
-            data.grassPositionsBuffer.SetCounterValue(0);
+            cmd.SetBufferCounterValue(data.denseTilesBuffer, 0);
+            cmd.SetBufferCounterValue(data.sparseTilesBuffer, 0);
+            cmd.SetBufferCounterValue(data.grassPositionsBuffer, 0);
 
             cmd.SetComputeBufferParam(cs, data.tileCullKernel, ShaderPropertyId.DenseTiles, data.denseTilesBuffer);
             cmd.SetComputeBufferParam(cs, data.tileCullKernel, ShaderPropertyId.SparseTiles, data.sparseTilesBuffer);
@@ -800,7 +814,9 @@ public class GrassDataRendererFeature : ScriptableRendererFeature
             public static readonly int ViewMatrix = Shader.PropertyToID("unity_MatrixV");
             public static readonly int InverseViewMatrix = Shader.PropertyToID("unity_MatrixInvV");
             public static readonly int ProjectionMatrix = Shader.PropertyToID("unity_MatrixP");
+            public static readonly int InverseProjectionMatrix = Shader.PropertyToID("unity_MatrixInvP");
             public static readonly int ViewAndProjectionMatrix = Shader.PropertyToID("unity_MatrixVP");
+            public static readonly int InverseViewAndProjectionMatrix = Shader.PropertyToID("unity_MatrixInvVP");
 
             public static readonly int BoundsYMinMax = Shader.PropertyToID("_BoundsYMinMax");
             public static readonly int SlopeBoundsYMinMax = Shader.PropertyToID("_SlopeBoundsYMinMax");

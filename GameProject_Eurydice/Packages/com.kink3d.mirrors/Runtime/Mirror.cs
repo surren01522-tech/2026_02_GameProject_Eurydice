@@ -68,10 +68,14 @@ namespace kTools.Mirrors
             public RenderTextureDescriptor descriptor;
         }
 
+        public static System.Func<Mirror, Camera, bool> CustomRenderFilter;
+
         Camera m_ReflectionCamera;
         UniversalAdditionalCameraData m_CameraData;
         readonly Dictionary<int, ReflectionTarget> m_CameraRenderTextures = new Dictionary<int, ReflectionTarget>();
         readonly List<int> m_DeadCameraIds = new List<int>();
+        readonly Plane[] m_FrustumPlanes = new Plane[6];
+        Renderer[] m_CullRenderers;
         RenderTexture m_PrimaryReflectionTexture;
         int m_ActiveGlobalOverrideCameraId;
         MaterialPropertyBlock m_PropertyBlock;
@@ -175,6 +179,47 @@ namespace kTools.Mirrors
             
             // Initialize Components
             InitializeCamera();
+            CacheCullRenderers();
+        }
+
+        void CacheCullRenderers()
+        {
+            if (m_Renderers != null && m_Renderers.Count > 0)
+            {
+                m_CullRenderers = m_Renderers.ToArray();
+                return;
+            }
+
+            if (transform.parent == null)
+            {
+                m_CullRenderers = null;
+                return;
+            }
+
+            var siblings = transform.parent.GetComponentsInChildren<MeshRenderer>(true);
+            var list = new List<Renderer>(siblings.Length);
+            for (int i = 0; i < siblings.Length; i++)
+            {
+                if (siblings[i] != null && siblings[i].gameObject != gameObject)
+                    list.Add(siblings[i]);
+            }
+            m_CullRenderers = list.Count > 0 ? list.ToArray() : null;
+        }
+
+        bool IsVisibleToCamera(Camera camera)
+        {
+            if (m_CullRenderers == null || m_CullRenderers.Length == 0)
+                return true;
+
+            GeometryUtility.CalculateFrustumPlanes(camera, m_FrustumPlanes);
+            for (int i = 0; i < m_CullRenderers.Length; i++)
+            {
+                Renderer r = m_CullRenderers[i];
+                if (r != null && r.enabled && r.gameObject.activeInHierarchy &&
+                    GeometryUtility.TestPlanesAABB(m_FrustumPlanes, r.bounds))
+                    return true;
+            }
+            return false;
         }
 
         void OnDisable()
@@ -228,8 +273,16 @@ namespace kTools.Mirrors
 #region Rendering
         void BeginCameraRendering(ScriptableRenderContext context, Camera camera)
         {
-            // Never render Mirrors for Preview, Reflection, or tiny warmup cameras
-            if(camera == null || camera.cameraType == CameraType.Preview || camera.cameraType == CameraType.Reflection || camera.pixelWidth <= 32 || camera.pixelHeight <= 32)
+            if (camera == null || camera.orthographic ||
+                camera.cameraType == CameraType.Preview || camera.cameraType == CameraType.Reflection ||
+                camera.targetTexture != null ||
+                camera.pixelWidth <= 32 || camera.pixelHeight <= 32)
+                return;
+
+            if (CustomRenderFilter != null && !CustomRenderFilter(this, camera))
+                return;
+
+            if (!IsVisibleToCamera(camera))
                 return;
 
             m_ProfilingSampler ??= new ProfilingSampler($"Mirror {gameObject.GetInstanceID()}");

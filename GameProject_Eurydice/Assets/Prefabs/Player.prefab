@@ -47,13 +47,15 @@ GameObject:
   - component: {fileID: 4284949931763451599}
   - component: {fileID: 4536908707786260723}
   - component: {fileID: 78185806260126481}
+  - component: {fileID: 3346136895782825222}
+  - component: {fileID: 5346206909556500911}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5071542213701493291
 Transform:
   m_ObjectHideFlags: 0
@@ -213,6 +215,59 @@ MonoBehaviour:
   minVerticalSpeed: 0.8
   stayEmitInterval: 0.083
   spawnRadius: 0.5
+--- !u!114 &3346136895782825222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3363152563566789463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb9491ec52a784447b3ce89e7a37e38f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTracker
+  stepEffectTransform: {fileID: 0}
+  stepDiameter: 1.2
+  maxGroundGap: 0.35
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 73
+  footOffsetOverride: 0
+--- !u!114 &5346206909556500911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3363152563566789463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41378111d788edb409bc78632102f656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kamgam.SkyClouds.SkyCloudMask
+  _maskIndex: 1
+  SkyCouldMaterials:
+  - {fileID: 2100000, guid: 87047a5db84f44d479dbb94da4c1d217, type: 2}
+  - {fileID: 2100000, guid: 6b5502d376d3f274abc6927d5ab28d4d, type: 2}
+  - {fileID: 2100000, guid: 32b06ee158459e3449c919090eb79363, type: 2}
+  - {fileID: 2100000, guid: fcddd1cc1df5dfc47bc64c8211c3edae, type: 2}
+  - {fileID: 2100000, guid: ea7e4fbd8c8f6b045b703a668591c329, type: 2}
+  - {fileID: 2100000, guid: 0f22d337e60da8149bb0ffc64e0c7dde, type: 2}
+  - {fileID: 2100000, guid: a55b2ff73341ebf4fa9e17b9af723a7e, type: 2}
+  - {fileID: 2100000, guid: 7b9d195a8c7b72d4cbcb1ce6b6107d8a, type: 2}
+  - {fileID: 2100000, guid: 70771b08ad6ef614dafbb010f1502713, type: 2}
+  - {fileID: 2100000, guid: 2889243cbb289b24c8f6ccbd585555f6, type: 2}
+  - {fileID: 2100000, guid: 129ad2f4fcb647649ad7876d8f56f497, type: 2}
+  - {fileID: 2100000, guid: df8228e2063f02748ab26a17d1a1ed42, type: 2}
+  - {fileID: 2100000, guid: 515eacba2a3d8324ab0c03e6ff144fb6, type: 2}
+  - {fileID: 2100000, guid: f3ca28c89f08c5241b7bdef619817aa8, type: 2}
+  - {fileID: 2100000, guid: b5732e4e24da22a46a5859f65c4915e9, type: 2}
+  - {fileID: 2100000, guid: 4ff3d050c5199cc49b1ebd390ea0be62, type: 2}
+  - {fileID: 2100000, guid: c99f2b6a7d5063f4c8bf7fc0304a0545, type: 2}
+  - {fileID: 2100000, guid: 5453f3c4cad0b444ab476747ba6a82b2, type: 2}
+  - {fileID: 2100000, guid: 8dd590b390be4264a87b624e0980e669, type: 2}
+  Padding: 0.2
 --- !u!1 &7584010778197632634
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5800144496189213945}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Inner Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8821040310270749316}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Middle Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,6 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1368657501815377988}
+  - component: {fileID: 3627558270492159734}
   m_Layer: 0
   m_Name: Eurydice_MuralPuzzle_03_FlowerHill
   m_TagString: Untagged
@@ -88,18 +89,107 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3256314389151525900}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 257997680950232192}
+  - {fileID: 3507979206381633789}
   - {fileID: 4031369566741585391}
   - {fileID: 5800144496189213945}
   - {fileID: 8821040310270749316}
   - {fileID: 9135015302597011691}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3627558270492159734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3256314389151525900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff667f42541f44144a4cf3b86d9ec0f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiscPuzzle
+  interactionPrompt: Interact
+  displayMode: 0
+  worldOffset: {x: 0, y: 0.5, z: 0}
+  puzzleCamera: {fileID: 4716035622799637851}
+  activePriority: 20
+  defaultPriority: -10
+  uniqueId: Ch1_DiscPuzzle3
+  isCompleted: 0
+  defaultRotationAxis: 2
+  defaultStartMode: 1
+  defaultTolerance: 3
+  stepAngle: 45
+  rotateSpeed: 12
+  discLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  maxRayDistance: 10
+  pieces:
+  - pieceTransform: {fileID: 4031369566741585391}
+    startMode: 0
+    startAngle: 90
+    targetAngle: 0
+    canRotate: 1
+    links: []
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 3893543634383919466}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  - pieceTransform: {fileID: 5800144496189213945}
+    startMode: 0
+    startAngle: 180
+    targetAngle: 0
+    canRotate: 1
+    links:
+    - targetIndex: 0
+      ratio: 1
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 7225432193258843096}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  - pieceTransform: {fileID: 8821040310270749316}
+    startMode: 0
+    startAngle: 270
+    targetAngle: 0
+    canRotate: 1
+    links:
+    - targetIndex: 1
+      ratio: 1
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 5227723933543448522}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  - pieceTransform: {fileID: 9135015302597011691}
+    startMode: 0
+    startAngle: 270
+    targetAngle: 0
+    canRotate: 1
+    links:
+    - targetIndex: 2
+      ratio: 1
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 73981014901648644}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  sockets: []
+  lockRotationUntilSlotted: 0
+  snapToTargetOnSolved: 1
+  onSolvedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  solvedSound: {fileID: 0}
+  debugLogSuccess: 0
 --- !u!1 &4052744647091184075
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9135015302597011691}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Outer Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,7 +233,8 @@ GameObject:
   - component: {fileID: 7437250523087484595}
   - component: {fileID: 5137789198257188526}
   - component: {fileID: 2902819797470890669}
-  m_Layer: 0
+  - component: {fileID: 3893543634383919466}
+  m_Layer: 7
   m_Name: Ring_1_Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,6 +313,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3893543634383919466
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4383889942098134327}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1229335328672341252, guid: 956e6c93bad1a8f48abded36b09dbc21, type: 3}
 --- !u!1 &4467464795697605360
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,6 +425,81 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7927634055294510577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3507979206381633789}
+  - component: {fileID: 4716035622799637851}
+  m_Layer: 0
+  m_Name: Ch.1 Puzzle 3 Cam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3507979206381633789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7927634055294510577}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1368657501815377988}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4716035622799637851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7927634055294510577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
+  Priority:
+    Enabled: 1
+    m_Value: 20
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20241001
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 63.3
+    OrthographicSize: 5
+    NearClipPlane: 0.3
+    FarClipPlane: 1000
+    Dutch: 0
+    ModeOverride: 2
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
 --- !u!1 &8098467971873574241
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,7 +511,8 @@ GameObject:
   - component: {fileID: 7348111147410490752}
   - component: {fileID: 8917005080088774387}
   - component: {fileID: 7762915231853028148}
-  m_Layer: 0
+  - component: {fileID: 73981014901648644}
+  m_Layer: 7
   m_Name: Ring_4_Outer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,6 +591,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &73981014901648644
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8098467971873574241}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5748153077660681486, guid: 956e6c93bad1a8f48abded36b09dbc21, type: 3}
 --- !u!1 &8277617252068518444
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,7 +622,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4031369566741585391}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Center Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +656,8 @@ GameObject:
   - component: {fileID: 5508538892200908270}
   - component: {fileID: 8419731206541827695}
   - component: {fileID: 7496531287332409334}
-  m_Layer: 0
+  - component: {fileID: 7225432193258843096}
+  m_Layer: 7
   m_Name: Ring_2_Inner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -524,6 +736,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7225432193258843096
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8402499434508463252}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2859030026508731019, guid: 956e6c93bad1a8f48abded36b09dbc21, type: 3}
 --- !u!1 &9133490531922695598
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,7 +769,8 @@ GameObject:
   - component: {fileID: 8842689645607094462}
   - component: {fileID: 3043710940412724789}
   - component: {fileID: 2048894422609322964}
-  m_Layer: 0
+  - component: {fileID: 5227723933543448522}
+  m_Layer: 7
   m_Name: Ring_3_Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -614,3 +849,25 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5227723933543448522
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133490531922695598}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -120776815007038722, guid: 956e6c93bad1a8f48abded36b09dbc21, type: 3}

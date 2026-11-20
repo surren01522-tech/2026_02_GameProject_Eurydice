@@ -108,7 +108,23 @@ public static class SceneEnvironmentManager
     private static RenderSettingsSnapshot prePortalSnapshot;
 
     public static string ActiveSceneName => activeSceneName;
+    public static string CurrentRenderingSceneName => portalRenderDepth > 0 && !string.IsNullOrEmpty(scopedTargetSceneName) ? scopedTargetSceneName : activeSceneName;
     public static event Action<string> OnActiveSceneChanged;
+
+    public static bool IsSceneRenderingActive(Scene scene)
+    {
+        if (!Application.isPlaying) return true;
+        string target = CurrentRenderingSceneName;
+        if (string.IsNullOrEmpty(target)) return true;
+        return scene.IsValid() && scene.name == target;
+    }
+
+    public static bool IsSceneActive(Scene scene)
+    {
+        if (!Application.isPlaying) return true;
+        if (string.IsNullOrEmpty(activeSceneName)) return true;
+        return scene.IsValid() && scene.name == activeSceneName;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Init()
@@ -123,8 +139,17 @@ public static class SceneEnvironmentManager
         activeScopeToken = 0;
         scopedTargetSceneName = string.Empty;
 
+        kTools.Mirrors.Mirror.CustomRenderFilter = FilterMirrorRender;
+
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
         SceneManager.sceneUnloaded += OnSceneUnloaded;
+    }
+
+    private static bool FilterMirrorRender(kTools.Mirrors.Mirror mirror, Camera camera)
+    {
+        if (mirror == null || camera == null) return false;
+        if (PortalManager.IsPortalCamera(camera)) return false;
+        return IsSceneRenderingActive(mirror.gameObject.scene);
     }
 
     public static void Register(SceneEnvironment env)

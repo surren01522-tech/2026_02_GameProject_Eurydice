@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 [ExecuteAlways]
 public class InfiniteGrassRenderer : MonoBehaviour
 {
+    private static readonly List<InfiniteGrassRenderer> ActiveRenderers = new List<InfiniteGrassRenderer>();
+
     [HideInInspector] public static InfiniteGrassRenderer instance;
 
     [Header("Camera")]
@@ -23,6 +26,7 @@ public class InfiniteGrassRenderer : MonoBehaviour
     public float textureUpdateThreshold = 10.0f;
 
     [Header("Interaction & Local Slope")]
+    [SerializeField] private Transform stepEffectTransform;
     public float slopeVerticalTolerance = 0.75f;
     public float localSlopeRadius = 35f;
 
@@ -37,22 +41,46 @@ public class InfiniteGrassRenderer : MonoBehaviour
     private readonly uint[] argsData = new uint[5];
     private readonly Vector3[] frustumCorners = new Vector3[8];
 
-    public Camera TargetCamera => targetCamera != null ? targetCamera : Camera.main;
+    public Camera TargetCamera => (targetCamera != null && targetCamera.isActiveAndEnabled) ? targetCamera : Camera.main;
+
+    public static InfiniteGrassRenderer GetActiveForCurrentScene()
+    {
+        for (int i = ActiveRenderers.Count - 1; i >= 0; i--)
+        {
+            InfiniteGrassRenderer r = ActiveRenderers[i];
+            if (r == null || !r.isActiveAndEnabled)
+                continue;
+
+            if (SceneEnvironmentManager.IsSceneRenderingActive(r.gameObject.scene))
+                return r;
+        }
+        return null;
+    }
 
     private void OnEnable()
     {
-        instance = this;
+        if (!ActiveRenderers.Contains(this))
+            ActiveRenderers.Add(this);
+
+        instance = GetActiveForCurrentScene() ?? this;
         GrassDataRendererFeature.MarkRenderersDirty();
         RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
         RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+        SceneEnvironmentManager.OnActiveSceneChanged -= HandleActiveSceneChanged;
+        SceneEnvironmentManager.OnActiveSceneChanged += HandleActiveSceneChanged;
+        SyncStepEffectBinding();
     }
 
     private void OnDisable()
     {
         RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+        SceneEnvironmentManager.OnActiveSceneChanged -= HandleActiveSceneChanged;
+        ActiveRenderers.Remove(this);
 
-        if (instance == this)
-            instance = null;
+        if (stepEffectTransform != null && PlayerTracker.Instance != null)
+            PlayerTracker.Instance.UnbindStepEffect(stepEffectTransform);
+
+        instance = GetActiveForCurrentScene();
 
         ReleaseBuffers();
 
@@ -68,9 +96,34 @@ public class InfiniteGrassRenderer : MonoBehaviour
         }
     }
 
+    private void HandleActiveSceneChanged(string _)
+    {
+        instance = GetActiveForCurrentScene();
+        GrassDataRendererFeature.MarkRenderersDirty();
+        SyncStepEffectBinding();
+    }
+
+    private void SyncStepEffectBinding()
+    {
+        if (!Application.isPlaying || stepEffectTransform == null)
+            return;
+
+        PlayerTracker tracker = PlayerTracker.Instance != null ? PlayerTracker.Instance : FindFirstObjectByType<PlayerTracker>();
+        if (tracker == null)
+            return;
+
+        if (SceneEnvironmentManager.IsSceneActive(gameObject.scene))
+            tracker.BindStepEffect(stepEffectTransform);
+        else
+            tracker.UnbindStepEffect(stepEffectTransform);
+    }
+
     public bool ShouldRenderCamera(Camera cam, CameraType cameraType)
     {
         if (cam == null || PortalManager.IsPortalCamera(cam))
+            return false;
+
+        if (!SceneEnvironmentManager.IsSceneRenderingActive(gameObject.scene))
             return false;
 
         if (cameraType == CameraType.SceneView)

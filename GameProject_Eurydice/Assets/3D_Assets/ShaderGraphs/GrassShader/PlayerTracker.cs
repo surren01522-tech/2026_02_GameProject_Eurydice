@@ -51,8 +51,50 @@ public class PlayerTracker : MonoBehaviour
         UpdateStepEffect();
     }
 
+    public void BindStepEffect(Transform target)
+    {
+        stepEffectTransform = target;
+        CacheStepEffectComponents();
+
+        if (stepEffectTransform == null)
+            return;
+
+        if (stepConstraint != null)
+        {
+            var source = new ConstraintSource { sourceTransform = transform, weight = 1f };
+            if (stepConstraint.sourceCount > 0)
+                stepConstraint.SetSource(0, source);
+            else
+                stepConstraint.AddSource(source);
+        }
+
+        stepEffectTransform.position = FootPosition;
+        if (stepTrail != null)
+            stepTrail.Clear();
+    }
+
+    public void UnbindStepEffect(Transform target)
+    {
+        if (stepEffectTransform != target)
+            return;
+
+        if (stepRenderer != null)
+            stepRenderer.enabled = false;
+        if (stepTrail != null)
+            stepTrail.emitting = false;
+
+        stepEffectTransform = null;
+        stepConstraint = null;
+        stepRenderer = null;
+        stepTrail = null;
+    }
+
     private void CacheStepEffectComponents()
     {
+        stepConstraint = null;
+        stepRenderer = null;
+        stepTrail = null;
+
         if (stepEffectTransform == null)
             return;
 

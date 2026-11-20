@@ -26,7 +26,10 @@ namespace ShapedClouds {
 	/// </remarks>
 	public class ShapedCloudsRenderPass: ScriptableRenderPass {
 		class PassData {
+			internal CloudsController controller;
 			internal Camera camera;
+			internal Matrix4x4 viewMatrix;
+			internal Matrix4x4 projectionMatrix;
 			internal TextureHandle baseTexture;
 			internal TextureHandle blurTexture;
 			internal TextureHandle finalTexture;
@@ -41,31 +44,39 @@ namespace ShapedClouds {
 
 		public ShapedCloudsRenderPass() {
 			renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
+			ConfigureInput(ScriptableRenderPassInput.Depth);
 
 		}
 
 		void ExecutePass(PassData data, UnsafeGraphContext context) {
+			var c = data.controller;
 			CommandBuffer cmd = CommandBufferHelpers.GetNativeCommandBuffer(context.cmd);
 
 			cmd.SetRenderTarget(data.baseTexture);
-			foreach (var r in controller.renderers)
+			cmd.ClearRenderTarget(false, true, Color.clear);
+			foreach (var r in c.renderers)
 				if (r != null)
-					r.Render(controller, data.camera, cmd);
+					r.Render(c, data.camera, cmd);
 
-			if (controller.baseBlur.enabled)
-				RenderBlur(controller.baseBlur, cmd, data.baseTexture, data.blurTexture);
+			if (c.baseBlur.enabled)
+				RenderBlur(c.baseBlur, cmd, data.baseTexture, data.blurTexture);
 
 			cmd.SetRenderTarget(data.finalTexture);
-			RenderFilter(controller, data.camera, cmd, data.baseTexture);
+			cmd.ClearRenderTarget(false, true, Color.clear);
+			if (c.renderers.Count > 0)
+				cmd.SetViewProjectionMatrices(data.viewMatrix, data.projectionMatrix);
+			RenderFilter(c, data.camera, cmd, data.baseTexture);
 
-			if (controller.finalBlur.enabled)
-				RenderBlur(controller.finalBlur, cmd, data.finalTexture, data.finalBlurTexture);
+			if (c.finalBlur.enabled)
+				RenderBlur(c.finalBlur, cmd, data.finalTexture, data.finalBlurTexture);
 
-			if (controller.renderAboveOpaques)
+			if (c.renderAboveOpaques)
 				cmd.SetRenderTarget(data.target);
 			else
 				cmd.SetRenderTarget(data.target, data.depth);
-			Blitter.BlitTexture(cmd, data.finalTexture, Vector4.one, controller.blitMaterial, 0);
+			if (c.renderers.Count > 0)
+				cmd.SetViewProjectionMatrices(data.viewMatrix, data.projectionMatrix);
+			Blitter.BlitTexture(cmd, data.finalTexture, Vector4.one, c.blitMaterial, 0);
 
 		}
 
@@ -80,20 +91,23 @@ namespace ShapedClouds {
 
 			string passName = $"Shaped Clouds ({controller.name})";
 
-			// To be honest, not sure if unsafe pass is the correct choice, but it'd also require several passes that share textures otherwise.
-			// Not to mention, CloudRenderers wouldn't be able to use CommandBuffer as an input, so they'd also need conditional compilation.
 			using var builder = renderGraph.AddUnsafePass<PassData>(passName, out var passData);
 
 			var cameraData = frameContext.Get<UniversalCameraData>();
+			passData.controller = controller;
 			passData.camera = cameraData.camera;
+			passData.viewMatrix = cameraData.GetViewMatrix();
+			passData.projectionMatrix = cameraData.GetProjectionMatrix();
 			
 			var resourceData = frameContext.Get<UniversalResourceData>();
 			passData.target = resourceData.activeColorTexture;
 
 			builder.SetRenderAttachment(passData.target, 0);
 
-			// When rendering above opaques, this ensures _CameraDepthTexture will be present.
-			if (!controller.renderAboveOpaques) {
+			if (controller.renderAboveOpaques) {
+				if (resourceData.cameraDepthTexture.IsValid())
+					builder.UseTexture(resourceData.cameraDepthTexture, AccessFlags.Read);
+			} else {
 				passData.depth = resourceData.activeDepthTexture;
 				builder.SetRenderAttachmentDepth(passData.depth, AccessFlags.Read);
 
@@ -210,6 +224,8 @@ namespace ShapedClouds {
 
 			CoreUtils.SetRenderTarget(cmd, finalTexture);
 			cmd.ClearRenderTarget(false, true, Color.clear);
+			if (controller.renderers.Count > 0)
+				cmd.SetViewProjectionMatrices(renderingData.cameraData.GetViewMatrix(), renderingData.cameraData.GetProjectionMatrix());
 			RenderFilter(controller, camera, cmd, baseTexture);
 
 			if (controller.finalBlur.enabled)
@@ -221,6 +237,8 @@ namespace ShapedClouds {
 			else
 				cmd.SetRenderTarget(renderingData.cameraData.renderer.cameraColorTargetHandle, renderingData.cameraData.renderer.cameraDepthTargetHandle);
 
+			if (controller.renderers.Count > 0)
+				cmd.SetViewProjectionMatrices(renderingData.cameraData.GetViewMatrix(), renderingData.cameraData.GetProjectionMatrix());
 			Blitter.BlitTexture(cmd, finalTexture, Vector4.one, controller.blitMaterial, 0);
 
 			context.ExecuteCommandBuffer(cmd);

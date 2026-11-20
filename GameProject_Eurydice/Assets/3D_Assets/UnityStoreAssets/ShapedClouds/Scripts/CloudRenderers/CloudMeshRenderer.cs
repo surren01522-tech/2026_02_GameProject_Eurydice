@@ -76,6 +76,8 @@ namespace ShapedClouds.CloudRenderers {
 		[Tooltip("A custom material, it should output a density, preferably additive. It should also have a _Density float. Mesh Material must be set to CUSTOM.")]
 		public Material customMaterial;
 
+		private MaterialPropertyBlock _mp;
+
 		public override void CloudUpdate(CloudsController sc, float deltaTime) { }
 
 		public override void Render(CloudsController controller, Camera camera, CommandBuffer cmd) {
@@ -101,19 +103,19 @@ namespace ShapedClouds.CloudRenderers {
 
 			cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix, camera.projectionMatrix);
 
-
-			MaterialPropertyBlock mp = new();
+			_mp ??= new MaterialPropertyBlock();
+			_mp.Clear();
 			if (texture != null)
-				mp.SetTexture("_MainTex", texture);
+				_mp.SetTexture("_MainTex", texture);
 
-			mp.SetFloat("_Density", density);
+			_mp.SetFloat("_Density", density);
 
-			mp.SetVector("_CloudCameraOffset", camera.transform.position);
-			mp.SetFloat("_CloudHeight", controller.height);
+			_mp.SetVector("_CloudCameraOffset", camera.transform.position);
+			_mp.SetFloat("_CloudHeight", controller.height);
 
 			if (targetRenderer == null)
 				for (int i = 0; i < mesh.subMeshCount; i++)
-					cmd.DrawMesh(mesh, Matrix4x4.Translate(transform.position) * Matrix4x4.Rotate(transform.rotation) * Matrix4x4.Scale(transform.lossyScale), _material, i, -1, mp);
+					cmd.DrawMesh(mesh, Matrix4x4.Translate(transform.position) * Matrix4x4.Rotate(transform.rotation) * Matrix4x4.Scale(transform.lossyScale), _material, i, -1, _mp);
 			else
 				for (int i = 0; i < targetRenderer.sharedMaterials.Length; i++) {
 					cmd.DrawRenderer(targetRenderer, (meshMaterial == CloudMeshMaterial.CUSTOM && customMaterial) ? customMaterial : targetRenderer.sharedMaterials[i], i);

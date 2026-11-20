@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4322520889734686317}
   - component: {fileID: 6499843009243788938}
   - component: {fileID: 2559388771077142677}
-  m_Layer: 0
+  - component: {fileID: 2464333185007384976}
+  m_Layer: 7
   m_Name: Ring_4_Outer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,6 +91,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2464333185007384976
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114203331899702009}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5748153077660681486, guid: 57c77ef3ea0ef0149a5a1ef8d308b3eb, type: 3}
 --- !u!1 &273366558066099917
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +122,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2467004220624239681}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Outer Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +156,8 @@ GameObject:
   - component: {fileID: 7098203883723074394}
   - component: {fileID: 9072238516890527687}
   - component: {fileID: 2997852479014644448}
-  m_Layer: 0
+  - component: {fileID: 8083567508794869516}
+  m_Layer: 7
   m_Name: Ring_3_Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -212,6 +236,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &8083567508794869516
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 625916924689729248}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -120776815007038722, guid: 57c77ef3ea0ef0149a5a1ef8d308b3eb, type: 3}
 --- !u!1 &2233856481056665006
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +267,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4007862981700699236}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Middle Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,6 +290,81 @@ Transform:
   - {fileID: 7098203883723074394}
   m_Father: {fileID: 5192577303699202597}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2236731937223834138
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1608509510208073193}
+  - component: {fileID: 6463294657550463673}
+  m_Layer: 0
+  m_Name: Ch.1 Puzzle 2 Cam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1608509510208073193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2236731937223834138}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.000044584274, y: 0, z: -3.4999526}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5192577303699202597}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6463294657550463673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2236731937223834138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
+  Priority:
+    Enabled: 1
+    m_Value: -10
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20241001
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 63.3
+    OrthographicSize: 5
+    NearClipPlane: 0.3
+    FarClipPlane: 1000
+    Dutch: 0
+    ModeOverride: 2
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
 --- !u!1 &3165816436386442427
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,7 +374,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9046356262818290526}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Inner Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +408,8 @@ GameObject:
   - component: {fileID: 1550281689045768792}
   - component: {fileID: 7864848326819772155}
   - component: {fileID: 2650012009170762363}
-  m_Layer: 0
+  - component: {fileID: 2167763106589862756}
+  m_Layer: 7
   m_Name: Ring_2_Inner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -366,6 +488,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2167763106589862756
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3172789797107023957}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2859030026508731019, guid: 57c77ef3ea0ef0149a5a1ef8d308b3eb, type: 3}
 --- !u!1 &5025078424852052346
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,6 +519,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5192577303699202597}
+  - component: {fileID: 9069844318015758069}
   m_Layer: 0
   m_Name: Eurydice_MuralPuzzle_02_GiantTree
   m_TagString: Untagged
@@ -390,7 +535,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5025078424852052346}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -400,8 +545,95 @@ Transform:
   - {fileID: 9046356262818290526}
   - {fileID: 4007862981700699236}
   - {fileID: 2467004220624239681}
+  - {fileID: 1608509510208073193}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9069844318015758069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5025078424852052346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff667f42541f44144a4cf3b86d9ec0f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiscPuzzle
+  interactionPrompt: Interact
+  displayMode: 0
+  worldOffset: {x: 0, y: 0.5, z: 0}
+  puzzleCamera: {fileID: 6463294657550463673}
+  activePriority: 20
+  defaultPriority: -10
+  uniqueId: Ch1_DiscPuzzle2
+  isCompleted: 0
+  defaultRotationAxis: 2
+  defaultStartMode: 1
+  defaultTolerance: 3
+  stepAngle: 45
+  rotateSpeed: 12
+  discLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  maxRayDistance: 10
+  pieces:
+  - pieceTransform: {fileID: 1532726073022128471}
+    startMode: 0
+    startAngle: 180
+    targetAngle: 0
+    canRotate: 1
+    links: []
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 7209762866684369545}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  - pieceTransform: {fileID: 9046356262818290526}
+    startMode: 0
+    startAngle: 270
+    targetAngle: 0
+    canRotate: 1
+    links: []
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 2167763106589862756}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  - pieceTransform: {fileID: 4007862981700699236}
+    startMode: 0
+    startAngle: 270
+    targetAngle: 0
+    canRotate: 1
+    links:
+    - targetIndex: 0
+      ratio: 1
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 8083567508794869516}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  - pieceTransform: {fileID: 2467004220624239681}
+    startMode: 0
+    startAngle: 270
+    targetAngle: 0
+    canRotate: 1
+    links:
+    - targetIndex: 1
+      ratio: 1
+    overrideSettings: 0
+    customTolerance: 0
+    clickCollider: {fileID: 2464333185007384976}
+    boundSocket: {fileID: 0}
+    hideUntilSocketPlaced: 0
+  sockets: []
+  lockRotationUntilSlotted: 0
+  snapToTargetOnSolved: 1
+  onSolvedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  solvedSound: {fileID: 0}
+  debugLogSuccess: 0
 --- !u!1 &5986136381251281408
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,7 +643,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1532726073022128471}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Center Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +677,8 @@ GameObject:
   - component: {fileID: 5877038083508027362}
   - component: {fileID: 1129041218335118619}
   - component: {fileID: 4139345748707630821}
-  m_Layer: 0
+  - component: {fileID: 7209762866684369545}
+  m_Layer: 7
   m_Name: Ring_1_Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -524,6 +757,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7209762866684369545
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6094268209955735894}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1229335328672341252, guid: 57c77ef3ea0ef0149a5a1ef8d308b3eb, type: 3}
 --- !u!1 &8643216840382233217
 GameObject:
   m_ObjectHideFlags: 0

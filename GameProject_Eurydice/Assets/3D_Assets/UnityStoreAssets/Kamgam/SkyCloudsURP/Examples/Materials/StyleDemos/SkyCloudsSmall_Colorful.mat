@@ -91,7 +91,7 @@ Material:
     - _EmmissiveColor: {r: 1, g: 0, b: 0.27166986, a: 0}
     - _EmmissiveVoronoi: {r: 0.54828763, g: 0.6286017, b: 0.7283019, a: 0}
     - _Mask0: {r: 0, g: -999, b: 0, a: 0.001}
-    - _Mask1: {r: 0, g: -999, b: 0, a: 0.001}
+    - _Mask1: {r: 18.3, g: 7, b: 0.28, a: 0.7}
     - _NoiseDir: {r: 1, g: 1, b: 1, a: 0}
     - _NoiseScale3D: {r: 1, g: 0.2, b: 0.6, a: 0}
     - _TranslucencyColor: {r: 1, g: 0.86355025, b: 0, a: 0}

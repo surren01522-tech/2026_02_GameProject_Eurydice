@@ -135,19 +135,18 @@ Shader "Shaped Clouds/CloudFilter" {
 				float4 col = 1;
 
 				float3 viewDir = normalize(i.worldPos - GetCameraPositionWS());
-				// Dome thing.
-				float domeFactor = 1 / (viewDir.y + _Curvature);
-				if (domeFactor < 0)
+				float denom = viewDir.y + _Curvature;
+				if (denom <= 1e-4)
 					return 0;
+				float domeFactor = 1.0 / denom;
 					
 				float2 uv = scaledPos(float2(viewDir.x * domeFactor, viewDir.z * domeFactor));
 
-				// Number between 0 and 1 determining how much the cloud fades away.
 				float fade = saturate(viewDir.y + 1 + _FadeDistance);
 				if (fade == 0)
 					return 0;
 				else if (fade < 1)
-					fade = (fade-1) / _FadeLength + 1;
+					fade = saturate((fade-1) / max(_FadeLength, 1e-4) + 1);
 
 				// If the base texture is empty in this fragment, returns nothing.
 				float4 base = tex2D(_MainTex, i.texcoord);

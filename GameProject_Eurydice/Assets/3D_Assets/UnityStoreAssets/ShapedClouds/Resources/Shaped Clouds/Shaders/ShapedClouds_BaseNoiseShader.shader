@@ -101,10 +101,10 @@ Shader "Shaped Clouds/BaseNoiseShader" {
 			float frag(v2f i): SV_Target {
 				// return i.worldPos;
 				float3 viewDir = normalize(i.worldPos - GetCameraPositionWS());
-				
-				float domeFactor = 1 / (viewDir.y + _Curvature);
-				if (domeFactor < 0)
+				float denom = viewDir.y + _Curvature;
+				if (denom <= 1e-4)
 					return 0;
+				float domeFactor = 1.0 / denom;
 					
 				float2 uv = float2(viewDir.x * domeFactor, viewDir.z * domeFactor);
 

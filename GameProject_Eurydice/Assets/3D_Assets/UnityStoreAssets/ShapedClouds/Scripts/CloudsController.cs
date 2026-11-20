@@ -356,6 +356,7 @@ namespace ShapedClouds {
 #endif
 
 			earlyList.Remove(this);
+			lateList.Remove(this);
 
 		}
 
@@ -489,9 +490,15 @@ namespace ShapedClouds {
 
 			}
 
-			// Check if the clouds should/shouldn't be rendered.
 			if (!isActiveAndEnabled || (ignoreCameraLayers & (1 << camera.gameObject.layer)) != 0 || (camera.cullingMask & (1 << gameObject.layer)) == 0 || (ignoreCameraTypes & camera.cameraType) != 0)
 				return false;
+
+			if (Application.isPlaying) {
+				if (PortalManager.IsPortalCamera(camera) || camera.targetTexture != null)
+					return false;
+				if (!SceneEnvironmentManager.IsSceneRenderingActive(gameObject.scene))
+					return false;
+			}
 
 			// Checks if essential shaders are present.
 			if (filter.shader == null || blitShader == null) {
