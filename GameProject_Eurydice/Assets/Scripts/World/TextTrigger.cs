@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using DG.Tweening;
 
@@ -11,6 +12,16 @@ public enum TriggerUIMode
 [RequireComponent(typeof(Collider))]
 public class TextTrigger : MonoBehaviour
 {
+    private sealed class FadeTarget
+    {
+        public GameObject root;
+        public CanvasGroup canvasGroup;
+        public TMP_Text[] texts;
+        public float[] baseAlphas;
+        public float factor;
+        public Tween tween;
+    }
+
     [Header("UI 모드")]
     [SerializeField] private TriggerUIMode mode = TriggerUIMode.WorldText;
     [SerializeField] private bool triggerOnce = false;
@@ -25,21 +36,19 @@ public class TextTrigger : MonoBehaviour
     [SerializeField] private float duration = 3f;
     [SerializeField] private bool hideOnExit = false;
 
-    private readonly List<CanvasGroup> targetCanvasGroups = new List<CanvasGroup>();
+    private readonly List<FadeTarget> fadeTargets = new List<FadeTarget>();
     private bool hasTriggered;
 
     private void Awake()
     {
         GetComponent<Collider>().isTrigger = true;
-        InitTargetCanvasGroups();
+        InitFadeTargets();
     }
 
     private void OnDisable()
     {
-        for (int i = 0; i < targetCanvasGroups.Count; i++)
-        {
-            if (targetCanvasGroups[i] != null) targetCanvasGroups[i].DOKill();
-        }
+        for (int i = 0; i < fadeTargets.Count; i++)
+            fadeTargets[i].tween?.Kill();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -73,9 +82,9 @@ public class TextTrigger : MonoBehaviour
         }
     }
 
-    private void InitTargetCanvasGroups()
+    private void InitFadeTargets()
     {
-        targetCanvasGroups.Clear();
+        fadeTargets.Clear();
         if (targetObjects == null) return;
 
         for (int i = 0; i < targetObjects.Length; i++)
@@ -84,34 +93,68 @@ public class TextTrigger : MonoBehaviour
             if (obj == null) continue;
 
             var cg = obj.GetComponent<CanvasGroup>();
-            if (cg == null) continue;
+            // CanvasGroup은 3D TextMeshPro(MeshRenderer)에 영향을 주지 않으므로 3D 텍스트를 별도 수집
+            TMP_Text[] texts = cg != null
+                ? obj.GetComponentsInChildren<TextMeshPro>(true)
+                : obj.GetComponentsInChildren<TMP_Text>(true);
 
-            cg.alpha = 0f;
+            if (cg == null && texts.Length == 0) continue;
+
+            var alphas = new float[texts.Length];
+            for (int t = 0; t < texts.Length; t++)
+                alphas[t] = texts[t].alpha > 0f ? texts[t].alpha : 1f;
+
+            var target = new FadeTarget
+            {
+                root = obj,
+                canvasGroup = cg,
+                texts = texts,
+                baseAlphas = alphas,
+                factor = 0f
+            };
+
+            ApplyFadeFactor(target, 0f);
             obj.SetActive(false);
-            targetCanvasGroups.Add(cg);
+            fadeTargets.Add(target);
         }
     }
 
-    private void StartFade(float targetAlpha)
+    private void StartFade(float targetFactor)
     {
         float dur = fadeDuration > 0f ? fadeDuration : 0.01f;
 
-        for (int i = 0; i < targetCanvasGroups.Count; i++)
+        for (int i = 0; i < fadeTargets.Count; i++)
         {
-            var cg = targetCanvasGroups[i];
-            if (cg == null) continue;
+            var target = fadeTargets[i];
+            if (target.root == null) continue;
 
-            cg.DOKill();
-            if (targetAlpha > 0f) cg.gameObject.SetActive(true);
+            target.tween?.Kill();
+            if (targetFactor > 0f) target.root.SetActive(true);
 
-            cg.DOFade(targetAlpha, dur)
+            target.tween = DOVirtual.Float(target.factor, targetFactor, dur, val => ApplyFadeFactor(target, val))
                 .SetEase(Ease.OutQuad)
                 .SetUpdate(true)
-                .SetLink(cg.gameObject)
+                .SetLink(target.root)
                 .OnComplete(() =>
                 {
-                    if (targetAlpha <= 0f) cg.gameObject.SetActive(false);
+                    ApplyFadeFactor(target, targetFactor);
+                    if (targetFactor <= 0f && target.root != null)
+                        target.root.SetActive(false);
                 });
+        }
+    }
+
+    private static void ApplyFadeFactor(FadeTarget target, float factor)
+    {
+        target.factor = factor;
+
+        if (target.canvasGroup != null)
+            target.canvasGroup.alpha = factor;
+
+        for (int i = 0; i < target.texts.Length; i++)
+        {
+            if (target.texts[i] != null)
+                target.texts[i].alpha = target.baseAlphas[i] * factor;
         }
     }
 

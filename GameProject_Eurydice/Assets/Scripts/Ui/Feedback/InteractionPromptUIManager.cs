@@ -60,7 +60,11 @@ public class InteractionPromptUIManager : MonoBehaviour
             return;
         }
 
-        UITweenExtensions.TryUpdateWorldToScreen(mainCam, currentTarget.TargetTransform, currentTarget.WorldOffset, floatingPanel);
+        if (UITweenExtensions.TryUpdateWorldToScreen(mainCam, currentTarget.TargetTransform, currentTarget.WorldOffset, floatingPanel))
+        {
+            if (floatingPanel != null && !floatingPanel.activeSelf)
+                floatingPanel.SetActive(true);
+        }
     }
 
     private void UpdatePrompt(IInteractable target)

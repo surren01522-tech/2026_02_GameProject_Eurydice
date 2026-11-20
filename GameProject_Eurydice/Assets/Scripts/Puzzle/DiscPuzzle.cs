@@ -215,8 +215,7 @@ public class DiscPuzzle : PuzzleBase
             {
                 if (pieces[i] != null && pieces[i].canRotate)
                 {
-                    visitedIndices.Clear();
-                    RotatePieceRecursive(i, stepAngle, 0f, null);
+                    RotatePieceWithLinks(i, stepAngle, 0f, null);
                     break;
                 }
             }
@@ -297,30 +296,38 @@ public class DiscPuzzle : PuzzleBase
 
     private void RotateClickedPiece(int pieceIdx)
     {
-        visitedIndices.Clear();
         float duration = rotateSpeed > 0f ? Mathf.Clamp(2.5f / rotateSpeed, 0.08f, 0.35f) : 0f;
-        RotatePieceRecursive(pieceIdx, stepAngle, duration, CheckSolution);
+        RotatePieceWithLinks(pieceIdx, stepAngle, duration, CheckSolution);
         SaveCurrentPuzzleState(false);
 
         if (duration <= 0f)
             CheckSolution();
     }
 
-    private void RotatePieceRecursive(int pieceIdx, float delta, float duration, Action onTweenComplete)
+    /// <summary>지정된 조각과 직접 연결된 링크 조각만 1단계 회전시킵니다.</summary>
+    private void RotatePieceWithLinks(int pieceIdx, float delta, float duration, Action onTweenComplete)
     {
         if (pieceIdx < 0 || pieceIdx >= pieces.Count) return;
-        if (!visitedIndices.Add(pieceIdx)) return;
 
         DiscPiece piece = pieces[pieceIdx];
         if (piece == null || !piece.canRotate) return;
 
-        piece.RotateStep(delta, defaultRotationAxis, duration, gameObject, duration > 0f ? onTweenComplete : null);
+        visitedIndices.Clear();
+        visitedIndices.Add(pieceIdx);
+        Action callback = duration > 0f ? onTweenComplete : null;
+        piece.RotateStep(delta, defaultRotationAxis, duration, gameObject, callback);
 
         if (piece.links == null) return;
         for (int i = 0; i < piece.links.Count; i++)
         {
             DiscLink link = piece.links[i];
-            RotatePieceRecursive(link.targetIndex, delta * link.ratio, duration, onTweenComplete);
+            int targetIdx = link.targetIndex;
+            if (targetIdx < 0 || targetIdx >= pieces.Count || !visitedIndices.Add(targetIdx)) continue;
+
+            DiscPiece target = pieces[targetIdx];
+            if (target == null || !target.canRotate) continue;
+
+            target.RotateStep(delta * link.ratio, defaultRotationAxis, duration, gameObject, callback);
         }
     }
 

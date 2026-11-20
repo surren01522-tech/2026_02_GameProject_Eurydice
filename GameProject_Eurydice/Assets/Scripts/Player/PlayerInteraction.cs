@@ -5,8 +5,9 @@ public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] private float range = 2.5f;
     [SerializeField] private LayerMask layer = ~0;
+    [SerializeField] private float maxAngle = 75f;
 
-    private readonly Collider[] hits = new Collider[8];
+    private Collider[] hits = new Collider[64];
     private PlayerController player;
     private IInteractable target;
 
@@ -32,21 +33,30 @@ public class PlayerInteraction : MonoBehaviour
             var interactTarget = target;
             SetTarget(null);
             interactTarget.Interact(player);
-            UpdateTarget();
+            if (GameStateManager.IsGamePlaying && !GameStateManager.HasActiveModal)
+                UpdateTarget();
         }
     }
 
     private void UpdateTarget()
     {
         int count = Physics.OverlapSphereNonAlloc(transform.position, range, hits, layer);
+        while (count == hits.Length && hits.Length < 256)
+        {
+            hits = new Collider[hits.Length * 2];
+            count = Physics.OverlapSphereNonAlloc(transform.position, range, hits, layer);
+        }
+
         IInteractable best = null;
-        float minAngle = 75f;
+        float minAngle = maxAngle;
+        float minSqrDist = float.MaxValue;
 
         for (int i = 0; i < count; i++)
         {
-            if (hits[i].gameObject == gameObject) continue;
+            Collider col = hits[i];
+            if (col == null || col.transform.IsChildOf(transform)) continue;
 
-            var interactables = hits[i].GetComponentsInParent<IInteractable>();
+            var interactables = col.GetComponentsInParent<IInteractable>();
             IInteractable interactable = null;
             for (int j = 0; j < interactables.Length; j++)
             {
@@ -58,13 +68,24 @@ public class PlayerInteraction : MonoBehaviour
             }
             if (interactable == null) continue;
 
-            Vector3 dir = hits[i].transform.position - transform.position;
-            dir.y = 0;
-            float angle = Vector3.Angle(transform.forward, dir);
+            Vector3 targetPoint = col.bounds.ClosestPoint(transform.position);
+            Vector3 dir = targetPoint - transform.position;
+            dir.y = 0f;
 
-            if (angle < minAngle)
+            if (dir.sqrMagnitude < 0.0001f)
+            {
+                Transform refT = interactable.TargetTransform != null ? interactable.TargetTransform : col.transform;
+                dir = refT.position - transform.position;
+                dir.y = 0f;
+            }
+
+            float sqrDist = dir.sqrMagnitude;
+            float angle = sqrDist < 0.0001f ? 0f : Vector3.Angle(transform.forward, dir);
+
+            if (angle < minAngle - 0.5f || (Mathf.Abs(angle - minAngle) <= 0.5f && sqrDist < minSqrDist))
             {
                 minAngle = angle;
+                minSqrDist = sqrDist;
                 best = interactable;
             }
         }

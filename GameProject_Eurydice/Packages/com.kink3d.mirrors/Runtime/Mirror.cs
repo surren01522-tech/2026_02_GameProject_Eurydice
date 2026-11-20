@@ -282,6 +282,10 @@ namespace kTools.Mirrors
             if (CustomRenderFilter != null && !CustomRenderFilter(this, camera))
                 return;
 
+            // Skip reflection if the camera is behind or on the mirror plane to avoid degenerate oblique frustums.
+            if (Vector3.Dot(transform.forward, camera.transform.position - transform.position) <= 0.001f)
+                return;
+
             if (!IsVisibleToCamera(camera))
                 return;
 

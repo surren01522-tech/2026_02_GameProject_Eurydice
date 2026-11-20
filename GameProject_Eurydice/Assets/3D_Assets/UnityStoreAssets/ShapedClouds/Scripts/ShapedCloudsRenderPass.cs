@@ -36,11 +36,34 @@ namespace ShapedClouds {
 			internal TextureHandle finalBlurTexture;
 			internal TextureHandle target;
 			internal TextureHandle depth;
+			internal bool isTargetFlipped;
 
 		}
 
 		private CloudsController controller;
 		public bool unqueued;
+
+		private static readonly int ViewMatrixId = Shader.PropertyToID("unity_MatrixV");
+		private static readonly int InverseViewMatrixId = Shader.PropertyToID("unity_MatrixInvV");
+		private static readonly int ProjectionMatrixId = Shader.PropertyToID("unity_MatrixP");
+		private static readonly int InverseProjectionMatrixId = Shader.PropertyToID("unity_MatrixInvP");
+		private static readonly int ViewAndProjectionMatrixId = Shader.PropertyToID("unity_MatrixVP");
+		private static readonly int InverseViewAndProjectionMatrixId = Shader.PropertyToID("unity_MatrixInvVP");
+
+		/// <summary>
+		/// Restores CPU and GPU view/projection shader matrices for the active render target flip state.
+		/// </summary>
+		internal static void SetAllViewProjMatrices(CommandBuffer cmd, Matrix4x4 view, Matrix4x4 proj, bool renderIntoTexture) {
+			cmd.SetViewProjectionMatrices(view, proj);
+			Matrix4x4 gpuProj = GL.GetGPUProjectionMatrix(proj, renderIntoTexture);
+			Matrix4x4 vp = gpuProj * view;
+			cmd.SetGlobalMatrix(ViewMatrixId, view);
+			cmd.SetGlobalMatrix(InverseViewMatrixId, view.inverse);
+			cmd.SetGlobalMatrix(ProjectionMatrixId, gpuProj);
+			cmd.SetGlobalMatrix(InverseProjectionMatrixId, gpuProj.inverse);
+			cmd.SetGlobalMatrix(ViewAndProjectionMatrixId, vp);
+			cmd.SetGlobalMatrix(InverseViewAndProjectionMatrixId, vp.inverse);
+		}
 
 		public ShapedCloudsRenderPass() {
 			renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
@@ -64,7 +87,7 @@ namespace ShapedClouds {
 			cmd.SetRenderTarget(data.finalTexture);
 			cmd.ClearRenderTarget(false, true, Color.clear);
 			if (c.renderers.Count > 0)
-				cmd.SetViewProjectionMatrices(data.viewMatrix, data.projectionMatrix);
+				SetAllViewProjMatrices(cmd, data.viewMatrix, data.projectionMatrix, true);
 			RenderFilter(c, data.camera, cmd, data.baseTexture);
 
 			if (c.finalBlur.enabled)
@@ -75,7 +98,7 @@ namespace ShapedClouds {
 			else
 				cmd.SetRenderTarget(data.target, data.depth);
 			if (c.renderers.Count > 0)
-				cmd.SetViewProjectionMatrices(data.viewMatrix, data.projectionMatrix);
+				SetAllViewProjMatrices(cmd, data.viewMatrix, data.projectionMatrix, data.isTargetFlipped);
 			Blitter.BlitTexture(cmd, data.finalTexture, Vector4.one, c.blitMaterial, 0);
 
 		}
@@ -101,6 +124,9 @@ namespace ShapedClouds {
 			
 			var resourceData = frameContext.Get<UniversalResourceData>();
 			passData.target = resourceData.activeColorTexture;
+			passData.isTargetFlipped = cameraData.cameraType == CameraType.SceneView ||
+			                           cameraData.targetTexture != null ||
+			                           !resourceData.isActiveTargetBackBuffer;
 
 			builder.SetRenderAttachment(passData.target, 0);
 
@@ -222,10 +248,17 @@ namespace ShapedClouds {
 			if (controller.baseBlur.enabled)
 				RenderBlur(controller.baseBlur, cmd, baseTexture, blurTexture);
 
+			Matrix4x4 viewMatrix = renderingData.cameraData.GetViewMatrix();
+			Matrix4x4 projMatrix = renderingData.cameraData.GetProjectionMatrix();
+			var colorTarget = renderingData.cameraData.renderer.cameraColorTargetHandle;
+			bool isTargetFlipped = renderingData.cameraData.cameraType == CameraType.SceneView ||
+			                       camera.targetTexture != null ||
+			                       colorTarget.rt != null;
+
 			CoreUtils.SetRenderTarget(cmd, finalTexture);
 			cmd.ClearRenderTarget(false, true, Color.clear);
 			if (controller.renderers.Count > 0)
-				cmd.SetViewProjectionMatrices(renderingData.cameraData.GetViewMatrix(), renderingData.cameraData.GetProjectionMatrix());
+				ShapedCloudsRenderPass.SetAllViewProjMatrices(cmd, viewMatrix, projMatrix, true);
 			RenderFilter(controller, camera, cmd, baseTexture);
 
 			if (controller.finalBlur.enabled)
@@ -233,12 +266,12 @@ namespace ShapedClouds {
 
 
 			if (controller.renderAboveOpaques)
-				cmd.SetRenderTarget(renderingData.cameraData.renderer.cameraColorTargetHandle);
+				cmd.SetRenderTarget(colorTarget);
 			else
-				cmd.SetRenderTarget(renderingData.cameraData.renderer.cameraColorTargetHandle, renderingData.cameraData.renderer.cameraDepthTargetHandle);
+				cmd.SetRenderTarget(colorTarget, renderingData.cameraData.renderer.cameraDepthTargetHandle);
 
 			if (controller.renderers.Count > 0)
-				cmd.SetViewProjectionMatrices(renderingData.cameraData.GetViewMatrix(), renderingData.cameraData.GetProjectionMatrix());
+				ShapedCloudsRenderPass.SetAllViewProjMatrices(cmd, viewMatrix, projMatrix, isTargetFlipped);
 			Blitter.BlitTexture(cmd, finalTexture, Vector4.one, controller.blitMaterial, 0);
 
 			context.ExecuteCommandBuffer(cmd);
