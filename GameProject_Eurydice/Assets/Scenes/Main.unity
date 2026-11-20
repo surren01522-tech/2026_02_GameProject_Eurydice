@@ -119,17 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &289095675 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1177626586276158000, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-  m_PrefabInstance: {fileID: 1182177666}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &451213718
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -145,6 +134,10 @@ PrefabInstance:
     - target: {fileID: 3363152563566789463, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4284949931763451599, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
+      propertyPath: range
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5071542213701493291, guid: 83654577a3743bc40991501ea0a3f5c8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -258,10 +251,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5263589997056521129, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
-      propertyPath: leaveButton
-      value: 
-      objectReference: {fileID: 289095675}
     - target: {fileID: 5495155974397499342, guid: 43d0fd88d3c3e4f4cb2ddfa22fbf7367, type: 3}
       propertyPath: titleCamera
       value: 
@@ -559,19 +548,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9914449
+      value: 0.9996239
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.13052617
+      value: 0.027425373
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -2.2255277e-11
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 2.3289044e-12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5830608206918971835, guid: 0fc7ee8da10931f47bad770a0f215ff2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -688,7 +677,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
   Priority:
     Enabled: 1
-    m_Value: 100
+    m_Value: 20
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -811,19 +800,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9914449
+      value: 0.9996239
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.13052621
+      value: 0.027425373
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1.8905415e-15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 7.883854e-16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2536862022437839690, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -840,6 +829,10 @@ PrefabInstance:
     - target: {fileID: 4362384999591960023, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: m_Name
       value: Vcam FreeLook
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362384999591960023, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7278624202201719351, guid: 59cf900b68df401449db0ce3863fe699, type: 3}
       propertyPath: Target.TrackingTarget

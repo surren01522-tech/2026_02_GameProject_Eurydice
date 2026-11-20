@@ -20,7 +20,7 @@ MonoBehaviour:
   worldSize: {x: 604, y: 744.59576}
   bakeCameraY: 80
   bakeDepth: 200
-  revealRadius: 15
+  revealRadius: 40
   innerRevealPercent: 0.6
   fogPixelsPerMeter: 1.5
   minFogResolution: 32

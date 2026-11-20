@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28cd0aaceb84c5c8d35a9b853ce29cc, type: 3}
+  m_Name: Chapter_1_Map
+  m_EditorClassIdentifier: Assembly-CSharp::MapRegionData
+  mapId: Chapter_1
+  displayName: Chapter 1
+  sceneNames:
+  - Chapter_1
+  worldCenter: {x: -2376.8574, y: 280.65814}
+  worldSize: {x: 969.0127, y: 1076.0048}
+  bakeCameraY: 150
+  bakeDepth: 200
+  revealRadius: 40
+  innerRevealPercent: 0.6
+  fogPixelsPerMeter: 1.5
+  minFogResolution: 32
+  maxFogResolution: 512
+  tiles:
+  - tileId: main
+    worldCenter: {x: -2376.8574, y: 280.65814}
+    worldSize: {x: 969.0127, y: 1076.0048}
+    mapTexture: {fileID: 2800000, guid: 9bfea60a71d348f40a4fd44bdba442b3, type: 3}
+    uvRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    fogWidth: 0
+    fogHeight: 0
+  staticMarkers:
+  - markerId: Ch1_Puzzle1
+    markerType: 4
+    label: Puzzle 1
+    worldPosition: {x: -2203.49, y: 31.06, z: 429.06}
+    revealWithFog: 0
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 0, g: 0, b: 0, a: 0}
+  - markerId: Ch1_Puzzle2
+    markerType: 4
+    label: Puzzle 2
+    worldPosition: {x: -2502.985, y: 2.75, z: 92.32892}
+    revealWithFog: 0
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 0, g: 0, b: 0, a: 0}
+  - markerId: Ch1_Puzzle3
+    markerType: 4
+    label: Puzzle 3
+    worldPosition: {x: -2365, y: -1.11, z: 301.77}
+    revealWithFog: 0
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 0, g: 0, b: 0, a: 0}
+  - markerId: Ch1_End Portal
+    markerType: 0
+    label: Portal
+    worldPosition: {x: -168.6, y: -32.900803, z: -118.46}
+    revealWithFog: 1
+    targetMapId: 
+    customIcon: {fileID: 0}
+    useCustomColor: 0
+    customColor: {r: 0, g: 0, b: 0, a: 0}

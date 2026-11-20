@@ -4627,7 +4627,7 @@ MonoBehaviour:
   arrow: {fileID: 0}
   spacing: 2.25
   moveSpeed: 20
-  leaveButton: {fileID: 0}
+  leaveButton: {fileID: 1177626586276158000}
   menuList:
   - title: Audio
     button: {fileID: 4059643525368569602}
@@ -19768,7 +19768,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 4096
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
