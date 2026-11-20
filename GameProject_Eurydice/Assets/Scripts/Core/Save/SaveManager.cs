@@ -118,7 +118,7 @@ public static class SaveManager
         }
     }
 
-    public static bool HasSaveData() => File.Exists(SaveDataPath);
+    public static bool HasSaveData() => TryReadCompatibleSaveData(out _);
 
     public static void SaveSettings(GameSettingsData data)
     {
@@ -163,6 +163,7 @@ public static class SaveManager
         {
             flushRunner?.Cancel();
             activeWriteTask?.Wait();
+            data.saveVersion = SaveData.CurrentSaveVersion;
             currentSaveData = data;
             OnBeforeFlush?.Invoke();
             isDirty = false;
@@ -179,6 +180,7 @@ public static class SaveManager
     {
         if (suppressProgressLoad) return;
 
+        data.saveVersion = SaveData.CurrentSaveVersion;
         currentSaveData = data;
         isDirty = true;
         if (!Application.isPlaying)
@@ -251,29 +253,85 @@ public static class SaveManager
 
     public static SaveData LoadGame()
     {
-        if (suppressProgressLoad || !File.Exists(SaveDataPath))
+        if (suppressProgressLoad || !TryReadCompatibleSaveData(out SaveData loaded))
         {
-            currentSaveData = new SaveData();
+            currentSaveData = SaveData.CreateNew();
             RebuildSceneLookup(currentSaveData);
             return currentSaveData;
         }
 
+        currentSaveData = loaded;
+        RebuildSceneLookup(currentSaveData);
+        return currentSaveData;
+    }
+
+    private static bool TryReadCompatibleSaveData(out SaveData data)
+    {
+        data = null;
+        if (!File.Exists(SaveDataPath)) return false;
+
         try
         {
             string json = File.ReadAllText(SaveDataPath);
-            currentSaveData = JsonUtility.FromJson<SaveData>(json) ?? new SaveData();
-            if (currentSaveData.scenes == null) currentSaveData.scenes = new List<SceneSaveData>();
-            if (currentSaveData.achievements == null) currentSaveData.achievements = new AchievementSaveData();
-            if (currentSaveData.mapRegions == null) currentSaveData.mapRegions = new List<MapRegionSaveData>();
-            RebuildSceneLookup(currentSaveData);
-            return currentSaveData;
+            data = JsonUtility.FromJson<SaveData>(json);
+            if (data == null) return false;
+
+            if (data.saveVersion < SaveData.MinCompatibleSaveVersion)
+            {
+                BackupAndResetIncompatibleSave(data.saveVersion);
+                data = null;
+                return false;
+            }
+
+            if (data.scenes == null) data.scenes = new List<SceneSaveData>();
+            if (data.achievements == null) data.achievements = new AchievementSaveData();
+            if (data.mapRegions == null) data.mapRegions = new List<MapRegionSaveData>();
+
+            if (data.saveVersion < SaveData.CurrentSaveVersion)
+            {
+                MigrateSaveData(data);
+                data.saveVersion = SaveData.CurrentSaveVersion;
+                if (!suppressProgressLoad)
+                    WriteJsonToDisk(SaveDataPath, JsonUtility.ToJson(data, true));
+            }
+
+            return true;
         }
         catch (Exception e)
         {
             Debug.LogError($"LoadGame 실패: {e.Message}");
-            currentSaveData = new SaveData();
-            RebuildSceneLookup(currentSaveData);
-            return currentSaveData;
+            data = null;
+            return false;
+        }
+    }
+
+    private static void MigrateSaveData(SaveData data)
+    {
+        // v0 -> v1: 기존 유효 좌표는 hasData=true로 승격, JsonUtility 기본 (0,0,0) 더미는 제거
+        if (data.saveVersion < 1 && data.scenes != null)
+        {
+            for (int i = 0; i < data.scenes.Count; i++)
+            {
+                var s = data.scenes[i];
+                if (s?.player == null) continue;
+                if (s.player.IsValid) s.player.hasData = true;
+                else s.player = null;
+            }
+        }
+    }
+
+    private static void BackupAndResetIncompatibleSave(int oldVersion)
+    {
+        try
+        {
+            string backupPath = SaveDataPath + ".bak";
+            File.Copy(SaveDataPath, backupPath, overwrite: true);
+            File.Delete(SaveDataPath);
+            Debug.LogWarning($"[SaveManager] 호환되지 않는 구버전 세이브(v{oldVersion} < v{SaveData.MinCompatibleSaveVersion})를 '{backupPath}'로 백업하고 초기화했습니다.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[SaveManager] 구버전 세이브 백업/초기화 실패: {e.Message}");
         }
     }
 
@@ -460,6 +518,15 @@ public static class SaveManager
         return AnySceneMatches(s => s.sockets != null && s.sockets.Exists(e => e != null && e.socketId == socketId && e.isPlaced));
     }
 
+    /// <summary>
+    /// 서브 씬 구분 없이 모든 저장된 씬 데이터에서 특정 퍼즐 ID의 완료 여부를 조회합니다.
+    /// </summary>
+    public static bool IsPuzzleCompletedAnyScene(string puzzleId)
+    {
+        if (string.IsNullOrEmpty(puzzleId)) return false;
+        return AnySceneMatches(s => s.puzzles != null && s.puzzles.Exists(p => p != null && p.puzzleId == puzzleId && p.isCompleted));
+    }
+
     public static void SaveSocketState(string socketId, bool isPlaced, string placedItemId, int placedAmount = 0, string sceneName = null)
     {
         if (string.IsNullOrEmpty(socketId)) return;
@@ -620,15 +687,16 @@ public static class SaveManager
         var gameData = currentSaveData ?? LoadGame();
         sceneName = ResolvePlayerSceneName(gameData, sceneName);
 
-        if (sceneLookup.TryGetValue(sceneName, out var sceneData) && sceneData?.player != null)
+        if (sceneLookup.TryGetValue(sceneName, out var sceneData) && sceneData?.player != null && sceneData.player.IsValid)
             return sceneData.player;
 
         if (gameData.scenes != null)
         {
             for (int i = 0; i < gameData.scenes.Count; i++)
             {
-                if (gameData.scenes[i]?.player != null)
-                    return gameData.scenes[i].player;
+                var p = gameData.scenes[i]?.player;
+                if (p != null && p.IsValid)
+                    return p;
             }
         }
         return null;
@@ -691,7 +759,7 @@ public static class SaveManager
             if (File.Exists(SaveDataPath))
                 File.Delete(SaveDataPath);
 
-            currentSaveData = new SaveData();
+            currentSaveData = SaveData.CreateNew();
             RebuildSceneLookup(currentSaveData);
             OnSaveDataDeleted?.Invoke();
             Debug.Log("[SaveManager] Save data deleted successfully.");

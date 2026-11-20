@@ -5,11 +5,18 @@ using UnityEngine;
 [Serializable]
 public class SaveData
 {
+    // 추후 맵/구조가 크게 변경되어 이전 세이브와 호환되지 않을 때 CurrentSaveVersion과 함께 올립니다.
+    public const int CurrentSaveVersion = 1;
+    public const int MinCompatibleSaveVersion = 0;
+
+    public int saveVersion;
     public InventorySaveData inventory = new();
     public List<MapRegionSaveData> mapRegions = new();
     public string lastActiveScene = string.Empty;
     public List<SceneSaveData> scenes = new();
     public AchievementSaveData achievements = new();
+
+    public static SaveData CreateNew() => new SaveData { saveVersion = CurrentSaveVersion };
 }
 
 [Serializable]
@@ -35,6 +42,7 @@ public class SceneSaveData
 [Serializable]
 public class PlayerSaveData
 {
+    public bool hasData;
     public Vector3 position;
     public float yRotation;
     public int controlMode = 1; // 0: FreeLook, 1: Strafe
@@ -42,10 +50,18 @@ public class PlayerSaveData
     public float cameraPitch;
     public float cameraZoom = 5f;
 
+    public bool IsValid =>
+        hasData ||
+        position != Vector3.zero ||
+        !Mathf.Approximately(yRotation, 0f) ||
+        !Mathf.Approximately(cameraYaw, 0f) ||
+        !Mathf.Approximately(cameraPitch, 0f);
+
     public PlayerSaveData() { }
 
     public PlayerSaveData(Vector3 position, float yRotation, int controlMode = 1, float cameraYaw = 0f, float cameraPitch = 0f, float cameraZoom = 5f)
     {
+        hasData = true;
         this.position = position;
         this.yRotation = yRotation;
         this.controlMode = controlMode;
