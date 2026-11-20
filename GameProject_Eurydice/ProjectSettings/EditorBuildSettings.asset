@@ -26,7 +26,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Test Scenes/GodRay_test_night.unity
     guid: 676e4339acfce22458058b1409412693
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Chapter_1.unity
     guid: 7cac95d1f7293914e9012e3b4bccea06
   m_configObjects:

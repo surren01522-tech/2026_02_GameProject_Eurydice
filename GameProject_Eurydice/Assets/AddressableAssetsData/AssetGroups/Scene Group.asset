@@ -27,6 +27,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Seamless_Scene
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cac95d1f7293914e9012e3b4bccea06
+    m_Address: Chapter_1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Seamless_Scene
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1a36d351bb49e04fb4e59e79c30a19c
+    m_Address: Chapter_0
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Seamless_Scene
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: de48cc1458fbb824e9fefd95cc256c55
     m_Address: Region_C
     m_ReadOnly: 0
@@ -35,12 +47,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e2bc377145a0fbd46b97e882f4098176
     m_Address: Play_test_Seamless
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Seamless_Scene
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b1a36d351bb49e04fb4e59e79c30a19c
-    m_Address: Chapter_0
     m_ReadOnly: 0
     m_SerializedLabels:
     - Seamless_Scene

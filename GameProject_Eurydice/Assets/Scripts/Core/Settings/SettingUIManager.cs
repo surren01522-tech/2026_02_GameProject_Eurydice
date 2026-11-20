@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using DG.Tweening;
+using Unity.VisualScripting;
 
 public class SettingUIManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class SettingUIManager : MonoBehaviour
     [SerializeField] private float moveSpeed = 20f;
 
     [Header("메뉴 항목")]
+    [SerializeField] private Button leaveButton;
     [SerializeField] private List<MenuEntry> menuList = new List<MenuEntry>();
 
     private readonly Vector3[] corners = new Vector3[4];
@@ -71,6 +73,11 @@ public class SettingUIManager : MonoBehaviour
                 BindButtonEvents(btn, i);
                 UIButtonTween.Bind(btn, playSound: false);
             }
+        }
+
+        if (leaveButton != null)
+        {
+            leaveButton.onClick.AddListener(LeaveGame);
         }
 
         if (settingPanel != null)
@@ -379,6 +386,15 @@ public class SettingUIManager : MonoBehaviour
         lastMenuButton = entry.button.gameObject;
         MoveArrowTo(lastMenuButton);
         OpenSubPanel(index);
+    }
+
+    private void LeaveGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     private IEnumerator CoInitArrowPosition(GameObject target)
