@@ -276,13 +276,14 @@ public static class PortalManager
                 for (int i = 0; i < ActivePortalsList.Count; i++)
                 {
                     var p = ActivePortalsList[i];
-                    if (p == null || p == exit || !p.IsOpen || p.LinkedPortal == null) continue;
+                    if (p == null || p == exit || !p.IsOpen || (p.LinkedPortal == null && !p.LoadSingleSceneOnEnter)) continue;
                     if (Time.time - p.LastTeleportTime < p.TeleportCooldown) continue;
 
                     if (TryDetectCross(p, prevPlayerPos, currPos, out float side, out Vector3 currLocal))
                     {
                         PortalCameraController.CompleteSplit(Camera.main);
-                        BeginCross(p, trackedPlayer, side, currLocal);
+                        if (p.LoadSingleSceneOnEnter) p.TriggerSingleSceneTransition();
+                        else BeginCross(p, trackedPlayer, side, currLocal);
                         break;
                     }
                 }
@@ -296,12 +297,13 @@ public static class PortalManager
             for (int i = 0; i < ActivePortalsList.Count; i++)
             {
                 var p = ActivePortalsList[i];
-                if (p == null || !p.IsOpen || p.LinkedPortal == null) continue;
+                if (p == null || !p.IsOpen || (p.LinkedPortal == null && !p.LoadSingleSceneOnEnter)) continue;
                 if (Time.time - p.LastTeleportTime < p.TeleportCooldown) continue;
 
                 if (TryDetectCross(p, prevPlayerPos, currPos, out float side, out Vector3 currLocal))
                 {
-                    BeginCross(p, trackedPlayer, side, currLocal);
+                    if (p.LoadSingleSceneOnEnter) p.TriggerSingleSceneTransition();
+                    else BeginCross(p, trackedPlayer, side, currLocal);
                     break;
                 }
             }

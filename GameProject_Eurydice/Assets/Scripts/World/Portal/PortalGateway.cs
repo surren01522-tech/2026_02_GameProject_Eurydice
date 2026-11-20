@@ -20,6 +20,12 @@ public enum PortalShapeMode
     Custom = 1
 }
 
+public enum PortalConditionMode
+{
+    All = 0,
+    Any = 1
+}
+
 [ExecuteAlways]
 [DefaultExecutionOrder(-10)]
 public class PortalGateway : MonoBehaviour
@@ -51,6 +57,8 @@ public class PortalGateway : MonoBehaviour
     [SerializeField] private string targetPortalId;
     [SerializeField] private string targetSceneName;
     [SerializeField] private PortalGateway linkedPortal;
+    [Tooltip("체크 시 반대편 포탈 대신 Target Scene Name으로 단독 씬(Single) 전환합니다. (엔딩 씬 등)")]
+    [SerializeField] private bool loadSingleSceneOnEnter;
     [SerializeField] private bool startOpen;
     [SerializeField] private bool closeAfterPassThrough;
     [SerializeField] private bool useDistancePin;
@@ -90,8 +98,10 @@ public class PortalGateway : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float editorPreviewProgress = 1f;
 
-    [FoldGroup("기믹 연동 (소켓 ID)")]
+    [FoldGroup("기믹 연동 (소켓 / 퍼즐 ID)")]
+    [SerializeField] private PortalConditionMode conditionMode = PortalConditionMode.All;
     [SerializeField] private List<string> requiredSocketIds = new();
+    [SerializeField] private List<string> requiredPuzzleIds = new();
     [SerializeField] private float socketActivationDelay = 0.25f;
     [SerializeField] private UnityEvent onPortalOpened;
     [SerializeField] private UnityEvent onPortalClosed;
@@ -118,8 +128,9 @@ public class PortalGateway : MonoBehaviour
     public bool IsOpen => CurrentState == PortalState.Open;
     public bool CloseAfterPassThrough => closeAfterPassThrough;
     public bool SyncStateWithLinked => syncStateWithLinked;
-    public bool IsDestinationLoaded => string.IsNullOrEmpty(DestinationSceneName) || SceneStreamer.Instance == null || SceneStreamer.Instance.IsSceneLoaded(DestinationSceneName);
-    public bool IsLoadingVisualActive => Application.isPlaying && (CurrentState == PortalState.Open || CurrentState == PortalState.Opening) && (linkedPortal == null || !IsDestinationLoaded);
+    public bool LoadSingleSceneOnEnter => loadSingleSceneOnEnter;
+    public bool IsDestinationLoaded => loadSingleSceneOnEnter || string.IsNullOrEmpty(DestinationSceneName) || SceneStreamer.Instance == null || SceneStreamer.Instance.IsSceneLoaded(DestinationSceneName);
+    public bool IsLoadingVisualActive => !loadSingleSceneOnEnter && Application.isPlaying && (CurrentState == PortalState.Open || CurrentState == PortalState.Opening) && (linkedPortal == null || !IsDestinationLoaded);
     public PortalGateway LinkedPortal => linkedPortal;
     public string DestinationSceneName => linkedPortal != null ? linkedPortal.gameObject.scene.name : targetSceneName;
     public PortalShapeMode ShapeMode => shapeMode;
@@ -139,6 +150,7 @@ public class PortalGateway : MonoBehaviour
     private RenderTexture renderTex;
     private Material runtimeMat;
     private Coroutine transitionRoutine;
+    private Coroutine activationDelayRoutine;
     private Vector3 defaultScale = new Vector3(2.2f, 3.0f, 1f);
     private float currentProgress = 1f;
     private float lastTeleportTime = -10f;
@@ -217,11 +229,11 @@ public class PortalGateway : MonoBehaviour
 
         bool savedOpen = SaveManager.IsPortalOpenAnyScene(portalId) ||
                          (syncStateWithLinked && SaveManager.IsPortalOpenAnyScene(targetPortalId));
-        bool socketsMet = HasRequiredSockets() && AreSocketsMet();
+        bool conditionsMet = HasActivationConditions() && AreActivationConditionsMet();
         bool linkedOpen = syncStateWithLinked && linkedPortal != null &&
                           (linkedPortal.CurrentState == PortalState.Open || linkedPortal.CurrentState == PortalState.Opening);
 
-        SetOpenImmediate(startOpen || savedOpen || socketsMet || linkedOpen, syncLinked: false, saveState: socketsMet && !savedOpen);
+        SetOpenImmediate(startOpen || savedOpen || conditionsMet || linkedOpen, syncLinked: false, saveState: conditionsMet && !savedOpen);
     }
 
     private void OnEnable()
@@ -233,6 +245,8 @@ public class PortalGateway : MonoBehaviour
         {
             ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
             ItemSocket.OnAnySocketPlaced += OnSocketPlaced;
+            PuzzleBase.OnAnyPuzzleCompleted -= OnPuzzleCompleted;
+            PuzzleBase.OnAnyPuzzleCompleted += OnPuzzleCompleted;
         }
         else
         {
@@ -245,7 +259,16 @@ public class PortalGateway : MonoBehaviour
     private void OnDisable()
     {
         if (Application.isPlaying)
+        {
             ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
+            PuzzleBase.OnAnyPuzzleCompleted -= OnPuzzleCompleted;
+        }
+
+        if (activationDelayRoutine != null)
+        {
+            StopCoroutine(activationDelayRoutine);
+            activationDelayRoutine = null;
+        }
 
         if (PortalCameraController.IsSplitActive && (PortalCameraController.SplitEntry == this || PortalCameraController.SplitExit == this))
             PortalCameraController.CompleteSplit(Camera.main);
@@ -257,7 +280,16 @@ public class PortalGateway : MonoBehaviour
     private void OnDestroy()
     {
         if (Application.isPlaying)
+        {
             ItemSocket.OnAnySocketPlaced -= OnSocketPlaced;
+            PuzzleBase.OnAnyPuzzleCompleted -= OnPuzzleCompleted;
+        }
+
+        if (activationDelayRoutine != null)
+        {
+            StopCoroutine(activationDelayRoutine);
+            activationDelayRoutine = null;
+        }
         ReleaseCamera();
         SafeDestroy(runtimeMat);
         runtimeMat = null;
@@ -322,6 +354,12 @@ public class PortalGateway : MonoBehaviour
 
     public void SetOpenImmediate(bool open, bool syncLinked = true, bool saveState = true)
     {
+        if (activationDelayRoutine != null)
+        {
+            StopCoroutine(activationDelayRoutine);
+            activationDelayRoutine = null;
+        }
+
         if (transitionRoutine != null)
         {
             StopCoroutine(transitionRoutine);
@@ -373,6 +411,12 @@ public class PortalGateway : MonoBehaviour
         }
         SaveOpenState(open);
 
+        if (activationDelayRoutine != null)
+        {
+            StopCoroutine(activationDelayRoutine);
+            activationDelayRoutine = null;
+        }
+
         if (transitionRoutine != null)
             StopCoroutine(transitionRoutine);
 
@@ -411,7 +455,7 @@ public class PortalGateway : MonoBehaviour
             float curvedT = curve != null ? Mathf.Clamp01(curve.Evaluate(t)) : t;
             currentProgress = Mathf.Lerp(startVal, targetVal, curvedT);
 
-            if (opening && currentProgress > 0.35f && !string.IsNullOrEmpty(targetSceneName) &&
+            if (!loadSingleSceneOnEnter && opening && currentProgress > 0.35f && !string.IsNullOrEmpty(targetSceneName) &&
                 SceneStreamer.Instance != null && !SceneStreamer.Instance.IsSceneLoaded(targetSceneName))
             {
                 currentProgress = 0.35f;
@@ -927,6 +971,22 @@ public class PortalGateway : MonoBehaviour
         onPlayerTeleported?.Invoke();
     }
 
+    /// <summary>단독 씬 전환 포탈 통과 시 대상 씬을 Single 모드로 로드합니다.</summary>
+    public void TriggerSingleSceneTransition()
+    {
+        if (!Application.isPlaying || !loadSingleSceneOnEnter || SceneLoader.IsLoading) return;
+        if (string.IsNullOrEmpty(targetSceneName))
+        {
+            Debug.LogWarning($"[PortalGateway] '{name}'의 LoadSingleSceneOnEnter가 켜져 있지만 Target Scene Name이 비어 있습니다.");
+            return;
+        }
+
+        lastTeleportTime = Time.time;
+        PlayTeleportAudioAndEvent(transform.position);
+        if (closeAfterPassThrough) NotifyPassThroughCompleted();
+        SceneLoader.Load(targetSceneName, savePlayer: false);
+    }
+
     private Material EnsureMaterial()
     {
         if (portalRenderer == null) return null;
@@ -1084,7 +1144,7 @@ public class PortalGateway : MonoBehaviour
 
     private void UpdatePinState()
     {
-        if (!Application.isPlaying || string.IsNullOrEmpty(targetSceneName)) return;
+        if (!Application.isPlaying || loadSingleSceneOnEnter || string.IsNullOrEmpty(targetSceneName)) return;
         bool wantOpen = CurrentState == PortalState.Open || CurrentState == PortalState.Opening;
         if (!wantOpen)
         {
@@ -1133,7 +1193,7 @@ public class PortalGateway : MonoBehaviour
 
     private void PinTargetScene(bool pinned)
     {
-        if (!Application.isPlaying || string.IsNullOrEmpty(targetSceneName) || isScenePinned == pinned) return;
+        if (!Application.isPlaying || loadSingleSceneOnEnter || string.IsNullOrEmpty(targetSceneName) || isScenePinned == pinned) return;
         if (SceneStreamer.Instance == null) return;
 
         if (pinned) SceneStreamer.Instance.PinScene(targetSceneName);
@@ -1155,39 +1215,61 @@ public class PortalGateway : MonoBehaviour
         }
     }
 
-    private bool HasRequiredSockets()
+    private static bool HasValidIds(List<string> ids)
     {
-        if (requiredSocketIds == null) return false;
-        for (int i = 0; i < requiredSocketIds.Count; i++)
+        if (ids == null) return false;
+        for (int i = 0; i < ids.Count; i++)
         {
-            if (!string.IsNullOrEmpty(requiredSocketIds[i]))
+            if (!string.IsNullOrEmpty(ids[i]))
                 return true;
         }
         return false;
     }
 
-    private bool AreSocketsMet()
+    private static bool EvaluateIdConditions(List<string> ids, System.Func<string, bool> isMet, bool requireAll)
     {
-        if (requiredSocketIds == null) return true;
-        for (int i = 0; i < requiredSocketIds.Count; i++)
+        if (ids == null) return requireAll;
+        for (int i = 0; i < ids.Count; i++)
         {
-            string id = requiredSocketIds[i];
-            if (!string.IsNullOrEmpty(id) && !SaveManager.IsSocketPlacedAnyScene(id))
-                return false;
+            string id = ids[i];
+            if (string.IsNullOrEmpty(id)) continue;
+
+            bool met = isMet(id);
+            if (requireAll && !met) return false;
+            if (!requireAll && met) return true;
         }
-        return true;
+        return requireAll;
     }
 
-    private void OnSocketPlaced(ItemSocket socket, ItemData item)
+    private bool HasActivationConditions() => HasValidIds(requiredSocketIds) || HasValidIds(requiredPuzzleIds);
+
+    private bool AreActivationConditionsMet()
     {
-        if (HasRequiredSockets() && AreSocketsMet())
-            StartCoroutine(OpenDelayedRoutine());
+        if (conditionMode == PortalConditionMode.All)
+        {
+            return EvaluateIdConditions(requiredSocketIds, SaveManager.IsSocketPlacedAnyScene, true) &&
+                   EvaluateIdConditions(requiredPuzzleIds, SaveManager.IsPuzzleCompletedAnyScene, true);
+        }
+
+        return EvaluateIdConditions(requiredSocketIds, SaveManager.IsSocketPlacedAnyScene, false) ||
+               EvaluateIdConditions(requiredPuzzleIds, SaveManager.IsPuzzleCompletedAnyScene, false);
+    }
+
+    private void OnSocketPlaced(ItemSocket socket, ItemData item) => TryActivateByCondition();
+    private void OnPuzzleCompleted(PuzzleBase puzzle) => TryActivateByCondition();
+
+    private void TryActivateByCondition()
+    {
+        if (CurrentState == PortalState.Open || CurrentState == PortalState.Opening) return;
+        if (HasActivationConditions() && AreActivationConditionsMet() && activationDelayRoutine == null)
+            activationDelayRoutine = StartCoroutine(OpenDelayedRoutine());
     }
 
     private IEnumerator OpenDelayedRoutine()
     {
         if (socketActivationDelay > 0f)
             yield return new WaitForSeconds(socketActivationDelay);
+        activationDelayRoutine = null;
         Open();
     }
 
